@@ -192,7 +192,7 @@ class BattleScene:
             screen.blit(result_img, (0, 0))
 
     def spawn_projectiles(self):
-    dirs = [(0, 5), (0, -5), (5, 0), (-5, 0), (5, 5), (-5, -5), (-5, 5), (5, -5)]  # 正確：縮進 4 個空格
+    dirs = [(0, 5), (0, -5), (5, 0), (-5, 0), (5, 5), (-5, -5), (-5, 5), (5, -5)]    正確：縮進 4 個空格
     types = random.sample(range(8), 3)
     for t in types:
         vx, vy = dirs[t]
