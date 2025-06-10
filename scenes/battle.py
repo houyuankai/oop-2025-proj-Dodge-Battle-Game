@@ -19,12 +19,16 @@ class BattleScene:
 
         self.dodge_countdown_timer = 0  # 新增倒數計時器
         self.dodge_countdown_duration = 2000  # 2秒倒數
+        
+        self.invincible = False  # 新增：無敵狀態標誌
+        self.invincible_timer = 0  # 新增：無敵計時器
+        self.invincible_duration = 500  # 新增：無敵0.5秒
 
         self.player = pygame.Rect(300, 600, 20, 20) # 初始化玩家位置在中央
         self.player_speed = 5
 
         self.projectiles = []
-        self.spawn_delay = 500
+        self.spawn_delay = 800
         self.last_spawn = pygame.time.get_ticks()
 
         self.boss_images = [
@@ -111,18 +115,26 @@ class BattleScene:
             self.spawn_projectiles()
             self.last_spawn = now
 
+        # 檢查無敵狀態
+        if self.invincible:
+            if now - self.invincible_timer > self.invincible_duration:
+                self.invincible = False  # 結束無敵狀態
+
         for proj in self.projectiles[:]:
             proj["rect"].x += proj["vx"]
             proj["rect"].y += proj["vy"]
             if not pygame.Rect(0, 300, 600, 600).colliderect(proj["rect"]):
                 self.projectiles.remove(proj)
-            elif self.player.colliderect(proj["rect"]):
+            elif self.player.colliderect(proj["rect"]) and not self.invincible:  # 修改：僅在非無敵時受傷
                 self.player_hp -= 1
                 self.projectiles.remove(proj)
-                self.state = "transition"
-                self.transition_timer = 1000
-                self.previous_state = "dodge"
-                return
+                self.invincible = True  # 進入無敵狀態
+                self.invincible_timer = now  # 記錄無敵開始時間
+                if self.player_hp <= 0:  # 新增：檢查血量是否為0
+                    self.state = "transition"
+                    self.transition_timer = 1000
+                    self.previous_state = "dodge"
+                    return
                 
         if pygame.time.get_ticks() - self.dodge_start_time >= 5000:
             self.state = "transition"
@@ -163,6 +175,7 @@ class BattleScene:
             screen.blit(self.boss_images[self.boss_anim_index], (200, 100))
 
         if self.state == "dodge" or self.state == "dodge_countdown":
+            player_color = (255, 165, 0) if self.invincible else (255, 200, 0)
             pygame.draw.ellipse(screen, (255, 200, 0), self.player)
             for proj in self.projectiles:
                 pygame.draw.rect(screen, (255, 255, 255), proj["rect"])
