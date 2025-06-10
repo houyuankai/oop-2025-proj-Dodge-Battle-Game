@@ -7,12 +7,13 @@ class BattleScene:
         self.game = game
         self.screen = game.screen
         self.clock = pygame.time.Clock()
+        self.dodge_start_time = pygame.time.get_ticks()
 
         self.player_hp = 3
         self.boss_hp = 5
 
         self.state = "dodge"  # "dodge", "attack", "transition", "win", "lose"
-        self.dodge_timer = 0
+        
         self.transition_timer = 0
         self.attack_timer = 0
 
@@ -65,7 +66,8 @@ class BattleScene:
                     self.state = "lose"
                 else:
                     self.state = "dodge"
-                    self.dodge_timer = 15000
+                    self.dodge_start_time = pygame.time.get_ticks()
+
 
     def update_dodge(self):
         keys = pygame.key.get_pressed()
@@ -75,6 +77,7 @@ class BattleScene:
         if keys[pygame.K_s]: self.player.y += self.player_speed
 
         self.player.clamp_ip(pygame.Rect(0, 300, 600, 600))
+
 
         now = pygame.time.get_ticks()
         if now - self.last_spawn > self.spawn_delay:
@@ -92,12 +95,12 @@ class BattleScene:
                 self.state = "transition"
                 self.transition_timer = 1000
                 return
-
-        self.dodge_timer += self.clock.get_time()
-        if self.dodge_timer >= 15000:
+                
+        if pygame.time.get_ticks() - self.dodge_start_time >= 15000:
             self.state = "attack"
             self.attack_cursor.x = 150
             self.attack_active = True
+
 
     def update_attack(self):
         if self.attack_active:
