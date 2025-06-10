@@ -176,7 +176,7 @@ class BattleScene:
 
         if self.state == "dodge" or self.state == "dodge_countdown":
             player_color = (0, 255, 255) if self.invincible else (255, 200, 0)
-            pygame.draw.ellipse(screen, (255, 200, 0), self.player)
+            pygame.draw.ellipse(screen, player_color, self.player)
             for proj in self.projectiles:
                 pygame.draw.rect(screen, (255, 255, 255), proj["rect"])
             if self.state == "dodge_countdown":
