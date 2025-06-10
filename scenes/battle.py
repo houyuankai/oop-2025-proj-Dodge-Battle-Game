@@ -29,7 +29,7 @@ class BattleScene:
         self.player_speed = 7
 
         self.projectiles = []
-        self.spawn_delay = 900
+        self.spawn_delay = 800
         self.projectile_speed = 3
         self.last_spawn = pygame.time.get_ticks()
         
@@ -54,7 +54,12 @@ class BattleScene:
         self.attack_cursor = pygame.Rect(150, 745, 10, 20)
         self.attack_speed = 5
         self.attack_active = False
-        
+
+        self.play_again_image = pygame.image.load(os.path.join("assets", "images", "play_again.png"))
+        self.menu_image = pygame.image.load(os.path.join("assets", "images", "menu.png"))
+        self.play_again_rect = self.play_again_image.get_rect(topleft=(150, 600))
+        self.menu_rect = self.menu_image.get_rect(topleft=(350, 600))
+
         self.reset_player_position()
         self.projectiles.clear()
         
