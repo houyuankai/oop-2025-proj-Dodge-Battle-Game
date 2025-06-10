@@ -29,8 +29,8 @@ class BattleScene:
         self.player_speed = 7
 
         self.projectiles = []
-        self.spawn_delay = 1000
-        self.projectile_speed = 4
+        self.spawn_delay = 900
+        self.projectile_speed = 3
         self.last_spawn = pygame.time.get_ticks()
         
 
@@ -52,7 +52,7 @@ class BattleScene:
         self.attack_bar = pygame.Rect(150, 750, 300, 10)
         self.attack_zone = pygame.Rect(275, 745, 50, 20)
         self.attack_cursor = pygame.Rect(150, 745, 10, 20)
-        self.attack_speed = 4
+        self.attack_speed = 5
         self.attack_active = False
         
         self.reset_player_position()
@@ -226,11 +226,11 @@ class BattleScene:
             if vx == 0:
                 x = random.choice([100, 300, 500])
                 y = 300 if vy > 0 else 880
-                rect = pygame.Rect(x, y, 200, 20)
+                rect = pygame.Rect(x-100, y, 200, 20)
             elif vy == 0:
                 x = 0 if vx > 0 else 580
                 y = random.choice([400, 600, 800])
-                rect = pygame.Rect(x, y, 20, 200)
+                rect = pygame.Rect(x, y-100, 20, 200)
             else:
                 x = 0 if vx > 0 else 580
                 y = 300 if vy > 0 else 880
