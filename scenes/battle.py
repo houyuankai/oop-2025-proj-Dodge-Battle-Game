@@ -205,5 +205,5 @@ class BattleScene:
             else:
                 x = 0 if vx > 0 else 580
                 y = 300 if vy > 0 else 880
-            rect = pygame.Rect(x, y, 20, 60)
+            rect = pygame.Rect(x, y, 20, 200)
             self.projectiles.append({"rect": rect, "vx": vx, "vy": vy})
