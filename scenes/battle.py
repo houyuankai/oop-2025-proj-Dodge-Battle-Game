@@ -25,10 +25,11 @@ class BattleScene:
         self.invincible_duration = 1000  # 新增：無敵0.5秒
 
         self.player = pygame.Rect(300, 600, 20, 20) # 初始化玩家位置在中央
-        self.player_speed = 5
+        self.player_speed = 6
 
         self.projectiles = []
-        self.spawn_delay = 800
+        self.spawn_delay = 1000
+        self.projectile_speed = 4
         self.last_spawn = pygame.time.get_ticks()
 
         self.boss_images = [
