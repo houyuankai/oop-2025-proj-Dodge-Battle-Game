@@ -29,8 +29,8 @@ class BattleScene:
         self.player_speed = 7
 
         self.projectiles = []
-        self.spawn_delay = 1200
-        self.projectile_speed = 4
+        self.spawn_delay = 1000
+        self.projectile_speed = 2
         self.last_spawn = pygame.time.get_ticks()
         
 
@@ -234,5 +234,5 @@ class BattleScene:
             else:
                 x = 0 if vx > 0 else 580
                 y = 300 if vy > 0 else 880
-                rect = pygame.Rect(x, y, 20, 60)
+                rect = pygame.Rect(x, y, 20, 200)
             self.projectiles.append(Projectile(rect, vx, vy, angle))
