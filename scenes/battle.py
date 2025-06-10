@@ -104,7 +104,7 @@ class BattleScene:
                 self.transition_timer = 1000
                 return
                 
-        if pygame.time.get_ticks() - self.dodge_start_time >= 10000:
+        if pygame.time.get_ticks() - self.dodge_start_time >= 5000:
             self.state = "transition"
             self.transition_timer = 1000
             self.previous_state = "dodge"
