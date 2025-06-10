@@ -12,12 +12,11 @@ class BattleScene:
         self.player_hp = 3
         self.boss_hp = 5
 
-        self.state = "dodge"  # "dodge", "attack", "transition", "win", "lose"
+        self.state = "dodge_countdown"  # "dodge_countdown", "dodge", "attack", "transition", "win", "lose"
+        self.dodge_countdown_timer = pygame.time.get_ticks()  # Initialize countdown timer  
         
         self.transition_timer = 0
         self.attack_timer = 0
-
-        self.dodge_countdown_timer = 0  # 新增倒數計時器
         self.dodge_countdown_duration = 2000  # 2秒倒數
         
         self.invincible = False  # 新增：無敵狀態標誌
@@ -51,6 +50,9 @@ class BattleScene:
         self.attack_cursor = pygame.Rect(150, 745, 10, 20)
         self.attack_speed = 4
         self.attack_active = False
+        
+        self.reset_player_position()
+        self.projectiles.clear()
         
     def reset_player_position(self):
         # 重置玩家圓球到操作區中央 (300, 600)
