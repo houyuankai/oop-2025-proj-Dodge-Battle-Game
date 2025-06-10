@@ -156,9 +156,9 @@ class BattleScene:
                 countdown = max(0, (self.attack_delay - (pygame.time.get_ticks() - self.attack_start_time)) // 1000 + 1)
                 countdown_text = self.font.render(f"Ready in: {countdown}", True, (255, 255, 0))
                 screen.blit(countdown_text, (240, 780))
-             else:
-                 press_text = self.font.render("Press SPACE", True, (255, 255, 255))
-                 screen.blit(press_text, (230, 780))
+            else:
+                press_text = self.font.render("Press SPACE", True, (255, 255, 255))
+                screen.blit(press_text, (230, 780))
 
         elif self.state in ["win", "lose"]:
             result_img = pygame.image.load(os.path.join("assets", "images", f"{self.state}.png"))
