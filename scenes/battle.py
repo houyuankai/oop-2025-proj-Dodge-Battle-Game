@@ -3,6 +3,7 @@ import random
 import os
 import math
 from scenes.projectile import Projectile
+from scenes.button_manager import ButtonManager
 
 class BattleScene:
     def __init__(self, game):
@@ -49,11 +50,13 @@ class BattleScene:
         self.attack_start_time = 0
         self.attack_delay = 2000  # 2 秒
         
-        self.attack_bar = pygame.Rect(150, 750, 300, 10)
-        self.attack_zone = pygame.Rect(275, 745, 50, 20)
-        self.attack_cursor = pygame.Rect(150, 745, 10, 20)
+        self.attack_bar = pygame.Rect(75, 590, 450, 20)
+        self.attack_zone = pygame.Rect(265, 580, 70, 40)
+        self.attack_cursor = pygame.Rect(75, 580, 20, 40)
         self.attack_speed = 5
         self.attack_active = False
+        
+        self.button_manager = ButtonManager(game)
 
         self.play_again_image = pygame.image.load(os.path.join("assets", "images", "play_again.png"))
         self.menu_image = pygame.image.load(os.path.join("assets", "images", "menu.png"))
@@ -67,6 +70,25 @@ class BattleScene:
         # 重置玩家圓球到操作區中央 (300, 600)
         self.player.x = 300
         self.player.y = 600
+        
+    def reset_game(self):
+        self.player_hp = 3
+        self.boss_hp = 5
+        self.state = "dodge_countdown"
+        self.dodge_countdown_timer = pygame.time.get_ticks()
+        self.invincible = False
+        self.invincible_timer = 0
+        self.projectiles.clear()
+        self.reset_player_position()
+        self.dodge_start_time = pygame.time.get_ticks()
+        self.last_spawn = pygame.time.get_ticks()
+        self.transition_timer = 0
+        self.attack_timer = 0
+        self.attack_start_time = 0
+        self.attack_active = False
+        self.attack_cursor.x = 150
+        self.previous_state = None
+
 
     def handle_event(self, event):
         if event.type == pygame.KEYDOWN:
@@ -77,6 +99,8 @@ class BattleScene:
                 self.state = "transition"
                 self.transition_timer = 1000
                 self.previous_state = "attack"
+         elif self.state in ["win", "lose"]:
+            self.button_manager.handle_event(event, self)
             
     def update(self):
         self.clock.tick(60)
@@ -160,7 +184,7 @@ class BattleScene:
                 self.attack_active = True
         else:
             self.attack_cursor.x += self.attack_speed
-            if self.attack_cursor.x > 440:
+            if self.attack_cursor.x > 505:
                 self.attack_active = False
                 self.state = "transition"
                 self.transition_timer = 1000
@@ -195,7 +219,7 @@ class BattleScene:
                 # 顯示倒數秒數
                 countdown = max(0, (self.dodge_countdown_duration - (pygame.time.get_ticks() - self.dodge_countdown_timer)) // 1000 + 1)
                 countdown_text = self.font.render(f"Ready in: {countdown}", True, (255, 255, 0))
-                screen.blit(countdown_text, (240, 780))
+                screen.blit(countdown_text, (240, 680))
 
 
         elif self.state == "attack":
@@ -207,14 +231,15 @@ class BattleScene:
                 # 顯示倒數秒數
                 countdown = max(0, (self.attack_delay - (pygame.time.get_ticks() - self.attack_start_time)) // 1000 + 1)
                 countdown_text = self.font.render(f"Ready in: {countdown}", True, (255, 255, 0))
-                screen.blit(countdown_text, (240, 780))
+                screen.blit(countdown_text, (240, 680))
             else:
                 press_text = self.font.render("Press SPACE", True, (255, 255, 255))
-                screen.blit(press_text, (230, 780))
+                screen.blit(press_text, (230, 680))
 
         elif self.state in ["win", "lose"]:
             result_img = pygame.image.load(os.path.join("assets", "images", f"{self.state}.png"))
             screen.blit(result_img, (0, 0))
+            self.button_manager.draw(screen)
 
     def spawn_projectiles(self):
         dirs = [
