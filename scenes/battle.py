@@ -17,7 +17,10 @@ class BattleScene:
         self.transition_timer = 0
         self.attack_timer = 0
 
-        self.player = pygame.Rect(300, 800, 20, 20)
+        self.dodge_countdown_timer = 0  # 新增倒數計時器
+        self.dodge_countdown_duration = 2000  # 2秒倒數
+
+        self.player = pygame.Rect(300, 600, 20, 20) # 初始化玩家位置在中央
         self.player_speed = 5
 
         self.projectiles = []
@@ -44,6 +47,11 @@ class BattleScene:
         self.attack_cursor = pygame.Rect(150, 745, 10, 20)
         self.attack_speed = 4
         self.attack_active = False
+        
+    def reset_player_position(self):
+        # 重置玩家圓球到操作區中央 (300, 600)
+        self.player.x = 300
+        self.player.y = 600
 
     def handle_event(self, event):
         if event.type == pygame.KEYDOWN:
@@ -75,8 +83,17 @@ class BattleScene:
                         self.attack_start_time = pygame.time.get_ticks()
                         self.attack_active = False  # 延遲後才開始動
                     else:
-                        self.state = "dodge"
-                        self.dodge_start_time = pygame.time.get_ticks()
+                        self.state = "dodge_countdown"  # 改為進入倒數狀態
+                        self.dodge_countdown_timer = pygame.time.get_ticks()
+                        self.reset_player_position()  # 重置玩家位置
+                        self.projectiles.clear()  # 清除現有障礙物
+    def update_dodge_countdown(self):
+        # 倒數計時邏輯
+        elapsed = pygame.time.get_ticks() - self.dodge_countdown_timer
+        if elapsed >= self.dodge_countdown_duration:
+            self.state = "dodge"
+            self.dodge_start_time = pygame.time.get_ticks()
+            self.last_spawn = pygame.time.get_ticks()
 
     def update_dodge(self):
         keys = pygame.key.get_pressed()
@@ -86,7 +103,6 @@ class BattleScene:
         if keys[pygame.K_s]: self.player.y += self.player_speed
 
         self.player.clamp_ip(pygame.Rect(0, 300, 600, 600))
-
 
         now = pygame.time.get_ticks()
         if now - self.last_spawn > self.spawn_delay:
@@ -103,6 +119,7 @@ class BattleScene:
                 self.projectiles.remove(proj)
                 self.state = "transition"
                 self.transition_timer = 1000
+                self.previous_state = "dodge"
                 return
                 
         if pygame.time.get_ticks() - self.dodge_start_time >= 5000:
@@ -143,10 +160,16 @@ class BattleScene:
                 self.boss_anim_timer = pygame.time.get_ticks()
             screen.blit(self.boss_images[self.boss_anim_index], (200, 100))
 
-        if self.state == "dodge":
+        if self.state == "dodge" or self.state == "dodge_countdown":
             pygame.draw.ellipse(screen, (255, 200, 0), self.player)
             for proj in self.projectiles:
                 pygame.draw.rect(screen, (255, 255, 255), proj["rect"])
+            if self.state == "dodge_countdown":
+                # 顯示倒數秒數
+                countdown = max(0, (self.dodge_countdown_duration - (pygame.time.get_ticks() - self.dodge_countdown_timer)) // 1000 + 1)
+                countdown_text = self.font.render(f"Ready in: {countdown}", True, (255, 255, 0))
+                screen.blit(countdown_text, (240, 780))
+
 
         elif self.state == "attack":
             pygame.draw.rect(screen, (255, 255, 255), self.attack_bar)
