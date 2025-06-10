@@ -105,10 +105,6 @@ class BattleScene:
                 return
                 
         if pygame.time.get_ticks() - self.dodge_start_time >= 15000:
-            self.state = "attack"
-            self.attack_cursor.x = 150
-            self.attack_active = True
-        if pygame.time.get_ticks() - self.dodge_start_time >= 15000:
             self.state = "transition"
             self.transition_timer = 1000
             self.previous_state = "dodge"
