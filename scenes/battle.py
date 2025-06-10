@@ -175,7 +175,7 @@ class BattleScene:
             screen.blit(self.boss_images[self.boss_anim_index], (200, 100))
 
         if self.state == "dodge" or self.state == "dodge_countdown":
-            player_color = (255, 165, 0) if self.invincible else (255, 200, 0)
+            player_color = (0, 255, 255) if self.invincible else (255, 200, 0)
             pygame.draw.ellipse(screen, (255, 200, 0), self.player)
             for proj in self.projectiles:
                 pygame.draw.rect(screen, (255, 255, 255), proj["rect"])
