@@ -22,7 +22,7 @@ class BattleScene:
         
         self.invincible = False  # 新增：無敵狀態標誌
         self.invincible_timer = 0  # 新增：無敵計時器
-        self.invincible_duration = 500  # 新增：無敵0.5秒
+        self.invincible_duration = 1000  # 新增：無敵0.5秒
 
         self.player = pygame.Rect(300, 600, 20, 20) # 初始化玩家位置在中央
         self.player_speed = 5
@@ -136,7 +136,7 @@ class BattleScene:
                     self.previous_state = "dodge"
                     return
                 
-        if pygame.time.get_ticks() - self.dodge_start_time >= 5000:
+        if pygame.time.get_ticks() - self.dodge_start_time >= 10000:
             self.state = "transition"
             self.transition_timer = 1000
             self.previous_state = "dodge"
