@@ -67,6 +67,8 @@ class BattleScene:
         self.clock.tick(60)
         if self.state == "dodge":
             self.update_dodge()
+        elif self.state == "dodge_countdown":  # 確保倒數狀態被處理
+            self.update_dodge_countdown()
         elif self.state == "attack":
             self.update_attack()
         elif self.state == "transition":
