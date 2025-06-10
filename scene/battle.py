@@ -150,11 +150,11 @@ class BattleScene:
         for t in types:
             vx, vy = dirs[t]
             if vx == 0:
-                x = random.choice([200, 300, 400])
+                x = random.choice([100, 300, 500])
                 y = 300 if vy > 0 else 880
             elif vy == 0:
                 x = 0 if vx > 0 else 580
-                y = random.choice([500, 600, 700])
+                y = random.choice([400, 600, 800])
             else:
                 x = 0 if vx > 0 else 580
                 y = 300 if vy > 0 else 880
