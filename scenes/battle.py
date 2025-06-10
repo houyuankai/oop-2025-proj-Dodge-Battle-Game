@@ -192,20 +192,22 @@ class BattleScene:
             screen.blit(result_img, (0, 0))
 
     def spawn_projectiles(self):
-        dirs = [
-            (0, 5), (0, -5), (5, 0), (-5, 0), (5, 5), (-5, -5), (-5, 5), (5, -5)
-        ]
-        types = random.sample(range(8), 3)
-        for t in types:
-            vx, vy = dirs[t]
-            if vx == 0:
-                x = random.choice([100, 300, 500])
-                y = 300 if vy > 0 else 880
-            elif vy == 0:
-                x = 0 if vx > 0 else 580
-                y = random.choice([400, 600, 800])
-            else:
-                x = 0 if vx > 0 else 580
-                y = 300 if vy > 0 else 880
-            rect = pygame.Rect(x, y, 20, 200)
-            self.projectiles.append({"rect": rect, "vx": vx, "vy": vy})
+    dirs = [
+        (0, 5), (0, -5), (5, 0), (-5, 0), (5, 5), (-5, -5), (-5, 5), (5, -5)
+    ]
+    types = random.sample(range(8), 3)
+    for t in types:
+        vx, vy = dirs[t]
+        if vx == 0:  # 上下移動
+            x = random.choice([100, 300, 500])
+            y = 300 if vy > 0 else 880
+            rect = pygame.Rect(x, y, 200, 20)  # 改為 200x20
+        elif vy == 0:  # 左右移動
+            x = 0 if vx > 0 else 580
+            y = random.choice([400, 600, 800])
+            rect = pygame.Rect(x, y, 20, 200)  # 改為 20x200
+        else:  # 斜向移動
+            x = 0 if vx > 0 else 580
+            y = 300 if vy > 0 else 880
+            rect = pygame.Rect(x, y, 20, 60)  # 保持原尺寸
+        self.projectiles.append({"rect": rect, "vx": vx, "vy": vy})
