@@ -34,6 +34,9 @@ class BattleScene:
         self.font = pygame.font.SysFont("Arial", 24)
         self.large_font = pygame.font.SysFont("Arial", 72)
 
+        self.attack_start_time = 0
+        self.attack_delay = 2000  # 2 秒
+        
         self.attack_bar = pygame.Rect(150, 750, 300, 10)
         self.attack_zone = pygame.Rect(275, 745, 50, 20)
         self.attack_cursor = pygame.Rect(150, 745, 10, 20)
@@ -67,6 +70,10 @@ class BattleScene:
                 else:
                     self.state = "dodge"
                     self.dodge_start_time = pygame.time.get_ticks()
+                if self.state == "attack":
+                    self.attack_cursor.x = 150
+                    self.attack_start_time = pygame.time.get_ticks()
+                    self.attack_active = False  # 延遲後才開始動
 
 
     def update_dodge(self):
@@ -103,10 +110,15 @@ class BattleScene:
 
 
     def update_attack(self):
-        if self.attack_active:
+        if not self.attack_active:
+            if pygame.time.get_ticks() - self.attack_start_time >= self.attack_delay:
+                self.attack_active = True
+        else:
             self.attack_cursor.x += self.attack_speed
             if self.attack_cursor.x > 440:
                 self.attack_active = False
+                if self.attack_zone.colliderect(self.attack_cursor):
+                    self.boss_hp -= 1
                 self.state = "transition"
                 self.transition_timer = 1000
 
@@ -138,8 +150,15 @@ class BattleScene:
             pygame.draw.rect(screen, (255, 255, 255), self.attack_bar)
             pygame.draw.rect(screen, (255, 255, 255), self.attack_zone, 2)
             pygame.draw.rect(screen, (255, 0, 0), self.attack_cursor)
-            press_text = self.font.render("Press SPACE", True, (255, 255, 255))
-            screen.blit(press_text, (230, 780))
+
+            if not self.attack_active:
+                # 顯示倒數秒數
+                countdown = max(0, (self.attack_delay - (pygame.time.get_ticks() - self.attack_start_time)) // 1000 + 1)
+                countdown_text = self.font.render(f"Ready in: {countdown}", True, (255, 255, 0))
+                screen.blit(countdown_text, (240, 780))
+             else:
+                 press_text = self.font.render("Press SPACE", True, (255, 255, 255))
+                 screen.blit(press_text, (230, 780))
 
         elif self.state in ["win", "lose"]:
             result_img = pygame.image.load(os.path.join("assets", "images", f"{self.state}.png"))
