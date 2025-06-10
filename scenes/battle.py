@@ -99,7 +99,7 @@ class BattleScene:
                 self.state = "transition"
                 self.transition_timer = 1000
                 self.previous_state = "attack"
-         elif self.state in ["win", "lose"]:
+        elif self.state in ["win", "lose"]:
             self.button_manager.handle_event(event, self)
             
     def update(self):
