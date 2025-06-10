@@ -1,6 +1,8 @@
 import pygame
 import random
 import os
+import math
+from scenes.projectile import Projectile
 
 class BattleScene:
     def __init__(self, game):
@@ -27,8 +29,10 @@ class BattleScene:
         self.player_speed = 7
 
         self.projectiles = []
-        self.spawn_delay = 1500
+        self.spawn_delay = 1200
+        self.projectile_speed = 4
         self.last_spawn = pygame.time.get_ticks()
+        
 
         self.boss_images = [
             pygame.image.load(os.path.join("assets", "images", f"boss_{i}.png")) for i in range(1, 4)
@@ -123,11 +127,11 @@ class BattleScene:
                 self.invincible = False  # 結束無敵狀態
 
         for proj in self.projectiles[:]:
-            proj["rect"].x += proj["vx"]
-            proj["rect"].y += proj["vy"]
-            if not pygame.Rect(0, 300, 600, 600).colliderect(proj["rect"]):
+            proj.rect.x += proj.vx
+            proj.rect.y += proj.vy
+            if not pygame.Rect(0, 300, 600, 600).colliderect(proj.rect):
                 self.projectiles.remove(proj)
-            elif self.player.colliderect(proj["rect"]) and not self.invincible:  # 修改：僅在非無敵時受傷
+            elif self.player.colliderect(proj.rect) and not self.invincible:  # 修改：僅在非無敵時受傷
                 self.player_hp -= 1
                 self.projectiles.remove(proj)
                 self.invincible = True  # 進入無敵狀態
@@ -180,7 +184,8 @@ class BattleScene:
             player_color = (0, 255, 255) if self.invincible else (255, 200, 0)
             pygame.draw.ellipse(screen, player_color, self.player)
             for proj in self.projectiles:
-                pygame.draw.rect(screen, (255, 255, 255), proj["rect"])
+                rotated_rect = proj.surface.get_rect(center=proj.rect.center)
+                screen.blit(proj.surface, rotated_rect)
             if self.state == "dodge_countdown":
                 # 顯示倒數秒數
                 countdown = max(0, (self.dodge_countdown_duration - (pygame.time.get_ticks() - self.dodge_countdown_timer)) // 1000 + 1)
@@ -207,20 +212,27 @@ class BattleScene:
             screen.blit(result_img, (0, 0))
 
     def spawn_projectiles(self):
-        dirs = [(0, 5), (0, -5), (5, 0), (-5, 0), (3, 3), (-3, -3), (-3, 3), (3, -3)]    # 正確：縮進 4 個空格
+        dirs = [
+            (0, self.projectile_speed), (0, -self.projectile_speed),
+            (self.projectile_speed, 0), (-self.projectile_speed, 0),
+            (self.projectile_speed, self.projectile_speed), (-self.projectile_speed, -self.projectile_speed),
+            (-self.projectile_speed, self.projectile_speed), (self.projectile_speed, -self.projectile_speed)
+        ]
+        angles = [0, 0, 0, 0, -45, -45, 45, 45]
         types = random.sample(range(8), 3)
         for t in types:
             vx, vy = dirs[t]
-            if vx == 0:  # 上下移動
+            angle = angles[t]
+            if vx == 0:
                 x = random.choice([100, 300, 500])
                 y = 300 if vy > 0 else 880
-                rect = pygame.Rect(x, y, 200, 20)  # 改為 200x20
-            elif vy == 0:  # 左右移動
+                rect = pygame.Rect(x, y, 200, 20)
+            elif vy == 0:
                 x = 0 if vx > 0 else 580
                 y = random.choice([400, 600, 800])
-                rect = pygame.Rect(x, y, 20, 200)  # 改為 20x200
-            else:  # 斜向移動
+                rect = pygame.Rect(x, y, 20, 200)
+            else:
                 x = 0 if vx > 0 else 580
                 y = 300 if vy > 0 else 880
-                rect = pygame.Rect(x, y, 20, 60)  # 保持原尺寸
-            self.projectiles.append({"rect": rect, "vx": vx, "vy": vy})
+                rect = pygame.Rect(x, y, 20, 60)
+            self.projectiles.append(Projectile(rect, vx, vy, angle))
