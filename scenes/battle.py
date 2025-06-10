@@ -29,7 +29,6 @@ class BattleScene:
 
         self.projectiles = []
         self.spawn_delay = 1500
-        self.projectile_speed = 2
         self.last_spawn = pygame.time.get_ticks()
 
         self.boss_images = [
@@ -206,7 +205,7 @@ class BattleScene:
             screen.blit(result_img, (0, 0))
 
     def spawn_projectiles(self):
-        dirs = [(0, 5), (0, -5), (5, 0), (-5, 0), (5, 5), (-5, -5), (-5, 5), (5, -5)]    # 正確：縮進 4 個空格
+        dirs = [(0, 5), (0, -5), (5, 0), (-5, 0), (3, 3), (-3, -3), (-3, 3), (3, -3)]    # 正確：縮進 4 個空格
         types = random.sample(range(8), 3)
         for t in types:
             vx, vy = dirs[t]
