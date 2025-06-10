@@ -1,0 +1,13 @@
+# 忽略虛擬環境
+venv/
+
+# Python 編譯檔
+__pycache__/
+*.py[cod]
+*.pyo
+
+# VSCode 設定
+.vscode/
+
+# 系統檔案
+.DS_Store
