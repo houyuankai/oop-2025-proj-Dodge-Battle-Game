@@ -34,6 +34,8 @@ class BattleScene:
         self.font = pygame.font.SysFont("Arial", 24)
         self.large_font = pygame.font.SysFont("Arial", 72)
 
+        self.previous_state = None
+
         self.attack_start_time = 0
         self.attack_delay = 2000  # 2 秒
         
@@ -49,12 +51,10 @@ class BattleScene:
                 self.attack_active = False
                 if self.attack_zone.colliderect(self.attack_cursor):
                     self.boss_hp -= 1
-                    self.state = "transition"
-                    self.transition_timer = 1000
-                else:
-                    self.state = "transition"
-                    self.transition_timer = 1000
-
+                self.state = "transition"
+                self.transition_timer = 1000
+                self.previous_state = "attack"
+            
     def update(self):
         if self.state == "dodge":
             self.update_dodge()
@@ -68,13 +68,14 @@ class BattleScene:
                 elif self.player_hp <= 0:
                     self.state = "lose"
                 else:
-                    self.state = "dodge"
-                    self.dodge_start_time = pygame.time.get_ticks()
-                if self.state == "attack":
-                    self.attack_cursor.x = 150
-                    self.attack_start_time = pygame.time.get_ticks()
-                    self.attack_active = False  # 延遲後才開始動
-
+                    if self.previous_state == "dodge":
+                        self.state = "attack"
+                        self.attack_cursor.x = 150
+                        self.attack_start_time = pygame.time.get_ticks()
+                        self.attack_active = False  # 延遲後才開始動
+                    else:
+                        self.state = "dodge"
+                        self.dodge_start_time = pygame.time.get_ticks()
 
     def update_dodge(self):
         keys = pygame.key.get_pressed()
@@ -107,6 +108,10 @@ class BattleScene:
             self.state = "attack"
             self.attack_cursor.x = 150
             self.attack_active = True
+        if pygame.time.get_ticks() - self.dodge_start_time >= 15000:
+            self.state = "transition"
+            self.transition_timer = 1000
+            self.previous_state = "dodge"
 
 
     def update_attack(self):
@@ -117,11 +122,10 @@ class BattleScene:
             self.attack_cursor.x += self.attack_speed
             if self.attack_cursor.x > 440:
                 self.attack_active = False
-                if self.attack_zone.colliderect(self.attack_cursor):
-                    self.boss_hp -= 1
                 self.state = "transition"
                 self.transition_timer = 1000
-
+                self.previous_state = "attack"
+               
     def draw(self, screen):
         screen.fill((100, 100, 100))
         pygame.draw.rect(screen, (0, 0, 0), (0, 300, 600, 600))
