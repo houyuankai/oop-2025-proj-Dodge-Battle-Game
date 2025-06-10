@@ -56,6 +56,7 @@ class BattleScene:
                 self.previous_state = "attack"
             
     def update(self):
+        self.clock.tick(60)
         if self.state == "dodge":
             self.update_dodge()
         elif self.state == "attack":
@@ -108,8 +109,7 @@ class BattleScene:
             self.state = "transition"
             self.transition_timer = 1000
             self.previous_state = "dodge"
-            self.attack_start_time = pygame.time.get_ticks()
-            self.attack_active = False
+            
 
 
     def update_attack(self):
