@@ -30,8 +30,8 @@ class BattleScene:
         self.player_speed = 7
 
         self.projectiles = []
-        self.spawn_delay = 900
-        self.projectile_speed = 3
+        self.spawn_delay = 1200
+        self.projectile_speed = 4
         self.last_spawn = pygame.time.get_ticks()
         
 
@@ -53,7 +53,7 @@ class BattleScene:
         self.attack_bar = pygame.Rect(75, 590, 450, 20)
         self.attack_zone = pygame.Rect(265, 580, 70, 40)
         self.attack_cursor = pygame.Rect(75, 580, 20, 40)
-        self.attack_speed = 5
+        self.attack_speed = 6
         self.attack_active = False
         
         self.button_manager = ButtonManager(game)
