@@ -215,8 +215,7 @@ class BattleScene:
                 self.transition_timer = 1000
                 self.previous_state = "attack"
                
-               
-   def draw(self, screen):
+    def draw(self, screen):
         print(f"Drawing state: {self.state}")  # 除錯
         screen.fill((240, 205, 0))
 
