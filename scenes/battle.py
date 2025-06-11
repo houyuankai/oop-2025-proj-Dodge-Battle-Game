@@ -250,7 +250,7 @@ class BattleScene:
 
         # 繪製黑色長方形（位於 HP 文字/愛心下方）
         if self.state in ["dodge", "dodge_countdown", "attack"]:
-            pygame.draw.rect(screen, (0, 0, 0), (0, 50, 600, 20))
+            pygame.draw.rect(screen, (0, 0, 0), (0, 0, 600, 50))
 
         # 繪製魔王
         if self.boss_hit and self.state == "transition":
