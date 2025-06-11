@@ -20,18 +20,23 @@ class InstructionScene:
     def handle_event(self, event):
         if event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE:
             self.current_page += 1
-            print(f"Space pressed, current_page: {self.current_page}")  # 除錯
+            print(f"Space pressed, current_page: {self.current_page}")
             if self.current_page >= len(self.image_paths):
-                print(f"Switching to {self.next_state}")  # 除錯
-                self.game.current_scene.state = self.next_state
+                print(f"Switching to {self.next_state}")
+                battle_scene = self.game.current_scene  # 保存 BattleScene
+                battle_scene.state = self.next_state
                 if self.next_state == "dodge_countdown":
-                    self.game.current_scene.dodge_countdown_timer = pygame.time.get_ticks()
+                    battle_scene.dodge_countdown_timer = pygame.time.get_ticks()
+                    print(f"Reset dodge_countdown_timer: {battle_scene.dodge_countdown_timer}")
                 elif self.next_state == "attack":
-                    self.game.current_scene.attack_start_time = pygame.time.get_ticks()
-                    self.game.current_scene.attack_active = False
-                self.game.current_scene = self.game.current_scene  # 回到 BattleScene
+                    battle_scene.attack_start_time = pygame.time.get_ticks()
+                    battle_scene.attack_active = False
+                    print(f"Reset attack_start_time: {battle_scene.attack_start_time}")
+                self.game.current_scene = battle_scene
+                print(f"Switched to BattleScene, state: {battle_scene.state}")
             else:
-                print(f"Showing page {self.current_page + 1}/{len(self.image_paths)}")  # 除錯
+                print(f"Showing page {self.current_page + 1}/{len(self.image_paths)}")
+
 
     def update(self):
         pass  # 無更新邏輯
