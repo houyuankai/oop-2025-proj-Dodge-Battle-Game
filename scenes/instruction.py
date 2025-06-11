@@ -44,4 +44,3 @@ class InstructionScene:
             screen.blit(self.images[self.current_page], (0, 0))
         else:
             print(f"Warning: current_page {self.current_page} out of range, skipping draw")
-```
