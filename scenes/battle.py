@@ -45,8 +45,8 @@ class BattleScene:
         self.boss_hit = False
         
          # 新增：載入愛心圖片
-        self.heart_image = load_image(os.path.join("assets", "images", "heart.png"), size=(20, 20))
-
+        self.heart_image = load_image(os.path.join("assets", "images", "heart.png"), size=(25, 25))
+        
         self.font = pygame.font.SysFont("Arial", 24)
         self.large_font = pygame.font.SysFont("Arial", 72)
 
@@ -235,9 +235,9 @@ class BattleScene:
         screen.blit(hp_text, (20, 20))
         screen.blit(boss_text, (350, 20))
         for i in range(self.player_hp):
-            screen.blit(self.heart_image, (110 + i * 25, 22))  # 間距 5 像素
+            screen.blit(self.heart_image, (140 + i * 25, 20))  # 間距 5 像素
         for i in range(self.boss_hp):
-            screen.blit(self.heart_image, (460 + i * 25, 22))  # 間距 5 像素
+            screen.blit(self.heart_image, (460 + i * 25, 20))  # 間距 5 像素
 
         if self.state == "transition" and self.boss_hit:
             screen.blit(self.boss_hit_image, (200, 100))
