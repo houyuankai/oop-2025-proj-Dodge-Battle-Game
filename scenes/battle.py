@@ -43,6 +43,9 @@ class BattleScene:
         self.boss_anim_index = 0
         self.boss_anim_timer = 0
         self.boss_hit = False
+        
+         # 新增：載入愛心圖片
+        self.heart_image = load_image(os.path.join("assets", "images", "heart.png"), size=(20, 20))
 
         self.font = pygame.font.SysFont("Arial", 24)
         self.large_font = pygame.font.SysFont("Arial", 72)
@@ -57,6 +60,11 @@ class BattleScene:
         self.attack_cursor = pygame.Rect(75, 580, 20, 40)
         self.attack_speed = 8
         self.attack_active = False
+
+        # 新增：Miss 文字顯示控制
+        self.miss_display = False
+        self.miss_timer = 0
+        self.miss_duration = 1000  # 1 秒
         
         self.button_manager = ButtonManager(game)
 
@@ -86,6 +94,8 @@ class BattleScene:
         self.attack_cursor.x = 75
         self.previous_state = None
         self.boss_hit = False
+        self.miss_display = False
+        self.miss_timer = 0
 
 
     def handle_event(self, event):
@@ -95,8 +105,11 @@ class BattleScene:
                 if self.attack_zone.colliderect(self.attack_cursor):
                     self.boss_hp -= 1
                     self.boss_hit = True
+                    self.miss_display = False
                 else:
                     self.boss_hit = False
+                    self.miss_display = True
+                    self.miss_timer = pygame.time.get_ticks()  # 新增：記錄 Miss 時間
                 self.state = "transition"
                 self.transition_timer = 1000
                 self.previous_state = "attack"
@@ -125,17 +138,23 @@ class BattleScene:
                         self.attack_start_time = pygame.time.get_ticks()
                         self.attack_active = False  # 延遲後才開始動
                     else:
-                        if self.previous_state == "attack":
-                            self.state = "dodge_countdown"  # 攻擊後進入倒數
-                            self.boss_hit = False  # 新增：重置命中狀態
-                            self.dodge_countdown_timer = pygame.time.get_ticks()
-                            self.reset_player_position()
-                            self.projectiles.clear()
-                        else:
+                        if self.previous_state == "dodge":
                             self.state = "attack"
                             self.attack_cursor.x = 75
                             self.attack_start_time = pygame.time.get_ticks()
                             self.attack_active = False
+                        else:
+                            self.state = "dodge_countdown"
+                            self.boss_hit = False
+                            self.miss_display = False
+                            self.miss_timer = 0
+                            self.dodge_countdown_timer = pygame.time.get_ticks()
+                            self.reset_player_position()
+                            self.projectiles.clear()
+            # 更新 Miss 顯示
+        if self.miss_display:
+            if pygame.time.get_ticks() - self.miss_timer > self.miss_duration:
+                self.miss_display = False
 
     def update_dodge_countdown(self):
         # 倒數計時邏輯
@@ -195,6 +214,8 @@ class BattleScene:
             self.attack_cursor.x += self.attack_speed
             if self.attack_cursor.x > 505:
                 self.boss_hit = False
+                self.miss_display = True
+                self.miss_timer = pygame.time.get_ticks()  # 新增：記錄 Miss 時間
                 self.attack_active = False
                 self.state = "transition"
                 self.transition_timer = 1000
@@ -205,10 +226,16 @@ class BattleScene:
         pygame.draw.rect(screen, (0, 0, 0), (0, 300, 600, 600))
 
         # 顯示血量
-        hp_text = self.font.render(f"Your HP: {'■'*self.player_hp}", True, (255, 0, 0))
-        boss_text = self.font.render(f"Boss HP: {'■'*self.boss_hp}", True, (255, 0, 0))
+        # 修改：使用愛心圖片表示生命值
+        hp_text = self.font.render("Your HP:", True, (255, 255, 255))
+        boss_text = self.font.render("Boss HP:", True, (255, 255, 255))
+        
         screen.blit(hp_text, (20, 20))
         screen.blit(boss_text, (400, 20))
+        for i in range(self.player_hp):
+            screen.blit(self.heart_image, (80 + i * 25, 20))  # 間距 5 像素
+        for i in range(self.boss_hp):
+            screen.blit(self.heart_image, (460 + i * 25, 20))  # 間距 5 像素
 
         if self.state == "transition" and self.boss_hit:
             screen.blit(self.boss_hit_image, (200, 100))
@@ -245,6 +272,10 @@ class BattleScene:
             else:
                 press_text = self.font.render("Press SPACE", True, (255, 255, 255))
                 screen.blit(press_text, (230, 680))
+            # 新增：顯示 Miss 文字
+            if self.miss_display:
+                miss_text = self.font.render("Miss", True, (255, 255, 255))
+                screen.blit(miss_text, (240, 550))
 
         elif self.state in ["win", "lose"]:
             result_img = load_image(os.path.join("assets", "images", f"{self.state}.png"), size=(600, 900))
