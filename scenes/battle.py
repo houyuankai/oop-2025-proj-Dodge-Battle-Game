@@ -30,7 +30,7 @@ class BattleScene:
         self.player_speed = 7
 
         self.projectiles = []
-        self.spawn_delay = 1100
+        self.spawn_delay = 1000
         self.projectile_speed = 4
         self.last_spawn = pygame.time.get_ticks()
         
@@ -244,7 +244,7 @@ class BattleScene:
             (-self.projectile_speed/1.4, self.projectile_speed/1.4), (self.projectile_speed/1.4, -self.projectile_speed/1.4)
         ]
         angles = [0, 0, 0, 0, -45, -45, 45, 45]
-        types = random.sample(range(8), random.randint(1, 3))
+        types = random.sample(range(8), random.randint(1, 2))
         for t in types:
             vx, vy = dirs[t]
             angle = angles[t]
