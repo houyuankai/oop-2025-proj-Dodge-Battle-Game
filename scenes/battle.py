@@ -233,8 +233,8 @@ class BattleScene:
                 self.previous_state = "attack"
                
     def draw(self, screen):
-        # 繪製黃色背景
-        screen.fill((240, 205, 0))
+        # 繪製紅色背景
+        screen.fill((203, 12, 14))
         # 繪製黑色操作區
         pygame.draw.rect(screen, (0, 0, 0), (0, 300, 600, 600))
 
