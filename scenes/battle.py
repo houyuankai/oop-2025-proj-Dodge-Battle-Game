@@ -232,8 +232,8 @@ class BattleScene:
 
         # 顯示血量
         # 修改：使用愛心圖片表示生命值
-        hp_text = self.font.render("Your HP:", True, (255, 255, 255))
-        boss_text = self.font.render("Boss HP:", True, (255, 255, 255))
+        hp_text = self.font.render("Your HP :", True, (255, 255, 255))
+        boss_text = self.font.render("Boss HP :", True, (255, 255, 255))
         
         screen.blit(hp_text, (20, 20))
         screen.blit(boss_text, (350, 20))
