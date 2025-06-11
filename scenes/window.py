@@ -7,7 +7,7 @@ class Window:
         self.rect = pygame.Rect(0, 0, width, height)
         self.rect.center = (start_x, start_y)
         self.target_x = target_x  # 僅需 x 目標
-        self.speed = 0.042  # 約 2.5 像素/幀 (60 FPS)
+        self.speed = 0.021  # 約 2.5 像素/幀 (60 FPS)
         self.scale = 1.0
         self.scale_speed = 0.025  # 每幀縮小 1%（延長存活時間）
         self.min_scale = 0.01  # 最小縮放比例（提高以確保可見）
