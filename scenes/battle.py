@@ -124,10 +124,10 @@ class BattleScene:
         if self.state == "instruction":
             print(f"Instruction state: first_dodge={self.first_dodge}, first_attack={self.first_attack}")
             if self.first_dodge:
-                self.game.current_scene = InstructionScene(self.game, self.dodge_pages, "dodge_countdown", self)
+                self.game.change_scene(InstructionScene(self.game, self.dodge_pages, "dodge_countdown", self))
                 self.first_dodge = False
             elif self.first_attack:
-                self.game.current_scene = InstructionScene(self.game, self.attack_pages, "attack", self)
+                self.game.change_scene(InstructionScene(self.game, self.attack_pages, "attack", self))
                 self.first_attack = False
         elif self.state == "dodge":
             self.update_dodge()
@@ -270,6 +270,7 @@ class BattleScene:
 
     def spawn_projectiles(self):
         dirs = [
+            (0, self.projectile_speed), (0, -self.projectile_speed),
             (0, self.projectile_speed), (0, -self.projectile_speed),
             (self.projectile_speed, 0), (-self.projectile_speed, 0),
             (self.projectile_speed/1.4, self.projectile_speed/1.4), (-self.projectile_speed/1.4, -self.projectile_speed/1.4),
