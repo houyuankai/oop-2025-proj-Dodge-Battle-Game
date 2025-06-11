@@ -264,12 +264,12 @@ class BattleScene:
         # 繪製生命值
         hp_text = self.font.render("Your HP:", True, (255, 255, 255))
         boss_text = self.font.render("Boss HP:", True, (255, 255, 255))
-        screen.blit(hp_text, (20, 20))
+        screen.blit(hp_text, (20, 10))
         screen.blit(boss_text, (350, 20))
         for i in range(self.player_hp):
-            screen.blit(self.heart_image, (140 + i * 25, 20))
+            screen.blit(self.heart_image, (140 + i * 25, 10))
         for i in range(self.boss_hp):
-            screen.blit(self.heart_image, (460 + i * 25, 20))
+            screen.blit(self.heart_image, (460 + i * 25, 10))
 
         # 繪製閃躲或倒數階段
         if self.state in ["dodge", "dodge_countdown"]:
