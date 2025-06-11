@@ -17,7 +17,6 @@ class Game:
     def run(self):
         while self.running:
             self.clock.tick(60)
-            print(f"Current scene: {type(self.current_scene).__name__}")
             self.handle_events()
             self.current_scene.update()
             self.current_scene.draw(self.screen)
@@ -28,11 +27,9 @@ class Game:
             if event.type == pygame.QUIT:
                 self.running = False
             elif event.type in [pygame.KEYDOWN, pygame.MOUSEBUTTONDOWN]:
-                print(f"Handling event: type={event.type}, key={getattr(event, 'key', None)}, button={getattr(event, 'button', None)}")
                 self.current_scene.handle_event(event)
 
     def change_scene(self, new_scene):
-        print(f"Changing scene to: {new_scene}")
         if isinstance(new_scene, str):
             if new_scene == "menu":
                 self.current_scene = MenuScene(self)
@@ -42,7 +39,6 @@ class Game:
                 raise ValueError(f"Unknown scene name: {new_scene}")
         else:
             self.current_scene = new_scene
-        print(f"New scene: {type(self.current_scene).__name__}")
 
 if __name__ == "__main__":
     game = Game()
