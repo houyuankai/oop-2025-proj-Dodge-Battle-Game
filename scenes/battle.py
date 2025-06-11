@@ -47,8 +47,10 @@ class BattleScene:
          # 新增：載入愛心圖片
         self.heart_image = load_image(os.path.join("assets", "images", "heart.png"), size=(25, 25))
         
-        self.font = pygame.font.SysFont("Arial", 24)
-        self.large_font = pygame.font.SysFont("Arial", 72)
+        self.font = pygame.font.SysFont("Arial", 24, bold=True)
+        self.large_font = pygame.font.SysFont("Arial", 24, bold=True)
+        self.miss_font = pygame.font.SysFont("Arial", 30, bold=True)  # 為 Miss 設置粗體
+
 
         self.previous_state = None
 
@@ -64,7 +66,7 @@ class BattleScene:
         # 新增：Miss 文字顯示控制
         self.miss_display = False
         self.miss_timer = 0
-        self.miss_duration = 1000  # 1 秒
+        self.miss_duration = 1500  # 1.5 秒
         
         self.button_manager = ButtonManager(game)
 
@@ -110,6 +112,7 @@ class BattleScene:
                     self.boss_hit = False
                     self.miss_display = True
                     self.miss_timer = pygame.time.get_ticks()  # 新增：記錄 Miss 時間
+                    print("Miss due to space press outside attack zone")  # 除錯
                 self.state = "transition"
                 self.transition_timer = 1000
                 self.previous_state = "attack"
@@ -277,6 +280,7 @@ class BattleScene:
             # 新增：顯示 Miss 文字
             if self.miss_display:
                 print("Drawing Miss text")  # 除錯
+                miss_rect = self.miss_font.render("Miss", True, (255, 0, 0)).get_rect(center=(300, 520)) # 新增：繪製藍色背景矩形以確認位置
                 miss_text = pygame.font.SysFont("Arial", 30).render("Miss", True, (255, 255, 255))  # 改用黑色，字型 30
                 miss_rect = miss_text.get_rect(center=(300, 540))  # 居中 (300, 540)
                 screen.blit(miss_text, miss_rect)
