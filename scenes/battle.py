@@ -58,11 +58,6 @@ class BattleScene:
         
         self.button_manager = ButtonManager(game)
 
-        self.play_again_image = pygame.image.load(os.path.join("assets", "images", "play_again.png"))
-        self.to_menu_image = pygame.image.load(os.path.join("assets", "images", "to_menu.png"))
-        self.play_again_rect = self.play_again_image.get_rect(topleft=(150, 600))
-        self.to_menu_rect = self.to_menu_image.get_rect(topleft=(350, 600))
-
         self.reset_player_position()
         self.projectiles.clear()
         
@@ -86,7 +81,7 @@ class BattleScene:
         self.attack_timer = 0
         self.attack_start_time = 0
         self.attack_active = False
-        self.attack_cursor.x = 150
+        self.attack_cursor.x = 75
         self.previous_state = None
 
 
@@ -120,7 +115,7 @@ class BattleScene:
                 else:
                     if self.previous_state == "dodge":
                         self.state = "attack"
-                        self.attack_cursor.x = 150
+                        self.attack_cursor.x = 75
                         self.attack_start_time = pygame.time.get_ticks()
                         self.attack_active = False  # 延遲後才開始動
                     else:
