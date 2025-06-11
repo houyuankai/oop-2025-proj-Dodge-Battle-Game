@@ -4,7 +4,7 @@ import os
 import math
 from scenes.projectile import Projectile
 from scenes.button_manager import ButtonManager
-from utils import load_image
+from scenes.utils import load_image
 
 class BattleScene:
     def __init__(self, game):
