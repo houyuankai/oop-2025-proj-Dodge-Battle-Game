@@ -120,9 +120,7 @@ class BattleScene:
             
     def update(self):
         self.clock.tick(60)
-        print(f"BattleScene update, state: {self.state}, timer: {self.dodge_countdown_timer}")
         if self.state == "instruction":
-            print(f"Instruction state: first_dodge={self.first_dodge}, first_attack={self.first_attack}")
             if self.first_dodge:
                 self.game.change_scene(InstructionScene(self.game, self.dodge_pages, "dodge_countdown", self))
                 self.first_dodge = False
@@ -158,12 +156,10 @@ class BattleScene:
     def update_dodge_countdown(self):
         current_ticks = pygame.time.get_ticks()
         elapsed = current_ticks - self.dodge_countdown_timer
-        print(f"Dodge countdown: current_ticks={current_ticks}, elapsed={elapsed}/{self.dodge_countdown_duration}")
         if elapsed >= self.dodge_countdown_duration:
             self.state = "dodge"
             self.dodge_start_time = current_ticks
             self.last_spawn = current_ticks
-            print(f"Entering dodge state")
 
     def update_dodge(self):
         keys = pygame.key.get_pressed()
@@ -218,7 +214,6 @@ class BattleScene:
                 self.previous_state = "attack"
                
     def draw(self, screen):
-        print(f"Drawing BattleScene, state: {self.state}")
         screen.fill((240, 205, 0))
         pygame.draw.rect(screen, (0, 0, 0), (0, 300, 600, 600))
 
@@ -249,7 +244,6 @@ class BattleScene:
                 countdown = max(0, (self.dodge_countdown_duration - (pygame.time.get_ticks() - self.dodge_countdown_timer)) // 1000 + 1)
                 countdown_text = self.font.render(f"Ready in: {countdown}", True, (255, 255, 255))
                 screen.blit(countdown_text, (240, 680))
-                print(f"Drawing countdown: {countdown}")
 
         elif self.state == "attack":
             pygame.draw.rect(screen, (255, 255, 255), self.attack_bar)
@@ -271,12 +265,11 @@ class BattleScene:
     def spawn_projectiles(self):
         dirs = [
             (0, self.projectile_speed), (0, -self.projectile_speed),
-            (0, self.projectile_speed), (0, -self.projectile_speed),
             (self.projectile_speed, 0), (-self.projectile_speed, 0),
             (self.projectile_speed/1.4, self.projectile_speed/1.4), (-self.projectile_speed/1.4, -self.projectile_speed/1.4),
             (-self.projectile_speed/1.4, self.projectile_speed/1.4), (self.projectile_speed/1.4, -self.projectile_speed/1.4)
         ]
-        angles = [0, 0, 0, 0, -45, -45, 45, 45]
+        angles = [0, 180, 90, -90, 45, -135, 135, -45]
         types = random.sample(range(8), random.randint(1, 2))
         for t in types:
             vx, vy = dirs[t]
