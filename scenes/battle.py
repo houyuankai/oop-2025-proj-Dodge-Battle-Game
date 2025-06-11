@@ -235,9 +235,9 @@ class BattleScene:
         screen.blit(hp_text, (20, 20))
         screen.blit(boss_text, (350, 20))
         for i in range(self.player_hp):
-            screen.blit(self.heart_image, (90 + i * 25, 20))  # 間距 5 像素
+            screen.blit(self.heart_image, (110 + i * 25, 22))  # 間距 5 像素
         for i in range(self.boss_hp):
-            screen.blit(self.heart_image, (430 + i * 25, 20))  # 間距 5 像素
+            screen.blit(self.heart_image, (460 + i * 25, 22))  # 間距 5 像素
 
         if self.state == "transition" and self.boss_hit:
             screen.blit(self.boss_hit_image, (200, 100))
