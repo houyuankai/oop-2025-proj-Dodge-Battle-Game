@@ -228,8 +228,7 @@ class BattleScene:
                
     def draw(self, screen):
         screen.fill((240, 205, 0))
-        pygame.draw.rect(screen, (0, 0, 0), (0, 300, 600, 600))
-
+        
         # 顯示血量
         # 修改：使用愛心圖片表示生命值
         hp_text = self.font.render("Your HP :", True, (255, 255, 255))
@@ -278,18 +277,21 @@ class BattleScene:
                 press_text = self.font.render("Press SPACE", True, (255, 255, 255))
                 screen.blit(press_text, (230, 680))
             # 新增：顯示 Miss 文字
-            if self.miss_display:
-                print("Drawing Miss text")  # 除錯
-                miss_rect = self.miss_font.render("Miss", True, (255, 0, 0)).get_rect(center=(300, 520)) # 新增：繪製藍色背景矩形以確認位置
-                miss_text = pygame.font.SysFont("Arial", 30).render("Miss", True, (255, 255, 255))  # 改用黑色，字型 30
-                miss_rect = miss_text.get_rect(center=(300, 540))  # 居中 (300, 540)
-                screen.blit(miss_text, miss_rect)
-                print(f"Miss text rect: {miss_rect}")  # 除錯
 
         elif self.state in ["win", "lose"]:
             result_img = load_image(os.path.join("assets", "images", f"{self.state}.png"), size=(600, 900))
             screen.blit(result_img, (0, 0))
             self.button_manager.draw(screen)
+            
+        pygame.draw.rect(screen, (0, 0, 0), (0, 300, 600, 600))
+        # 最後繪製 Miss 文字，確保不被覆蓋
+        if self.miss_display:
+            print("Drawing Miss text")  # 除錯
+            miss_rect = self.miss_font.render("Miss", True, (255, 0, 0)).get_rect(center=(300, 500))
+            pygame.draw.rect(screen, (0, 0, 255), miss_rect.inflate(10, 10))  # 放大藍色背景
+            miss_text = self.miss_font.render("Miss", True, (255, 0, 0))
+            screen.blit(miss_text, miss_rect)
+            print(f"Miss text rect: {miss_rect}")  # 除錯
 
     def spawn_projectiles(self):
         dirs = [
