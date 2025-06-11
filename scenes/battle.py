@@ -239,12 +239,12 @@ class BattleScene:
         pygame.draw.rect(screen, (0, 0, 0), (0, 300, 600, 600))
 
         # 繪製對角線背景（僅在 dodge, dodge_countdown, attack 階段）
-        if self.state in ["dodge", "dodge_countdown", "attack"]:
+        if self.state in ["dodge", "dodge_countdown", "attack", "transition"]:
             pygame.draw.line(screen, (100, 100, 100), (0, 0), (600, 300), 2)
             pygame.draw.line(screen, (100, 100, 100), (600, 0), (0, 300), 2)
 
         # 繪製窗戶
-        if self.state in ["dodge", "dodge_countdown", "attack"]:
+        if self.state in ["dodge", "dodge_countdown", "attack", "transition"]:
             for window in self.windows:
                 window.draw(screen)
 
