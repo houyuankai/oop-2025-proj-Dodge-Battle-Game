@@ -18,7 +18,7 @@ class ButtonManager:
             if self.play_again_rect.collidepoint(mouse_pos):
                 battle_scene.reset_game()
             elif self.to_menu_rect.collidepoint(mouse_pos):
-                self.game.set_scene("to_menu")
+                self.game.set_scene("menu")
 
     def draw(self, screen):
         screen.blit(self.play_again_image, self.play_again_rect)
