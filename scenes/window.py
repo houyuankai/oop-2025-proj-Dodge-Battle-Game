@@ -10,6 +10,7 @@ class Window:
         self.scale_speed = 0.05 # 每幀縮小 2%
         self.min_scale = 0.1  # 最小縮放比例
         self.color = (255, 255, 255)  # 白色
+        self.alpha = 255
         
 
     def update(self, dt):
