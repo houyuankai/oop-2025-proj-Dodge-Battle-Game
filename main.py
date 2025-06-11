@@ -23,15 +23,18 @@ class Game:
             self.handle_events()
             self.current_scene.update()
             self.current_scene.draw(self.screen)
-            pygame.display.flip()
-
+            pygame.display.update()  # 改用 update 代替 flip，確保刷新
+            
     def handle_events(self):
-        for event in pygame.event.get():
+        events = pygame.event.get()
+        for event in events:
             if event.type == pygame.QUIT:
                 self.running = False
-            else:
-                print(f"Handling event: {event.type}")  # 除錯
+            elif event.type == pygame.KEYDOWN:
+                print(f"Handling event: {event.key}")
                 self.current_scene.handle_event(event)
+        pygame.event.clear(pygame.KEYDOWN)  # 清空鍵盤事件，防止重複
+
 
     def change_scene(self, new_scene):
         print(f"Changing scene to: {new_scene}")  # 除錯
