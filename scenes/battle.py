@@ -5,6 +5,7 @@ import math
 from scenes.projectile import Projectile
 from scenes.button_manager import ButtonManager
 from scenes.utils import load_image
+from scenes.instruction import InstructionScene
 
 class BattleScene:
     def __init__(self, game):
@@ -16,7 +17,7 @@ class BattleScene:
         self.player_hp = 3
         self.boss_hp = 5
 
-        self.state = "dodge_countdown"  # "dodge_countdown", "dodge", "attack", "transition", "win", "lose"
+        self.state = "instruction" # "instruction", "dodge_countdown", "dodge", "attack", "transition", "win", "lose"
         self.dodge_countdown_timer = pygame.time.get_ticks()  # Initialize countdown timer  
         
         self.transition_timer = 0
@@ -63,6 +64,12 @@ class BattleScene:
         
         self.button_manager = ButtonManager(game)
 
+        self.first_dodge = True
+        self.first_attack = True
+        # 新增：追蹤第一次進入
+        self.dodge_pages = [os.path.join("assets", "images", "instruction_dodge1.png"),os.path.join("assets", "images", "instruction_dodge2.png")]
+        self.attack_pages = [os.path.join("assets", "images", "instruction_attack1.png"),os.path.join("assets", "images", "instruction_attack2.png")]
+        
         self.reset_player_position()
         self.projectiles.clear()
         
@@ -89,29 +96,37 @@ class BattleScene:
         self.attack_cursor.x = 75
         self.previous_state = None
         self.boss_hit = False
-
+        self.first_dodge = True
+        self.first_attack = True
 
     def handle_event(self, event):
-        if event.type == pygame.KEYDOWN:
-            if self.state == "attack" and event.key == pygame.K_SPACE and self.attack_active:
-                self.attack_active = False
-                if self.attack_zone.colliderect(self.attack_cursor):
-                    self.boss_hp -= 1
-                    self.boss_hit = True
-                    self.miss_display = False
-                else:
-                    self.boss_hit = False
-                self.state = "transition"
-                self.transition_timer = 1000
-                self.previous_state = "attack"
+        if self.state in ["dodge", "dodge_countdown", "attack", "transition"]:
+            if event.type == pygame.KEYDOWN:
+                if self.state == "attack" and event.key == pygame.K_SPACE and self.attack_active:
+                    self.attack_active = False
+                    if self.attack_zone.colliderect(self.attack_cursor):
+                        self.boss_hp -= 1
+                        self.boss_hit = True
+                    else:
+                        self.boss_hit = False
+                    self.state = "transition"
+                    self.transition_timer = 1000
+                    self.previous_state = "attack"
         elif self.state in ["win", "lose"]:
             self.button_manager.handle_event(event, self)
             
     def update(self):
         self.clock.tick(60)
-        if self.state == "dodge":
+        if self.state == "instruction":
+            if self.first_dodge:
+                self.game.current_scene = InstructionScene(self.game, self.dodge_pages, "dodge_countdown")
+                self.first_dodge = False
+            elif self.first_attack:
+                self.game.current_scene = InstructionScene(self.game, self.attack_pages, "attack")
+                self.first_attack = False
+        elif self.state == "dodge":
             self.update_dodge()
-        elif self.state == "dodge_countdown":  # 確保倒數狀態被處理
+        elif self.state == "dodge_countdown":
             self.update_dodge_countdown()
         elif self.state == "attack":
             self.update_attack()
@@ -124,7 +139,7 @@ class BattleScene:
                     self.state = "lose"
                 else:
                     if self.previous_state == "dodge":
-                        self.state = "attack"
+                        self.state = "instruction" if self.first_attack else "attack"
                         self.attack_cursor.x = 75
                         self.attack_start_time = pygame.time.get_ticks()
                         self.attack_active = False
