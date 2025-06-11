@@ -15,6 +15,6 @@ class Projectile:
             self.surface = pygame.Surface((20, 200), pygame.SRCALPHA)
             self.surface.fill((255, 255, 255))
         else:  # 斜向移動
-            self.surface = pygame.Surface((20, 200), pygame.SRCALPHA)
+            self.surface = pygame.Surface((20, 100), pygame.SRCALPHA)
             self.surface.fill((255, 255, 255))
             self.surface = pygame.transform.rotate(self.surface, angle)
