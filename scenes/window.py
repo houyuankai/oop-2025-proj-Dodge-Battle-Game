@@ -1,7 +1,7 @@
 import pygame
 
 class Window:
-    def __init__(self, start_x, start_y, target_x, target_y, width=10, height=160):
+    def __init__(self, start_x, start_y, target_x, target_y, width=2, height=160):
         self.initial_width = width  # 儲存初始寬度
         self.initial_height = height  # 儲存初始高度
         
@@ -28,7 +28,7 @@ class Window:
         self.rect.width = int(50 * self.scale)
         self.rect.height = int(100 * self.scale)
         self.rect.center = old_center  # 恢復中心，確保 y=150
-        if self.rect.width < 0.1 or self.rect.height < 1:
+        if self.rect.width < 0.02 or self.rect.height < 1:
             return True  # 標記移除
         return False
 
