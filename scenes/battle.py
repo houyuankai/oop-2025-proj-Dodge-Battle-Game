@@ -165,8 +165,8 @@ class BattleScene:
         if self.state in ["dodge", "dodge_countdown", "attack", "transition"]:
             self.window_spawn_timer += self.clock.get_time()
             if self.window_spawn_timer >= self.window_spawn_interval:
-                self.windows.append(Window(0, 150, 300, 150, width=10, height=160))  # 左窗戶
-                self.windows.append(Window(600, 150, 300, 150, width=10, height=160))  # 右窗戶
+                self.windows.append(Window(0, 150, 300, 150, width=2, height=160))  # 左窗戶
+                self.windows.append(Window(600, 150, 300, 150, width=2, height=160))  # 右窗戶
                 self.window_spawn_timer = 0
             for window in self.windows[:]:
                 if window.update(dt):
