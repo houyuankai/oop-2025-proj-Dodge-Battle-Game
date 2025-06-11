@@ -1,14 +1,14 @@
 import pygame
 
 class Window:
-    def __init__(self, start_x, start_y, target_x, target_y, width=50, height=100):
+    def __init__(self, start_x, start_y, target_x, target_y, width=70, height=110):
         self.rect = pygame.Rect(0, 0, width, height)
         self.rect.center = (start_x, start_y)
         self.target_x = target_x  # 僅需 x 目標
-        self.speed = 0.083  # 約 5 像素/幀 (60 FPS)
+        self.speed = 0.042  # 約 5 像素/幀 (60 FPS)
         self.scale = 1.0
-        self.scale_speed = 0.05  # 每幀縮小 5%
-        self.min_scale = 0.1  # 最小縮放比例
+        self.scale_speed = 0.025  # 每幀縮小 5%
+        self.min_scale = 0.15  # 最小縮放比例
         self.color = (255, 255, 255)  # 純白
         self.alpha = 255  # 完全不透明
 
