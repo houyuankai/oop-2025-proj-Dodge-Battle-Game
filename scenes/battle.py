@@ -78,7 +78,7 @@ class BattleScene:
 
         self.windows = []  # 窗戶列表
         self.window_spawn_timer = 0
-        self.window_spawn_interval = 500  # 每 500ms 生成一對窗戶
+        self.window_spawn_interval = 300  # 每 300ms 生成一對窗戶（加快以補償縮小）
 
         self.reset_player_position()
         self.projectiles.clear()
@@ -247,6 +247,10 @@ class BattleScene:
         if self.state in ["dodge", "dodge_countdown", "attack"]:
             for window in self.windows:
                 window.draw(screen)
+
+        # 繪製黑色長方形（位於 HP 文字/愛心下方）
+        if self.state in ["dodge", "dodge_countdown", "attack"]:
+            pygame.draw.rect(screen, (0, 0, 0), (0, 50, 600, 20))
 
         # 繪製魔王
         if self.boss_hit and self.state == "transition":
