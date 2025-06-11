@@ -49,8 +49,6 @@ class BattleScene:
         
         self.font = pygame.font.SysFont("Arial", 24, bold=True)
         self.large_font = pygame.font.SysFont("Arial", 24, bold=True)
-        self.miss_font = pygame.font.SysFont("Arial", 30, bold=True)  # 為 Miss 設置粗體
-
 
         self.previous_state = None
 
@@ -62,11 +60,6 @@ class BattleScene:
         self.attack_cursor = pygame.Rect(75, 580, 20, 40)
         self.attack_speed = 8
         self.attack_active = False
-
-        # 新增：Miss 文字顯示控制
-        self.miss_display = False
-        self.miss_timer = 0
-        self.miss_duration = 1500  # 1.5 秒
         
         self.button_manager = ButtonManager(game)
 
@@ -96,8 +89,6 @@ class BattleScene:
         self.attack_cursor.x = 75
         self.previous_state = None
         self.boss_hit = False
-        self.miss_display = False
-        self.miss_timer = 0
 
 
     def handle_event(self, event):
@@ -110,9 +101,6 @@ class BattleScene:
                     self.miss_display = False
                 else:
                     self.boss_hit = False
-                    self.miss_display = True
-                    self.miss_timer = pygame.time.get_ticks()  # 新增：記錄 Miss 時間
-                    print("Miss due to space press outside attack zone")  # 除錯
                 self.state = "transition"
                 self.transition_timer = 1000
                 self.previous_state = "attack"
@@ -139,27 +127,14 @@ class BattleScene:
                         self.state = "attack"
                         self.attack_cursor.x = 75
                         self.attack_start_time = pygame.time.get_ticks()
-                        self.attack_active = False  # 延遲後才開始動
+                        self.attack_active = False
                     else:
-                        if self.previous_state == "dodge":
-                            self.state = "attack"
-                            self.attack_cursor.x = 75
-                            self.attack_start_time = pygame.time.get_ticks()
-                            self.attack_active = False
-                        else:
-                            self.state = "dodge_countdown"
-                            self.boss_hit = False
-                            self.miss_display = False
-                            self.miss_timer = 0
-                            self.dodge_countdown_timer = pygame.time.get_ticks()
-                            self.reset_player_position()
-                            self.projectiles.clear()
-            # 更新 Miss 顯示
-        if self.miss_display:
-            print(f"Miss display active, time left: {self.miss_duration - (pygame.time.get_ticks() - self.miss_timer)}")
-            if pygame.time.get_ticks() - self.miss_timer > self.miss_duration:
-                self.miss_display = False
-
+                        self.state = "dodge_countdown"
+                        self.boss_hit = False
+                        self.dodge_countdown_timer = pygame.time.get_ticks()
+                        self.reset_player_position()
+                        self.projectiles.clear()
+          
     def update_dodge_countdown(self):
         # 倒數計時邏輯
         elapsed = pygame.time.get_ticks() - self.dodge_countdown_timer
@@ -218,22 +193,20 @@ class BattleScene:
             self.attack_cursor.x += self.attack_speed
             if self.attack_cursor.x > 505:
                 self.boss_hit = False
-                self.miss_display = True
-                self.miss_timer = pygame.time.get_ticks()  # 新增：記錄 Miss 時間
                 self.attack_active = False
                 self.state = "transition"
                 self.transition_timer = 1000
                 self.previous_state = "attack"
-                print("Miss due to cursor overshoot") 
+               
                
     def draw(self, screen):
         screen.fill((240, 205, 0))
+        pygame.draw.rect(screen, (0, 0, 0), (0, 300, 600, 600))
         
         # 顯示血量
         # 修改：使用愛心圖片表示生命值
         hp_text = self.font.render("Your HP :", True, (255, 255, 255))
         boss_text = self.font.render("Boss HP :", True, (255, 255, 255))
-        
         screen.blit(hp_text, (20, 20))
         screen.blit(boss_text, (350, 20))
         for i in range(self.player_hp):
@@ -267,7 +240,6 @@ class BattleScene:
             pygame.draw.rect(screen, (255, 255, 255), self.attack_bar)
             pygame.draw.rect(screen, (255, 255, 255), self.attack_zone, 2)
             pygame.draw.rect(screen, (255, 0, 0), self.attack_cursor)
-
             if not self.attack_active:
                 # 顯示倒數秒數
                 countdown = max(0, (self.attack_delay - (pygame.time.get_ticks() - self.attack_start_time)) // 1000 + 1)
@@ -276,23 +248,12 @@ class BattleScene:
             else:
                 press_text = self.font.render("Press SPACE", True, (255, 255, 255))
                 screen.blit(press_text, (230, 680))
-            # 新增：顯示 Miss 文字
 
         elif self.state in ["win", "lose"]:
             result_img = load_image(os.path.join("assets", "images", f"{self.state}.png"), size=(600, 900))
             screen.blit(result_img, (0, 0))
             self.button_manager.draw(screen)
             
-        pygame.draw.rect(screen, (0, 0, 0), (0, 300, 600, 600))
-        # 最後繪製 Miss 文字，確保不被覆蓋
-        if self.miss_display:
-            print("Drawing Miss text")  # 除錯
-            miss_rect = self.miss_font.render("Miss", True, (255, 0, 0)).get_rect(center=(300, 500))
-            pygame.draw.rect(screen, (0, 0, 255), miss_rect.inflate(10, 10))  # 放大藍色背景
-            miss_text = self.miss_font.render("Miss", True, (255, 0, 0))
-            screen.blit(miss_text, miss_rect)
-            print(f"Miss text rect: {miss_rect}")  # 除錯
-
     def spawn_projectiles(self):
         dirs = [
             (0, self.projectile_speed), (0, -self.projectile_speed),
