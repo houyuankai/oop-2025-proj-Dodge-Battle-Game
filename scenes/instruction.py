@@ -2,17 +2,16 @@ import pygame
 from scenes.utils import load_image
 
 class InstructionScene:
-    def __init__(self, game, image_paths, next_state):
+    def __init__(self, game, image_paths, next_state, battle_scene):
         self.game = game
         self.screen = game.screen
-        self.image_paths = image_paths  # 圖片路徑清單
-        self.next_state = next_state  # 下個階段（"dodge_countdown" 或 "attack"）
+        self.image_paths = image_paths
+        self.next_state = next_state
+        self.battle_scene = battle_scene  # 保存 BattleScene 實例
         self.current_page = 0
-        self.font = pygame.font.SysFont("Arial", 24, bold=True)
-        # 載入圖片，縮放至 600x900
         try:
             self.images = [load_image(path, size=(600, 900)) for path in image_paths]
-            print(f"Loaded {len(self.images)} images: {image_paths}")  # 除錯
+            print(f"Loaded {len(self.images)} images: {image_paths}")
         except Exception as e:
             print(f"Image load error: {e}")
             raise
@@ -23,29 +22,26 @@ class InstructionScene:
             print(f"Space pressed, current_page: {self.current_page}")
             if self.current_page >= len(self.image_paths):
                 print(f"Switching to {self.next_state}")
-                battle_scene = self.game.current_scene  # 保存 BattleScene
-                battle_scene.state = self.next_state
+                self.battle_scene.state = self.next_state
                 if self.next_state == "dodge_countdown":
-                    battle_scene.dodge_countdown_timer = pygame.time.get_ticks()
-                    print(f"Reset dodge_countdown_timer: {battle_scene.dodge_countdown_timer}")
+                    self.battle_scene.dodge_countdown_timer = pygame.time.get_ticks()
+                    print(f"Reset dodge_countdown_timer: {self.battle_scene.dodge_countdown_timer}")
                 elif self.next_state == "attack":
-                    battle_scene.attack_start_time = pygame.time.get_ticks()
-                    battle_scene.attack_active = False
-                    print(f"Reset attack_start_time: {battle_scene.attack_start_time}")
-                self.game.current_scene = battle_scene
-                print(f"Switched to BattleScene, state: {battle_scene.state}")
+                    self.battle_scene.attack_start_time = pygame.time.get_ticks()
+                    self.battle_scene.attack_active = False
+                    print(f"Reset attack_start_time: {self.battle_scene.attack_start_time}")
+                self.game.current_scene = self.battle_scene
+                print(f"Switched to BattleScene, state: {self.battle_scene.state}")
             else:
                 print(f"Showing page {self.current_page + 1}/{len(self.image_paths)}")
 
-
     def update(self):
-        pass  # 無更新邏輯
+        pass
 
     def draw(self, screen):
         screen.fill((240, 205, 0))
         if self.current_page < len(self.images):
             screen.blit(self.images[self.current_page], (0, 0))
-            page_text = self.font.render(f"Page {self.current_page + 1}/{len(self.image_paths)}", True, (255, 255, 255))
-            screen.blit(page_text, (500, 850))
         else:
-            print(f"Warning: current_page {self.current_page} out of range, skipping draw")  # 除錯
+            print(f"Warning: current_page {self.current_page} out of range, skipping draw")
+```
