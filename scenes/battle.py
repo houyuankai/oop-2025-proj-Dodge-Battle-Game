@@ -249,7 +249,7 @@ class BattleScene:
             (-self.projectile_speed, self.projectile_speed), (self.projectile_speed, -self.projectile_speed)
         ]
         angles = [0, 0, 0, 0, -45, -45, 45, 45]
-        types = random.sample(range(8), 3)
+        types = random.sample(range(8), 2)
         for t in types:
             vx, vy = dirs[t]
             angle = angles[t]
