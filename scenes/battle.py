@@ -41,6 +41,7 @@ class BattleScene:
         self.boss_hit_image = pygame.image.load(os.path.join("assets", "images", "boss_hit.png"))
         self.boss_anim_index = 0
         self.boss_anim_timer = 0
+        self.boss_hit = False
 
         self.font = pygame.font.SysFont("Arial", 24)
         self.large_font = pygame.font.SysFont("Arial", 72)
@@ -83,6 +84,7 @@ class BattleScene:
         self.attack_active = False
         self.attack_cursor.x = 75
         self.previous_state = None
+        self.boss_hit = False
 
 
     def handle_event(self, event):
@@ -91,6 +93,9 @@ class BattleScene:
                 self.attack_active = False
                 if self.attack_zone.colliderect(self.attack_cursor):
                     self.boss_hp -= 1
+                    self.boss_hit = True
+                else:
+                    self.boss_hit = False
                 self.state = "transition"
                 self.transition_timer = 1000
                 self.previous_state = "attack"
@@ -119,10 +124,18 @@ class BattleScene:
                         self.attack_start_time = pygame.time.get_ticks()
                         self.attack_active = False  # 延遲後才開始動
                     else:
-                        self.state = "dodge_countdown"  # 改為進入倒數狀態
-                        self.dodge_countdown_timer = pygame.time.get_ticks()
-                        self.reset_player_position()  # 重置玩家位置
-                        self.projectiles.clear()  # 清除現有障礙物
+                        if self.previous_state == "attack":
+                            self.state = "dodge_countdown"  # 攻擊後進入倒數
+                            self.boss_hit = False  # 新增：重置命中狀態
+                            self.dodge_countdown_timer = pygame.time.get_ticks()
+                            self.reset_player_position()
+                            self.projectiles.clear()
+                        else:
+                            self.state = "attack"
+                            self.attack_cursor.x = 75
+                            self.attack_start_time = pygame.time.get_ticks()
+                            self.attack_active = False
+
     def update_dodge_countdown(self):
         # 倒數計時邏輯
         elapsed = pygame.time.get_ticks() - self.dodge_countdown_timer
@@ -180,6 +193,7 @@ class BattleScene:
         else:
             self.attack_cursor.x += self.attack_speed
             if self.attack_cursor.x > 505:
+                self.boss_hit = False
                 self.attack_active = False
                 self.state = "transition"
                 self.transition_timer = 1000
@@ -195,15 +209,15 @@ class BattleScene:
         screen.blit(hp_text, (20, 20))
         screen.blit(boss_text, (400, 20))
 
-        # 顯示 boss
-        if self.state == "transition" and self.boss_hp < 5:
+        if self.state == "transition" and self.boss_hit:
             screen.blit(self.boss_hit_image, (200, 100))
         else:
             if pygame.time.get_ticks() - self.boss_anim_timer > 300:
                 self.boss_anim_index = (self.boss_anim_index + 1) % len(self.boss_images)
                 self.boss_anim_timer = pygame.time.get_ticks()
             screen.blit(self.boss_images[self.boss_anim_index], (200, 100))
-
+        # 顯示 boss
+        
         if self.state == "dodge" or self.state == "dodge_countdown":
             player_color = (0, 255, 255) if self.invincible else (255, 200, 0)
             pygame.draw.ellipse(screen, player_color, self.player)
