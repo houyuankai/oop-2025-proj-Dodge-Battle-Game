@@ -191,7 +191,7 @@ class BattleScene:
                 self.previous_state = "attack"
                
     def draw(self, screen):
-        screen.fill((100, 100, 100))
+        screen.fill((240, 205, 0))
         pygame.draw.rect(screen, (0, 0, 0), (0, 300, 600, 600))
 
         # 顯示血量
