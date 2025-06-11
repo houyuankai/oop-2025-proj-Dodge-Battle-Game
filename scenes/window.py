@@ -7,10 +7,10 @@ class Window:
         self.target = (target_x, target_y)
         self.speed = 0.083  # 約 5 像素/幀 (60 FPS)
         self.scale = 1.0
-        self.scale_speed = 0.02  # 每幀縮小 2%
+        self.scale_speed = 0.05 # 每幀縮小 2%
         self.min_scale = 0.1  # 最小縮放比例
         self.color = (255, 255, 255)  # 白色
-        self.alpha = 200  # 透明度 (0-255)
+        
 
     def update(self, dt):
         # 移動向目標
