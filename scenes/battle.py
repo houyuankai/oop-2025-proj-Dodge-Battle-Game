@@ -265,7 +265,7 @@ class BattleScene:
         hp_text = self.font.render("Your HP:", True, (255, 255, 255))
         boss_text = self.font.render("Boss HP:", True, (255, 255, 255))
         screen.blit(hp_text, (20, 10))
-        screen.blit(boss_text, (350, 20))
+        screen.blit(boss_text, (350, 10))
         for i in range(self.player_hp):
             screen.blit(self.heart_image, (140 + i * 25, 10))
         for i in range(self.boss_hp):
