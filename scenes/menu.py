@@ -21,7 +21,7 @@ class MenuScene:
                 self.game.change_scene(BattleScene(self.game))
 
     def update(self):
-        pass  # Menu doesn't have updates yet
+        pass
 
     def draw(self, screen):
         screen.blit(self.background, (0, 0))
