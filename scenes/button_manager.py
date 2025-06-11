@@ -1,5 +1,6 @@
 import pygame
 import os
+from utils import load_image  # 新增：匯入 load_image
 
 class ButtonManager:
     def __init__(self, game):
