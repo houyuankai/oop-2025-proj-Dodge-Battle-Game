@@ -1,11 +1,12 @@
 import pygame
 import os
 
-def load_image(path, scale=None):
+def load_image(path, size=None):
     image = pygame.image.load(path).convert_alpha()
-    if scale:
-        image = pygame.transform.scale(image, scale)
+    if size:
+        image = pygame.transform.scale(image, size)
     return image
+
 
 def load_images_from_folder(folder_path, scale=None):
     images = []
