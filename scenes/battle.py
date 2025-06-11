@@ -30,7 +30,7 @@ class BattleScene:
         self.player_speed = 7
 
         self.projectiles = []
-        self.spawn_delay = 1200
+        self.spawn_delay = 1000
         self.projectile_speed = 4
         self.last_spawn = pygame.time.get_ticks()
         
