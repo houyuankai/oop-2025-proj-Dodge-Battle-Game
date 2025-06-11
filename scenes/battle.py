@@ -6,6 +6,7 @@ from scenes.projectile import Projectile
 from scenes.button_manager import ButtonManager
 from scenes.utils import load_image
 from scenes.instruction import InstructionScene
+from scenes.window import Window
 
 class BattleScene:
     def __init__(self, game):
@@ -67,12 +68,17 @@ class BattleScene:
 
         self.dodge_pages = [
             os.path.join("assets", "images", "instruction_dodge1.png"),
-            os.path.join("assets", "images", "instruction_dodge2.png")
+            os.path.join("assets", "images", "instruction_dodge2.png"),
+            os.path.join("assets", "images", "instruction_dodge3.png")
         ]
         self.attack_pages = [
             os.path.join("assets", "images", "instruction_attack1.png"),
             os.path.join("assets", "images", "instruction_attack2.png")
         ]
+
+        self.windows = []  # 窗戶列表
+        self.window_spawn_timer = 0
+        self.window_spawn_interval = 500  # 每 500ms 生成一對窗戶
 
         self.reset_player_position()
         self.projectiles.clear()
@@ -89,6 +95,7 @@ class BattleScene:
         self.invincible = False
         self.invincible_timer = 0
         self.projectiles.clear()
+        self.windows.clear()  # 清空窗戶
         self.reset_player_position()
         self.dodge_start_time = pygame.time.get_ticks()
         self.last_spawn = pygame.time.get_ticks()
@@ -101,6 +108,7 @@ class BattleScene:
         self.boss_hit = False
         self.first_dodge = True
         self.first_attack = True
+        self.window_spawn_timer = 0
 
     def handle_event(self, event):
         if self.state in ["dodge", "dodge_countdown", "attack", "transition"]:
@@ -119,7 +127,7 @@ class BattleScene:
             self.button_manager.handle_event(event, self)
             
     def update(self):
-        self.clock.tick(60)
+        dt = self.clock.tick(60) / 16.67  # 標準化為 60 FPS
         if self.state == "instruction":
             if self.first_dodge:
                 self.game.change_scene(InstructionScene(self.game, self.dodge_pages, "dodge_countdown", self))
@@ -152,6 +160,17 @@ class BattleScene:
                         self.dodge_countdown_timer = pygame.time.get_ticks()
                         self.reset_player_position()
                         self.projectiles.clear()
+
+        # 更新窗戶（僅在 dodge, dodge_countdown, attack 階段）
+        if self.state in ["dodge", "dodge_countdown", "attack"]:
+            self.window_spawn_timer += self.clock.get_time()
+            if self.window_spawn_timer >= self.window_spawn_interval:
+                self.windows.append(Window(0, 150, 300, 150))  # 左窗戶
+                self.windows.append(Window(600, 150, 300, 150))  # 右窗戶
+                self.window_spawn_timer = 0
+            for window in self.windows[:]:
+                if window.update(dt):
+                    self.windows.remove(window)
 
     def update_dodge_countdown(self):
         current_ticks = pygame.time.get_ticks()
@@ -214,9 +233,31 @@ class BattleScene:
                 self.previous_state = "attack"
                
     def draw(self, screen):
+        # 繪製黃色背景
         screen.fill((240, 205, 0))
+        # 繪製黑色操作區
         pygame.draw.rect(screen, (0, 0, 0), (0, 300, 600, 600))
 
+        # 繪製對角線背景（僅在 dodge, dodge_countdown, attack 階段）
+        if self.state in ["dodge", "dodge_countdown", "attack"]:
+            pygame.draw.line(screen, (100, 100, 100), (0, 0), (600, 300), 2)
+            pygame.draw.line(screen, (100, 100, 100), (600, 0), (0, 300), 2)
+
+        # 繪製窗戶
+        if self.state in ["dodge", "dodge_countdown", "attack"]:
+            for window in self.windows:
+                window.draw(screen)
+
+        # 繪製魔王
+        if self.boss_hit and self.state == "transition":
+            screen.blit(self.boss_hit_image, (200, 100))
+        else:
+            if pygame.time.get_ticks() - self.boss_anim_timer > 300:
+                self.boss_anim_index = (self.boss_anim_index + 1) % len(self.boss_images)
+                self.boss_anim_timer = pygame.time.get_ticks()
+            screen.blit(self.boss_images[self.boss_anim_index], (200, 100))
+
+        # 繪製生命值
         hp_text = self.font.render("Your HP:", True, (255, 255, 255))
         boss_text = self.font.render("Boss HP:", True, (255, 255, 255))
         screen.blit(hp_text, (20, 20))
@@ -226,14 +267,7 @@ class BattleScene:
         for i in range(self.boss_hp):
             screen.blit(self.heart_image, (460 + i * 25, 20))
 
-        if self.boss_hit and self.state == "transition":
-            screen.blit(self.boss_hit_image, (200, 100))
-        else:
-            if pygame.time.get_ticks() - self.boss_anim_timer > 300:
-                self.boss_anim_index = (self.boss_anim_index + 1) % len(self.boss_images)
-                self.boss_anim_timer = pygame.time.get_ticks()
-            screen.blit(self.boss_images[self.boss_anim_index], (200, 100))
-
+        # 繪製閃躲或倒數階段
         if self.state in ["dodge", "dodge_countdown"]:
             player_color = (0, 255, 255) if self.invincible else (255, 200, 0)
             pygame.draw.ellipse(screen, player_color, self.player)
@@ -245,6 +279,7 @@ class BattleScene:
                 countdown_text = self.font.render(f"Ready in: {countdown}", True, (255, 255, 255))
                 screen.blit(countdown_text, (240, 680))
 
+        # 繪製攻擊階段
         elif self.state == "attack":
             pygame.draw.rect(screen, (255, 255, 255), self.attack_bar)
             pygame.draw.rect(screen, (255, 255, 255), self.attack_zone, 2)
@@ -257,6 +292,7 @@ class BattleScene:
                 press_text = self.font.render("Press SPACE", True, (255, 255, 255))
                 screen.blit(press_text, (230, 680))
 
+        # 繪製勝負階段
         elif self.state in ["win", "lose"]:
             result_img = load_image(os.path.join("assets", "images", f"{self.state}.png"), size=(600, 900))
             screen.blit(result_img, (0, 0))
