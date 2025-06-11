@@ -276,9 +276,11 @@ class BattleScene:
                 screen.blit(press_text, (230, 680))
             # 新增：顯示 Miss 文字
             if self.miss_display:
-                print("Drawing Miss text")
-                miss_text = self.font.render("Miss", True, (255, 255, 255))
-                screen.blit(miss_text, (240, 560))
+                print("Drawing Miss text")  # 除錯
+                miss_text = pygame.font.SysFont("Arial", 30).render("Miss", True, (255, 255, 255))  # 改用黑色，字型 30
+                miss_rect = miss_text.get_rect(center=(300, 540))  # 居中 (300, 540)
+                screen.blit(miss_text, miss_rect)
+                print(f"Miss text rect: {miss_rect}")  # 除錯
 
         elif self.state in ["win", "lose"]:
             result_img = load_image(os.path.join("assets", "images", f"{self.state}.png"), size=(600, 900))
