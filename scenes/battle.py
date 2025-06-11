@@ -262,8 +262,8 @@ class BattleScene:
             screen.blit(self.boss_images[self.boss_anim_index], (200, 100))
 
         # 繪製生命值
-        hp_text = self.font.render("Your HP:", True, (255, 255, 255))
-        boss_text = self.font.render("Boss HP:", True, (255, 255, 255))
+        hp_text = self.font.render("Your HP :", True, (255, 255, 255))
+        boss_text = self.font.render("Boss HP :", True, (255, 255, 255))
         screen.blit(hp_text, (20, 10))
         screen.blit(boss_text, (350, 10))
         for i in range(self.player_hp):
