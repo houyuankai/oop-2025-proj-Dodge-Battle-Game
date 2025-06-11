@@ -4,6 +4,7 @@ import os
 import math
 from scenes.projectile import Projectile
 from scenes.button_manager import ButtonManager
+from utils import load_image
 
 class BattleScene:
     def __init__(self, game):
@@ -36,9 +37,9 @@ class BattleScene:
         
 
         self.boss_images = [
-            pygame.image.load(os.path.join("assets", "images", f"boss_{i}.png")) for i in range(1, 4)
+            load_image(os.path.join("assets", "images", f"boss_{i}.png"), size=(200, 200)) for i in range(1, 4)
         ]
-        self.boss_hit_image = pygame.image.load(os.path.join("assets", "images", "boss_hit.png"))
+        self.boss_hit_image = load_image(os.path.join("assets", "images", "boss_hit.png"), size=(200, 200))
         self.boss_anim_index = 0
         self.boss_anim_timer = 0
         self.boss_hit = False
@@ -204,8 +205,8 @@ class BattleScene:
         pygame.draw.rect(screen, (0, 0, 0), (0, 300, 600, 600))
 
         # 顯示血量
-        hp_text = self.font.render(f"Your HP: {'❤'*self.player_hp}", True, (255, 255, 255))
-        boss_text = self.font.render(f"Boss HP: {'❤'*self.boss_hp}", True, (255, 255, 255))
+        hp_text = self.font.render(f"Your HP: {'■'*self.player_hp}", True, (255, 0, 0))
+        boss_text = self.font.render(f"Boss HP: {'■'*self.boss_hp}", True, (255, 0, 0))
         screen.blit(hp_text, (20, 20))
         screen.blit(boss_text, (400, 20))
 
@@ -246,7 +247,7 @@ class BattleScene:
                 screen.blit(press_text, (230, 680))
 
         elif self.state in ["win", "lose"]:
-            result_img = pygame.image.load(os.path.join("assets", "images", f"{self.state}.png"))
+            result_img = load_image(os.path.join("assets", "images", f"{self.state}.png"), size=(600, 900))
             screen.blit(result_img, (0, 0))
             self.button_manager.draw(screen)
 
