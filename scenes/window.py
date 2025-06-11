@@ -1,7 +1,7 @@
 import pygame
 
 class Window:
-    def __init__(self, start_x, start_y, target_x, target_y, width=70, height=110):
+    def __init__(self, start_x, start_y, target_x, target_y, width=100, height=160):
         self.rect = pygame.Rect(0, 0, width, height)
         self.rect.center = (start_x, start_y)
         self.target_x = target_x  # 僅需 x 目標
