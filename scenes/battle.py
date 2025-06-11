@@ -17,18 +17,18 @@ class BattleScene:
         self.player_hp = 3
         self.boss_hp = 5
 
-        self.state = "instruction" # "instruction", "dodge_countdown", "dodge", "attack", "transition", "win", "lose"
-        self.dodge_countdown_timer = pygame.time.get_ticks()  # Initialize countdown timer  
+        self.state = "instruction"
+        self.dodge_countdown_timer = pygame.time.get_ticks()
         
         self.transition_timer = 0
         self.attack_timer = 0
-        self.dodge_countdown_duration = 2000  # 2秒倒數
+        self.dodge_countdown_duration = 2000
         
-        self.invincible = False  # 新增：無敵狀態標誌
-        self.invincible_timer = 0  # 新增：無敵計時器
-        self.invincible_duration = 1000  # 新增：無敵0.5秒
+        self.invincible = False
+        self.invincible_timer = 0
+        self.invincible_duration = 1000
 
-        self.player = pygame.Rect(300, 600, 20, 20) # 初始化玩家位置在中央
+        self.player = pygame.Rect(300, 600, 20, 20)
         self.player_speed = 7
 
         self.projectiles = []
@@ -36,7 +36,6 @@ class BattleScene:
         self.projectile_speed = 5
         self.last_spawn = pygame.time.get_ticks()
         
-
         self.boss_images = [
             load_image(os.path.join("assets", "images", f"boss_{i}.png"), size=(200, 200)) for i in range(1, 4)
         ]
@@ -45,16 +44,15 @@ class BattleScene:
         self.boss_anim_timer = 0
         self.boss_hit = False
         
-         # 新增：載入愛心圖片
         self.heart_image = load_image(os.path.join("assets", "images", "heart.png"), size=(25, 25))
         
         self.font = pygame.font.SysFont("Arial", 24, bold=True)
-        self.large_font = pygame.font.SysFont("Arial", 24, bold=True)
+        self.large_font = pygame.font.SysFont("Arial", 72, bold=True)
 
         self.previous_state = None
 
         self.attack_start_time = 0
-        self.attack_delay = 2000  # 2 秒
+        self.attack_delay = 2000
         
         self.attack_bar = pygame.Rect(75, 590, 450, 20)
         self.attack_zone = pygame.Rect(265, 580, 70, 40)
@@ -66,22 +64,27 @@ class BattleScene:
 
         self.first_dodge = True
         self.first_attack = True
-        # 新增：追蹤第一次進入
-        self.dodge_pages = [os.path.join("assets", "images", "instruction_dodge1.png"),os.path.join("assets", "images", "instruction_dodge2.png")]
-        self.attack_pages = [os.path.join("assets", "images", "instruction_attack1.png"),os.path.join("assets", "images", "instruction_attack2.png")]
-        
+
+        self.dodge_pages = [
+            os.path.join("assets", "images", "instruction_dodge1.png"),
+            os.path.join("assets", "images", "instruction_dodge2.png")
+        ]
+        self.attack_pages = [
+            os.path.join("assets", "images", "instruction_attack1.png"),
+            os.path.join("assets", "images", "instruction_attack2.png")
+        ]
+
         self.reset_player_position()
         self.projectiles.clear()
         
     def reset_player_position(self):
-        # 重置玩家圓球到操作區中央 (300, 600)
         self.player.x = 300
         self.player.y = 600
         
     def reset_game(self):
         self.player_hp = 3
         self.boss_hp = 5
-        self.state = "dodge_countdown"
+        self.state = "instruction"
         self.dodge_countdown_timer = pygame.time.get_ticks()
         self.invincible = False
         self.invincible_timer = 0
@@ -121,10 +124,10 @@ class BattleScene:
         if self.state == "instruction":
             print(f"Instruction state: first_dodge={self.first_dodge}, first_attack={self.first_attack}")
             if self.first_dodge:
-                self.game.current_scene = InstructionScene(self.game, self.dodge_pages, "dodge_countdown")
+                self.game.current_scene = InstructionScene(self.game, self.dodge_pages, "dodge_countdown", self)
                 self.first_dodge = False
             elif self.first_attack:
-                self.game.current_scene = InstructionScene(self.game, self.attack_pages, "attack")
+                self.game.current_scene = InstructionScene(self.game, self.attack_pages, "attack", self)
                 self.first_attack = False
         elif self.state == "dodge":
             self.update_dodge()
@@ -151,7 +154,7 @@ class BattleScene:
                         self.dodge_countdown_timer = pygame.time.get_ticks()
                         self.reset_player_position()
                         self.projectiles.clear()
-    
+
     def update_dodge_countdown(self):
         current_ticks = pygame.time.get_ticks()
         elapsed = current_ticks - self.dodge_countdown_timer
@@ -161,6 +164,7 @@ class BattleScene:
             self.dodge_start_time = current_ticks
             self.last_spawn = current_ticks
             print(f"Entering dodge state")
+
     def update_dodge(self):
         keys = pygame.key.get_pressed()
         if keys[pygame.K_a]: self.player.x -= self.player_speed
@@ -175,22 +179,21 @@ class BattleScene:
             self.spawn_projectiles()
             self.last_spawn = now
 
-        # 檢查無敵狀態
         if self.invincible:
             if now - self.invincible_timer > self.invincible_duration:
-                self.invincible = False  # 結束無敵狀態
+                self.invincible = False
 
         for proj in self.projectiles[:]:
             proj.rect.x += proj.vx
             proj.rect.y += proj.vy
             if not pygame.Rect(0, 300, 600, 600).colliderect(proj.rect):
                 self.projectiles.remove(proj)
-            elif self.player.colliderect(proj.rect) and not self.invincible:  # 修改：僅在非無敵時受傷
+            elif self.player.colliderect(proj.rect) and not self.invincible:
                 self.player_hp -= 1
                 self.projectiles.remove(proj)
-                self.invincible = True  # 進入無敵狀態
-                self.invincible_timer = now  # 記錄無敵開始時間
-                if self.player_hp <= 0:  # 新增：檢查血量是否為0
+                self.invincible = True
+                self.invincible_timer = now
+                if self.player_hp <= 0:
                     self.state = "transition"
                     self.transition_timer = 1000
                     self.previous_state = "dodge"
@@ -200,8 +203,6 @@ class BattleScene:
             self.state = "transition"
             self.transition_timer = 1000
             self.previous_state = "dodge"
-            
-
 
     def update_attack(self):
         if not self.attack_active:
@@ -219,9 +220,8 @@ class BattleScene:
     def draw(self, screen):
         print(f"Drawing BattleScene, state: {self.state}")
         screen.fill((240, 205, 0))
-
-        # 繪製操作區、血量、魔王
         pygame.draw.rect(screen, (0, 0, 0), (0, 300, 600, 600))
+
         hp_text = self.font.render("Your HP:", True, (255, 255, 255))
         boss_text = self.font.render("Boss HP:", True, (255, 255, 255))
         screen.blit(hp_text, (20, 20))
@@ -239,7 +239,6 @@ class BattleScene:
                 self.boss_anim_timer = pygame.time.get_ticks()
             screen.blit(self.boss_images[self.boss_anim_index], (200, 100))
 
-        # 狀態特定元素
         if self.state in ["dodge", "dodge_countdown"]:
             player_color = (0, 255, 255) if self.invincible else (255, 200, 0)
             pygame.draw.ellipse(screen, player_color, self.player)
@@ -268,7 +267,7 @@ class BattleScene:
             result_img = load_image(os.path.join("assets", "images", f"{self.state}.png"), size=(600, 900))
             screen.blit(result_img, (0, 0))
             self.button_manager.draw(screen)
-            
+
     def spawn_projectiles(self):
         dirs = [
             (0, self.projectile_speed), (0, -self.projectile_speed),
