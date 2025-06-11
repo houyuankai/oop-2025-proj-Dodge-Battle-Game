@@ -9,7 +9,7 @@ class Window:
         self.target_x = target_x  # 僅需 x 目標
         self.speed = 0.042  # 約 2.5 像素/幀 (60 FPS)
         self.scale = 1.0
-        self.scale_speed = 0.01  # 每幀縮小 1%（延長存活時間）
+        self.scale_speed = 0.03  # 每幀縮小 1%（延長存活時間）
         self.min_scale = 0.03  # 最小縮放比例（提高以確保可見）
         self.color = (255, 255, 255)  # 純白
         self.alpha = 255  # 完全不透明
