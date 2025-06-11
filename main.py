@@ -1,6 +1,7 @@
 import pygame
 import sys
 from scenes.menu import MenuScene
+from scenes.battle import BattleScene  # 新增：BattleScene
 
 class Game:
     def __init__(self):
@@ -31,7 +32,15 @@ class Game:
                 self.current_scene.handle_event(event)
 
     def change_scene(self, new_scene):
-        self.current_scene = new_scene
+        if isinstance(new_scene, str):
+            if new_scene == "menu":
+                self.current_scene = MenuScene(self)
+            elif new_scene == "battle":
+                self.current_scene = BattleScene(self)
+            else:
+                raise ValueError(f"Unknown scene name: {new_scene}")
+        else:
+            self.current_scene = new_scene
 
 if __name__ == "__main__":
     game = Game()
