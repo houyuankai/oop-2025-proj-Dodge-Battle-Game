@@ -153,6 +153,7 @@ class BattleScene:
                             self.projectiles.clear()
             # 更新 Miss 顯示
         if self.miss_display:
+            print(f"Miss display active, time left: {self.miss_duration - (pygame.time.get_ticks() - self.miss_timer)}")
             if pygame.time.get_ticks() - self.miss_timer > self.miss_duration:
                 self.miss_display = False
 
@@ -220,6 +221,7 @@ class BattleScene:
                 self.state = "transition"
                 self.transition_timer = 1000
                 self.previous_state = "attack"
+                print("Miss due to cursor overshoot") 
                
     def draw(self, screen):
         screen.fill((240, 205, 0))
@@ -231,11 +233,11 @@ class BattleScene:
         boss_text = self.font.render("Boss HP:", True, (255, 255, 255))
         
         screen.blit(hp_text, (20, 20))
-        screen.blit(boss_text, (400, 20))
+        screen.blit(boss_text, (350, 20))
         for i in range(self.player_hp):
-            screen.blit(self.heart_image, (80 + i * 25, 20))  # 間距 5 像素
+            screen.blit(self.heart_image, (90 + i * 25, 20))  # 間距 5 像素
         for i in range(self.boss_hp):
-            screen.blit(self.heart_image, (460 + i * 25, 20))  # 間距 5 像素
+            screen.blit(self.heart_image, (430 + i * 25, 20))  # 間距 5 像素
 
         if self.state == "transition" and self.boss_hit:
             screen.blit(self.boss_hit_image, (200, 100))
@@ -274,8 +276,9 @@ class BattleScene:
                 screen.blit(press_text, (230, 680))
             # 新增：顯示 Miss 文字
             if self.miss_display:
+                print("Drawing Miss text")
                 miss_text = self.font.render("Miss", True, (255, 255, 255))
-                screen.blit(miss_text, (240, 550))
+                screen.blit(miss_text, (240, 560))
 
         elif self.state in ["win", "lose"]:
             result_img = load_image(os.path.join("assets", "images", f"{self.state}.png"), size=(600, 900))
