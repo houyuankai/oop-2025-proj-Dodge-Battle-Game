@@ -1,7 +1,7 @@
 import pygame
 import os
 from scenes.battle import BattleScene
-from utils import load_image 
+from scenes.utils import load_image 
 
 class MenuScene:
     def __init__(self, game):
