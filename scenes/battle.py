@@ -153,10 +153,12 @@ class BattleScene:
     def update_dodge_countdown(self):
         # 倒數計時邏輯
         elapsed = pygame.time.get_ticks() - self.dodge_countdown_timer
+        print(f"Dodge countdown elapsed: {elapsed}/{self.dodge_countdown_duration}")  # 除錯
         if elapsed >= self.dodge_countdown_duration:
             self.state = "dodge"
             self.dodge_start_time = pygame.time.get_ticks()
             self.last_spawn = pygame.time.get_ticks()
+            print(f"Entering dodge state")  # 除錯
 
     def update_dodge(self):
         keys = pygame.key.get_pressed()
@@ -214,41 +216,59 @@ class BattleScene:
                 self.previous_state = "attack"
                
                
-    def draw(self, screen):
+   def draw(self, screen):
+        print(f"Drawing state: {self.state}")  # 除錯
         screen.fill((240, 205, 0))
-        pygame.draw.rect(screen, (0, 0, 0), (0, 300, 600, 600))
-        
-        # 顯示血量
-        # 修改：使用愛心圖片表示生命值
-        hp_text = self.font.render("Your HP :", True, (255, 255, 255))
-        boss_text = self.font.render("Boss HP :", True, (255, 255, 255))
+
+        # 無條件繪製血量和魔王
+        hp_text = self.font.render("Your HP:", True, (255, 255, 255))
+        boss_text = self.font.render("Boss HP:", True, (255, 255, 255))
         screen.blit(hp_text, (20, 20))
         screen.blit(boss_text, (350, 20))
         for i in range(self.player_hp):
-            screen.blit(self.heart_image, (140 + i * 25, 20))  # 間距 5 像素
+            screen.blit(self.heart_image, (140 + i * 25, 20))
         for i in range(self.boss_hp):
-            screen.blit(self.heart_image, (460 + i * 25, 20))  # 間距 5 像素
+            screen.blit(self.heart_image, (460 + i * 25, 20))
 
-        if self.state == "transition" and self.boss_hit:
+        if self.boss_hit and self.state == "transition":
             screen.blit(self.boss_hit_image, (200, 100))
         else:
             if pygame.time.get_ticks() - self.boss_anim_timer > 300:
                 self.boss_anim_index = (self.boss_anim_index + 1) % len(self.boss_images)
                 self.boss_anim_timer = pygame.time.get_ticks()
             screen.blit(self.boss_images[self.boss_anim_index], (200, 100))
-        # 顯示 boss
-        
-        if self.state == "dodge" or self.state == "dodge_countdown":
+
+        # 繪製操作區和狀態特定元素
+        if self.state in ["dodge", "dodge_countdown"]:
+            pygame.draw.rect(screen, (0, 0, 0), (0, 300, 600, 600))
             player_color = (0, 255, 255) if self.invincible else (255, 200, 0)
             pygame.draw.ellipse(screen, player_color, self.player)
             for proj in self.projectiles:
                 rotated_rect = proj.surface.get_rect(center=proj.rect.center)
                 screen.blit(proj.surface, rotated_rect)
             if self.state == "dodge_countdown":
-                # 顯示倒數秒數
                 countdown = max(0, (self.dodge_countdown_duration - (pygame.time.get_ticks() - self.dodge_countdown_timer)) // 1000 + 1)
-                countdown_text = self.font.render(f"Ready in: {countdown}", True, (255, 255, 0))
+                countdown_text = self.font.render(f"Ready in: {countdown}", True, (255, 255, 255))
                 screen.blit(countdown_text, (240, 680))
+                print(f"Drawing countdown: {countdown}")  # 除錯
+
+        elif self.state == "attack":
+            pygame.draw.rect(screen, (0, 0, 0), (0, 300, 600, 600))
+            pygame.draw.rect(screen, (255, 255, 255), self.attack_bar)
+            pygame.draw.rect(screen, (255, 255, 255), self.attack_zone, 2)
+            pygame.draw.rect(screen, (255, 0, 0), self.attack_cursor)
+            if not self.attack_active:
+                countdown = max(0, (self.attack_delay - (pygame.time.get_ticks() - self.attack_start_time)) // 1000 + 1)
+                countdown_text = self.font.render(f"Ready in: {countdown}", True, (255, 255, 255))
+                screen.blit(countdown_text, (240, 680))
+            else:
+                press_text = self.font.render("Press SPACE", True, (255, 255, 255))
+                screen.blit(press_text, (230, 680))
+
+        elif self.state in ["win", "lose"]:
+            result_img = load_image(os.path.join("assets", "images", f"{self.state}.png"), size=(600, 900))
+            screen.blit(result_img, (0, 0))
+            self.button_manager.draw(screen)
 
 
         elif self.state == "attack":
