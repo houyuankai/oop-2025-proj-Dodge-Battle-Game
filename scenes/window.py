@@ -29,7 +29,7 @@ class Window:
         self.rect.height = max(int(self.initial_height * self.scale), 1)  # 至少 1 像素
         self.rect.center = old_center  # 恢復中心，確保 y=150
         print(f"Window size updated: {self.rect.width}x{self.rect.height}")  # 除錯輸出
-        if self.rect.width < 0.05 or self.rect.height < 1:
+        if self.rect.width < 1 or self.rect.height < 1:
             return True  # 標記移除
         return False
 
