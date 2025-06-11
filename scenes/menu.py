@@ -1,15 +1,16 @@
 import pygame
 import os
 from scenes.battle import BattleScene
+from utils import load_image 
 
 class MenuScene:
     def __init__(self, game):
         self.game = game
         self.screen = game.screen
-        self.background = pygame.image.load(os.path.join("assets", "images", "menu_background.png"))
-        self.start_button = pygame.image.load(os.path.join("assets", "images", "start_button.png"))
+        
+        self.background = load_image(os.path.join("assets", "images", "menu_background.png"), size=(600, 900))
+        self.start_button = load_image(os.path.join("assets", "images", "start_button.png"), size=(100, 50))
         self.start_button_rect = self.start_button.get_rect(center=(300, 600))
-
         self.title_font = pygame.font.SysFont("Arial", 64)
         self.title_surface = self.title_font.render("Dungeon Boss Fight", True, (255, 255, 255))
         self.title_rect = self.title_surface.get_rect(center=(300, 200))
