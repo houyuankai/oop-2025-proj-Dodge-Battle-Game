@@ -13,7 +13,6 @@ class Window:
         self.min_scale = 0.01  # 最小縮放比例（提高以確保可見）
         self.color = (255, 255, 255)  # 純白
         self.alpha = 255  # 完全不透明
-        print(f"Window initialized with size: {width}x{height}")  # 除錯輸出
 
     def update(self, dt):
         # 移動：僅沿 x 軸，y 鎖定為 150
