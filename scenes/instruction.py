@@ -7,7 +7,7 @@ class InstructionScene:
         self.screen = game.screen
         self.image_paths = image_paths
         self.next_state = next_state
-        self.battle_scene = battle_scene  # 保存 BattleScene 實例
+        self.battle_scene = battle_scene
         self.current_page = 0
         try:
             self.images = [load_image(path, size=(600, 900)) for path in image_paths]
@@ -15,8 +15,11 @@ class InstructionScene:
         except Exception as e:
             print(f"Image load error: {e}")
             raise
+        self.done = False  # 標記是否完成
 
     def handle_event(self, event):
+        if self.done:
+            return
         if event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE:
             self.current_page += 1
             print(f"Space pressed, current_page: {self.current_page}")
@@ -30,8 +33,9 @@ class InstructionScene:
                     self.battle_scene.attack_start_time = pygame.time.get_ticks()
                     self.battle_scene.attack_active = False
                     print(f"Reset attack_start_time: {self.battle_scene.attack_start_time}")
-                self.game.current_scene = self.battle_scene
+                self.game.change_scene(self.battle_scene)
                 print(f"Switched to BattleScene, state: {self.battle_scene.state}")
+                self.done = True
             else:
                 print(f"Showing page {self.current_page + 1}/{len(self.image_paths)}")
 
