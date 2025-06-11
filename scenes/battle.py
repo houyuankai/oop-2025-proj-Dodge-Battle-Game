@@ -240,8 +240,8 @@ class BattleScene:
         dirs = [
             (0, self.projectile_speed), (0, -self.projectile_speed),
             (self.projectile_speed, 0), (-self.projectile_speed, 0),
-            (self.projectile_speed, self.projectile_speed), (-self.projectile_speed, -self.projectile_speed),
-            (-self.projectile_speed, self.projectile_speed), (self.projectile_speed, -self.projectile_speed)
+            (self.projectile_speed/1.4, self.projectile_speed/1.4), (-self.projectile_speed/1.4, -self.projectile_speed/1.4),
+            (-self.projectile_speed/1.4, self.projectile_speed/1.4), (self.projectile_speed/1.4, -self.projectile_speed/1.4)
         ]
         angles = [0, 0, 0, 0, -45, -45, 45, 45]
         types = random.sample(range(8), random.randint(1, 2))
