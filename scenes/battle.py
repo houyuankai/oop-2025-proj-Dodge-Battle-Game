@@ -162,7 +162,7 @@ class BattleScene:
                         self.projectiles.clear()
 
         # 更新窗戶（僅在 dodge, dodge_countdown, attack 階段）
-        if self.state in ["dodge", "dodge_countdown", "attack"]:
+        if self.state in ["dodge", "dodge_countdown", "attack", "transition"]:
             self.window_spawn_timer += self.clock.get_time()
             if self.window_spawn_timer >= self.window_spawn_interval:
                 self.windows.append(Window(0, 150, 300, 150))  # 左窗戶
@@ -249,7 +249,7 @@ class BattleScene:
                 window.draw(screen)
 
         # 繪製黑色長方形（位於 HP 文字/愛心下方）
-        if self.state in ["dodge", "dodge_countdown", "attack"]:
+        if self.state in ["dodge", "dodge_countdown", "attack", "transition"]:
             pygame.draw.rect(screen, (0, 0, 0), (0, 0, 600, 50))
 
         # 繪製魔王
