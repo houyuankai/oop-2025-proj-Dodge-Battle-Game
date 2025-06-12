@@ -254,7 +254,7 @@ class BattleScene:
 
         # 繪製魔王
         if self.boss_hit and self.state == "transition":
-            screen.blit(self.boss_hit_image, (200, 100))
+            screen.blit(self.boss_hit_image, (210, 30))
         else:
             if pygame.time.get_ticks() - self.boss_anim_timer > 300:
                 self.boss_anim_index = (self.boss_anim_index + 1) % len(self.boss_images)
