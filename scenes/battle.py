@@ -254,12 +254,12 @@ class BattleScene:
 
         # 繪製魔王
         if self.boss_hit and self.state == "transition":
-            screen.blit(self.boss_hit_image, (210, 30))
+            screen.blit(self.boss_hit_image, (0, 0))
         else:
             if pygame.time.get_ticks() - self.boss_anim_timer > 300:
                 self.boss_anim_index = (self.boss_anim_index + 1) % len(self.boss_images)
                 self.boss_anim_timer = pygame.time.get_ticks()
-            screen.blit(self.boss_images[self.boss_anim_index], (200, 100))
+            screen.blit(self.boss_images[self.boss_anim_index], (210, 30))
 
         # 繪製生命值
         hp_text = self.font.render("Your HP :", True, (255, 255, 255))
