@@ -6,10 +6,10 @@ class ButtonManager:
     def __init__(self, game):
         self.game = game
         self.screen = game.screen
-        self.play_again_image = load_image(os.path.join("assets", "images", "play_again.png"), size=(100, 50))
-        self.to_menu_image = load_image(os.path.join("assets", "images", "to_menu.png"), size=(100, 50))
-        self.play_again_rect = self.play_again_image.get_rect(topleft=(150, 600))
-        self.to_menu_rect = self.to_menu_image.get_rect(topleft=(350, 600))
+        self.play_again_image = load_image(os.path.join("assets", "images", "play_again.png"), size=(120, 60))
+        self.to_menu_image = load_image(os.path.join("assets", "images", "to_menu.png"), size=(120, 60))
+        self.play_again_rect = self.play_again_image.get_rect(topleft=(120, 700))
+        self.to_menu_rect = self.to_menu_image.get_rect(topleft=(380, 700))
 
     def handle_event(self, event, battle_scene):
         if event.type == pygame.MOUSEBUTTONDOWN:
