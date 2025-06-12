@@ -38,7 +38,7 @@ class BattleScene:
         self.last_spawn = pygame.time.get_ticks()
         
         self.boss_images = [
-            load_image(os.path.join("assets", "images", f"boss_{i}.png"), size=(200, 200)) for i in range(1, 4)
+            load_image(os.path.join("assets", "images", f"boss_{i}.png"), size=(200, 200)) for i in range(1, 9)
         ]
         self.boss_hit_image = load_image(os.path.join("assets", "images", "boss_hit.png"), size=(200, 200))
         self.boss_anim_index = 0
