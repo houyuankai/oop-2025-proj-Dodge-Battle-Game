@@ -86,7 +86,7 @@ class BattleScene:
         # 音樂初始化
         self.current_music = None
         self.music_paths = {
-            "dodge": os.path.join("assets", "sounds", "music_2.mp3"),
+            "dodge": os.path.join("assets", "sounds", "music_2.mp3"),  # 更新為 music_2.mp3
             "win": os.path.join("assets", "sounds", "music_4.mp3"),
             "lose": os.path.join("assets", "sounds", "music_3.mp3")
         }
@@ -147,13 +147,13 @@ class BattleScene:
                 self.current_music = None
                 self.game.current_music = None
         elif self.state == "dodge_countdown" and self.first_dodge:
-            if self.current_music != "music_8.wav":
+            if self.current_music != "music_2.mp3":  # 更新為 music_2.mp3
                 pygame.mixer.music.stop()
                 pygame.mixer.music.load(self.music_paths["dodge"])
                 pygame.mixer.music.set_volume(0.5)
                 pygame.mixer.music.play(-1)
-                self.current_music = "music_8.wav"
-                self.game.current_music = "music_8.wav"
+                self.current_music = "music_2.mp3"
+                self.game.current_music = "music_2.mp3"
         elif self.state == "win":
             if self.current_music != "music_4.mp3":
                 pygame.mixer.music.stop()
