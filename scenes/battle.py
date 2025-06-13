@@ -78,11 +78,19 @@ class BattleScene:
 
         self.windows = []  # 窗戶列表
         self.window_spawn_timer = 0
-        self.window_spawn_interval = 300  # 每 300ms 生成一對窗戶（加快以補償縮小）
+        self.window_spawn_interval = 300  # 每 300ms 生成一對窗戶
 
         self.reset_player_position()
         self.projectiles.clear()
         
+        # 音樂初始化
+        self.current_music = None
+        self.music_paths = {
+            "dodge": os.path.join("assets", "sounds", "music_8.wav"),
+            "win": os.path.join("assets", "sounds", "music_4.mp3"),
+            "lose": os.path.join("assets", "sounds", "music_3.mp3")
+        }
+
     def reset_player_position(self):
         self.player.x = 300
         self.player.y = 600
@@ -109,6 +117,10 @@ class BattleScene:
         self.first_dodge = True
         self.first_attack = True
         self.window_spawn_timer = 0
+        # 停止音樂
+        pygame.mixer.music.stop()
+        self.current_music = None
+        self.game.current_music = None
 
     def handle_event(self, event):
         if self.state in ["dodge", "dodge_countdown", "attack", "transition"]:
@@ -125,9 +137,40 @@ class BattleScene:
                     self.previous_state = "attack"
         elif self.state in ["win", "lose"]:
             self.button_manager.handle_event(event, self)
-            
+
     def update(self):
         dt = self.clock.tick(60) / 16.67  # 標準化為 60 FPS
+        # 音樂控制
+        if self.state == "instruction":
+            if self.current_music != None:
+                pygame.mixer.music.stop()
+                self.current_music = None
+                self.game.current_music = None
+        elif self.state == "dodge_countdown" and self.first_dodge:
+            if self.current_music != "music_8.wav":
+                pygame.mixer.music.stop()
+                pygame.mixer.music.load(self.music_paths["dodge"])
+                pygame.mixer.music.set_volume(0.5)
+                pygame.mixer.music.play(-1)
+                self.current_music = "music_8.wav"
+                self.game.current_music = "music_8.wav"
+        elif self.state == "win":
+            if self.current_music != "music_4.mp3":
+                pygame.mixer.music.stop()
+                pygame.mixer.music.load(self.music_paths["win"])
+                pygame.mixer.music.set_volume(0.5)
+                pygame.mixer.music.play(-1)
+                self.current_music = "music_4.mp3"
+                self.game.current_music = "music_4.mp3"
+        elif self.state == "lose":
+            if self.current_music != "music_3.mp3":
+                pygame.mixer.music.stop()
+                pygame.mixer.music.load(self.music_paths["lose"])
+                pygame.mixer.music.set_volume(0.5)
+                pygame.mixer.music.play(-1)
+                self.current_music = "music_3.mp3"
+                self.game.current_music = "music_3.mp3"
+
         if self.state == "instruction":
             if self.first_dodge:
                 self.game.change_scene(InstructionScene(self.game, self.dodge_pages, "dodge_countdown", self))
@@ -161,7 +204,7 @@ class BattleScene:
                         self.reset_player_position()
                         self.projectiles.clear()
 
-        # 更新窗戶（僅在 dodge, dodge_countdown, attack 階段）
+        # 更新窗戶
         if self.state in ["dodge", "dodge_countdown", "attack", "transition"]:
             self.window_spawn_timer += self.clock.get_time()
             if self.window_spawn_timer >= self.window_spawn_interval:
@@ -238,7 +281,7 @@ class BattleScene:
         # 繪製黑色操作區
         pygame.draw.rect(screen, (0, 0, 0), (0, 300, 600, 600))
 
-        # 繪製對角線背景（僅在 dodge, dodge_countdown, attack 階段）
+        # 繪製對角線背景
         if self.state in ["dodge", "dodge_countdown", "attack", "transition"]:
             pygame.draw.line(screen, (100, 100, 100), (0, 0), (600, 300), 2)
             pygame.draw.line(screen, (100, 100, 100), (600, 0), (0, 300), 2)
@@ -248,7 +291,7 @@ class BattleScene:
             for window in self.windows:
                 window.draw(screen)
 
-        # 繪製黑色長方形（位於 HP 文字/愛心下方）
+        # 繪製黑色長方形
         if self.state in ["dodge", "dodge_countdown", "attack", "transition"]:
             pygame.draw.rect(screen, (0, 0, 0), (0, 0, 600, 50))
 
@@ -306,8 +349,10 @@ class BattleScene:
         dirs = [
             (0, self.projectile_speed), (0, -self.projectile_speed),
             (self.projectile_speed, 0), (-self.projectile_speed, 0),
-            (self.projectile_speed/1.4, self.projectile_speed/1.4), (-self.projectile_speed/1.4, -self.projectile_speed/1.4),
-            (-self.projectile_speed/1.4, self.projectile_speed/1.4), (self.projectile_speed/1.4, -self.projectile_speed/1.4)
+            (self.projectile_speed/1.4, self.projectile_speed/1.4),
+            (-self.projectile_speed/1.4, -self.projectile_speed/1.4),
+            (-self.projectile_speed/1.4, self.projectile_speed/1.4),
+            (self.projectile_speed/1.4, -self.projectile_speed/1.4)
         ]
         angles = [0, 180, 90, -90, 45, -135, 135, -45]
         types = random.sample(range(8), random.randint(1, 2))
