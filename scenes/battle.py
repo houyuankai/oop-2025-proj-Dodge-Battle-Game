@@ -86,7 +86,7 @@ class BattleScene:
         # 音樂初始化
         self.current_music = None
         self.music_paths = {
-            "dodge": os.path.join("assets", "sounds", "music_2.mp3"),  # 更新為 music_2.mp3
+            "dodge": os.path.join("assets", "sounds", "music_2.mp3"),
             "win": os.path.join("assets", "sounds", "music_4.mp3"),
             "lose": os.path.join("assets", "sounds", "music_3.mp3")
         }
@@ -141,35 +141,48 @@ class BattleScene:
     def update(self):
         dt = self.clock.tick(60) / 16.67  # 標準化為 60 FPS
         # 音樂控制
+        print(f"State: {self.state}, Current Music: {self.current_music}")  # 除錯
         if self.state == "instruction":
             if self.current_music != None:
                 pygame.mixer.music.stop()
                 self.current_music = None
                 self.game.current_music = None
-        elif self.state == "dodge_countdown" and self.first_dodge:
-            if self.current_music != "music_2.mp3":  # 更新為 music_2.mp3
-                pygame.mixer.music.stop()
-                pygame.mixer.music.load(self.music_paths["dodge"])
-                pygame.mixer.music.set_volume(0.5)
-                pygame.mixer.music.play(-1)
-                self.current_music = "music_2.mp3"
-                self.game.current_music = "music_2.mp3"
+        elif self.state in ["dodge_countdown", "dodge", "attack", "transition"]:
+            if self.current_music != "music_2.mp3":
+                print(f"Loading music_2.mp3: {self.music_paths['dodge']}")  # 除錯
+                try:
+                    pygame.mixer.music.stop()
+                    pygame.mixer.music.load(self.music_paths["dodge"])
+                    pygame.mixer.music.set_volume(0.5)
+                    pygame.mixer.music.play(-1)
+                    self.current_music = "music_2.mp3"
+                    self.game.current_music = "music_2.mp3"
+                except pygame.error as e:
+                    print(f"Error loading music_2.mp3: {e}")
         elif self.state == "win":
             if self.current_music != "music_4.mp3":
-                pygame.mixer.music.stop()
-                pygame.mixer.music.load(self.music_paths["win"])
-                pygame.mixer.music.set_volume(0.5)
-                pygame.mixer.music.play(-1)
-                self.current_music = "music_4.mp3"
-                self.game.current_music = "music_4.mp3"
+                print(f"Loading music_4.mp3: {self.music_paths['win']}")  # 除錯
+                try:
+                    pygame.mixer.music.stop()
+                    pygame.mixer.music.load(self.music_paths["win"])
+                    pygame.mixer.music.set_volume(0.5)
+                    pygame.mixer.music.play(-1)
+                    self.current_music = "music_4.mp3"
+                    self.game.current_music = "music_4.mp3"
+                except pygame.error as e:
+                    print(f"Error loading music_4.mp3: {e}")
         elif self.state == "lose":
             if self.current_music != "music_3.mp3":
-                pygame.mixer.music.stop()
-                pygame.mixer.music.load(self.music_paths["lose"])
-                pygame.mixer.music.set_volume(0.5)
-                pygame.mixer.music.play(-1)
-                self.current_music = "music_3.mp3"
-                self.game.current_music = "music_3.mp3"
+                print(f"Loading music_3.mp3: {self.music_paths['lose']}")  # 除錯
+                try:
+                    pygame.mixer.music.stop()
+                    pygame.mixer.music.load(self.music_paths["lose"])
+                    pygame.mixer.music.set_volume(0.5)
+                    pygame.mixer.music.play(-1)
+                    self.current_music = "music_3.mp3"
+                    self.game.current_music = "music_3.mp3"
+                except pygame.error as e:
+                    print(f"Error loading music_3.mp3: {e}")
 
         if self.state == "instruction":
             if self.first_dodge:
