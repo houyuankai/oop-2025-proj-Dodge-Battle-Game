@@ -33,10 +33,6 @@ class MenuScene:
             
     def draw(self, screen):
         # 繪製背景
-        if self.background:
-            screen.blit(self.background, (0, 0))
-        else:
-            screen.fill((0, 0, 0))  # 預設黑色背景
-        # 移除文字渲染
-        # 繪製按鍵
-        self.button_manager.draw(screen)
+        screen.blit(self.background, (0, 0))
+        # 繪製開始按鍵
+        screen.blit(self.start_button, self.start_button_rect)
