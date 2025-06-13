@@ -117,7 +117,7 @@ class BattleScene:
         self.first_dodge = True
         self.first_attack = True
         self.window_spawn_timer = 0
-        # 停止音樂
+        # 停止音樂並重置
         pygame.mixer.music.stop()
         self.current_music = None
         self.game.current_music = None
@@ -147,7 +147,7 @@ class BattleScene:
                     pygame.mixer.music.stop()
                     self.current_music = None
                     self.game.current_music = None
-            # 若非 first_dodge（例如 first_attack），不干涉音樂
+            # first_attack 的 InstructionScene 不干涉音樂
         elif self.state in ["dodge_countdown", "dodge", "attack", "transition"]:
             if self.current_music != "music_2.mp3":
                 try:
@@ -158,7 +158,7 @@ class BattleScene:
                     self.current_music = "music_2.mp3"
                     self.game.current_music = "music_2.mp3"
                 except pygame.error:
-                    pass  # 靜默處理錯誤
+                    pass
         elif self.state == "win":
             if self.current_music != "music_4.mp3":
                 try:
