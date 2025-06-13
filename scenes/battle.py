@@ -40,7 +40,7 @@ class BattleScene:
         self.boss_images = [
             load_image(os.path.join("assets", "images", f"boss_{i}.png"), size=(180, 270)) for i in range(1, 9)
         ]
-        self.boss_hit_image = load_image(os.path.join("assets", "images", "boss_hit.png"), size=(200, 200))
+        self.boss_hit_image = load_image(os.path.join("assets", "images", "boss_hit.png"), size=(600, 250))
         self.boss_anim_index = 0
         self.boss_anim_timer = 0
         self.boss_hit = False
@@ -308,7 +308,7 @@ class BattleScene:
 
         # 繪製魔王
         if self.boss_hit and self.state == "transition":
-            screen.blit(self.boss_hit_image, (0, 0))
+            screen.blit(self.boss_hit_image, (0, 50))
         else:
             if pygame.time.get_ticks() - self.boss_anim_timer > 300:
                 self.boss_anim_index = (self.boss_anim_index + 1) % len(self.boss_images)
