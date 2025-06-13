@@ -30,8 +30,13 @@ class MenuScene:
             pygame.mixer.music.set_volume(0.5)
             pygame.mixer.music.play(-1)  # 迴圈播放
             self.game.current_music = "music_1.mp3"
-
+            
     def draw(self, screen):
-        screen.blit(self.background, (0, 0))
-        screen.blit(self.title_surface, self.title_rect)
-        screen.blit(self.start_button, self.start_button_rect)
+        # 繪製背景
+        if self.background:
+            screen.blit(self.background, (0, 0))
+        else:
+            screen.fill((0, 0, 0))  # 預設黑色背景
+        # 移除文字渲染
+        # 繪製按鍵
+        self.button_manager.draw(screen)
