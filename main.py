@@ -10,7 +10,7 @@ class Game:
         self.screen_width = 600
         self.screen_height = 900
         self.screen = pygame.display.set_mode((self.screen_width, self.screen_height))
-        pygame.display.set_caption("Dungeon Boss Fight")
+        pygame.display.set_caption("Cuddle Time!")
         self.clock = pygame.time.Clock()
         self.running = True
         self.current_scene = MenuScene(self)
