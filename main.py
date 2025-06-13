@@ -6,6 +6,7 @@ from scenes.battle import BattleScene
 class Game:
     def __init__(self):
         pygame.init()
+        pygame.mixer.init()  # 初始化音樂系統
         self.screen_width = 600
         self.screen_height = 900
         self.screen = pygame.display.set_mode((self.screen_width, self.screen_height))
@@ -13,6 +14,7 @@ class Game:
         self.clock = pygame.time.Clock()
         self.running = True
         self.current_scene = MenuScene(self)
+        self.current_music = None  # 追蹤當前音樂
 
     def run(self):
         while self.running:
@@ -30,6 +32,8 @@ class Game:
                 self.current_scene.handle_event(event)
 
     def change_scene(self, new_scene):
+        pygame.mixer.music.stop()  # 切換場景時停止音樂
+        self.current_music = None
         if isinstance(new_scene, str):
             if new_scene == "menu":
                 self.current_scene = MenuScene(self)
