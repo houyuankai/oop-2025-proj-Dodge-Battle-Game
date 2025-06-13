@@ -17,6 +17,8 @@ class ButtonManager:
             if self.play_again_rect.collidepoint(mouse_pos):
                 battle_scene.reset_game()
             elif self.to_menu_rect.collidepoint(mouse_pos):
+                pygame.mixer.music.stop()  # 停止音樂
+                self.game.current_music = None
                 self.game.change_scene("menu")
 
     def draw(self, screen):
