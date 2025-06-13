@@ -86,7 +86,7 @@ class BattleScene:
         # 音樂初始化
         self.current_music = None
         self.music_paths = {
-            "dodge": os.path.join("assets", "sounds", "music_8.wav"),
+            "dodge": os.path.join("assets", "sounds", "music_2.mp3"),
             "win": os.path.join("assets", "sounds", "music_4.mp3"),
             "lose": os.path.join("assets", "sounds", "music_3.mp3")
         }
