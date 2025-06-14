@@ -80,8 +80,16 @@ class BattleScene:
         self.window_spawn_timer = 0
         self.window_spawn_interval = 300  # 每 300ms 生成一對窗戶
 
+        # 物件相關
+        self.items = []
+        self.item_spawn_timer = 0
+        self.item_spawn_interval = 1500  # 1.5 秒
+        self.item3_count = 0
+        self.item4_count = 0
+
         self.reset_player_position()
         self.projectiles.clear()
+        self.items.clear()
         
         # 音樂初始化
         self.current_music = None
@@ -103,6 +111,7 @@ class BattleScene:
         self.invincible = False
         self.invincible_timer = 0
         self.projectiles.clear()
+        self.items.clear()  # 清空物件
         self.windows.clear()  # 清空窗戶
         self.reset_player_position()
         self.dodge_start_time = pygame.time.get_ticks()
@@ -117,6 +126,9 @@ class BattleScene:
         self.first_dodge = True
         self.first_attack = True
         self.window_spawn_timer = 0
+        self.item_spawn_timer = 0
+        self.item3_count = 0  # 重置計數
+        self.item4_count = 0
         # 停止音樂並重置
         pygame.mixer.music.stop()
         self.current_music = None
@@ -198,6 +210,7 @@ class BattleScene:
         elif self.state == "transition":
             self.transition_timer -= self.clock.get_time()
             if self.transition_timer <= 0:
+                self.items.clear()  # 清空物件
                 if self.boss_hp <= 0:
                     self.state = "win"
                 elif self.player_hp <= 0:
@@ -233,6 +246,7 @@ class BattleScene:
             self.state = "dodge"
             self.dodge_start_time = current_ticks
             self.last_spawn = current_ticks
+            self.item_spawn_timer = current_ticks
 
     def update_dodge(self):
         keys = pygame.key.get_pressed()
@@ -247,6 +261,47 @@ class BattleScene:
         if now - self.last_spawn > self.spawn_delay:
             self.spawn_projectiles()
             self.last_spawn = now
+
+        # 物件生成
+        if now - self.item_spawn_timer > self.item_spawn_interval:
+            if len(self.items) < 2:  # 最多 2 個物件
+                r = random.random()
+                if r < 0.10:  # 10% 物件一
+                    x = random.randint(50, 550)
+                    y = random.randint(350, 850)
+                    self.items.append(Item(x, y, "item1"))
+                elif r < 0.20:  # 10% 物件二
+                    x = random.randint(50, 550)
+                    y = random.randint(350, 850)
+                    self.items.append(Item(x, y, "item2"))
+                elif r < 0.30:  # 10% 物件三
+                    x = random.randint(50, 550)
+                    y = random.randint(350, 850)
+                    self.items.append(Item(x, y, "item3"))
+                elif r < 0.35:  # 5% 物件四
+                    x = random.randint(50, 550)
+                    y = random.randint(350, 850)
+                    self.items.append(Item(x, y, "item4"))
+            self.item_spawn_timer = now
+
+        # 物件更新和碰撞
+        for item in self.items[:]:
+            if now - item.spawn_time > item.lifetime:
+                self.items.remove(item)
+            elif self.player.colliderect(item.rect):
+                if item.item_type == "item1":
+                    if self.player_hp < 3:
+                        self.player_hp += 1
+                elif item.item_type == "item2":
+                    self.invincible = True
+                    self.invincible_timer = now
+                elif item.item_type == "item3":
+                    if self.boss_hp < 5:
+                        self.boss_hp += 1
+                    self.item3_count += 1
+                elif item.item_type == "item4":
+                    self.item4_count += 1
+                self.items.remove(item)
 
         if self.invincible:
             if now - self.invincible_timer > self.invincible_duration:
@@ -332,6 +387,9 @@ class BattleScene:
             for proj in self.projectiles:
                 rotated_rect = proj.surface.get_rect(center=proj.rect.center)
                 screen.blit(proj.surface, rotated_rect)
+            # 繪製物件
+            for item in self.items:
+                screen.blit(item.image, item.rect.topleft)
             if self.state == "dodge_countdown":
                 countdown = max(0, (self.dodge_countdown_duration - (pygame.time.get_ticks() - self.dodge_countdown_timer)) // 1000 + 1)
                 countdown_text = self.font.render(f"Ready in: {countdown}", True, (255, 255, 255))
