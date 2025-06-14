@@ -2,6 +2,7 @@ import pygame
 import random
 import os
 import math
+import time  # 添加時間模組
 from scenes.projectile import Projectile
 from scenes.button_manager import ButtonManager
 from scenes.utils import load_image
@@ -157,7 +158,7 @@ class BattleScene:
             self.button_manager.handle_event(event, self)
 
     def update_music(self):
-        if self.state in ["dodge", "dodge_countdown", "attack", "transition"]:  # 包含 transition
+        if self.state in ["dodge", "dodge_countdown", "attack", "transition"]:
             if self.current_music != self.music_paths["dodge"]:
                 pygame.mixer.music.stop()
                 try:
@@ -252,7 +253,6 @@ class BattleScene:
             self.dodge_start_time = current_ticks
             self.last_spawn = current_ticks
             self.item_spawn_timer = current_ticks
-        # 備用音樂檢查
         if self.current_music != self.music_paths["dodge"]:
             self.update_music()
 
@@ -273,22 +273,21 @@ class BattleScene:
         if now - self.item_spawn_timer > self.item_spawn_interval:
             if len(self.items) < 2:
                 r = random.random()
+                start_time = time.time()  # 記錄開始時間
+                x = random.randint(50, 550)
+                y = random.randint(350, 850)
                 if r < 0.10:  # 10% item1
-                    x = random.randint(50, 550)
-                    y = random.randint(350, 850)
                     self.items.append(Item(x, y, "item1"))
+                    print(f"Generated item1 at {x},{y}, time: {(time.time() - start_time)*1000:.3f}ms")
                 elif r < 0.20:  # 10% item2
-                    x = random.randint(50, 550)
-                    y = random.randint(350, 850)
                     self.items.append(Item(x, y, "item2"))
+                    print(f"Generated item2 at {x},{y}, time: {(time.time() - start_time)*1000:.3f}ms")
                 elif r < 0.25:  # 5% item3
-                    x = random.randint(50, 550)
-                    y = random.randint(350, 850)
                     self.items.append(Item(x, y, "item3"))
+                    print(f"Generated item3 at {x},{y}, time: {(time.time() - start_time)*1000:.3f}ms")
                 elif r < 0.40:  # 15% item4
-                    x = random.randint(50, 550)
-                    y = random.randint(350, 850)
                     self.items.append(Item(x, y, "item4"))
+                    print(f"Generated item4 at {x},{y}, time: {(time.time() - start_time)*1000:.3f}ms")
             self.item_spawn_timer = now
 
         for item in self.items[:]:
@@ -296,7 +295,7 @@ class BattleScene:
                 self.items.remove(item)
                 continue
             if self.player.colliderect(item.rect):
-                self.items.remove(item)  # 先移除物件
+                self.items.remove(item)
                 if item.item_type == "item1":
                     if self.player_hp < 3:
                         self.player_hp += 1
@@ -307,27 +306,26 @@ class BattleScene:
                     if self.boss_hp < 5:
                         self.boss_hp += 1
                     self.item3_count += 1
-                    if self.item3_count >= 2:  # 蒐集 2 個
+                    if self.item3_count >= 2:
                         self.state = "ending3"
                         self.items.clear()
                         self.update_music()
-                        break  # 跳出迴圈
+                        break
                 elif item.item_type == "item4":
                     self.item4_count += 1
-                    if self.item4_count >= 2:  # 蒐集 2 個
+                    if self.item4_count >= 15:
                         self.state = "ending4"
                         self.items.clear()
                         self.update_music()
-                        break  # 跳出迴圈
-                continue  # 處理下一個物件
+                        break
+                continue
 
         if self.invincible:
             if now - self.invincible_timer > self.invincible_duration:
                 self.invincible = False
 
         for proj in self.projectiles[:]:
-            proj.rect.x += proj.vx
-            proj.rect.y += proj.vy
+            proj.update()
             if not pygame.Rect(0, 300, 600, 600).colliderect(proj.rect):
                 self.projectiles.remove(proj)
             elif self.player.colliderect(proj.rect) and not self.invincible:
@@ -358,96 +356,84 @@ class BattleScene:
                 self.state = "transition"
                 self.transition_timer = 1000
                 self.previous_state = "attack"
-        # 備用音樂檢查
         if self.current_music != self.music_paths["dodge"]:
             self.update_music()
 
     def draw(self, screen):
-        screen.fill((240, 205, 0))
+        screen.fill((240, 175, 0))
         pygame.draw.rect(screen, (0, 0, 0), (0, 300, 600, 600))
 
         if self.state in ["dodge", "dodge_countdown", "attack", "transition"]:
-            pygame.draw.line(screen, (100, 100, 100), (0, 0), (600, 300), 2)
-            pygame.draw.line(screen, (100, 100, 100), (600, 0), (0, 300), 2)
+            pygame.draw.line(screen, (100, 100, 100), (0, 10), (600, 300), 2)
+            pygame.draw.line(screen, (100, 100, 100), (600, 10), (0, 300), 2)
 
         if self.state in ["dodge", "dodge_countdown", "attack", "transition"]:
-            for window in self.windows:
+            for window in self.windows[:]:
                 window.draw(screen)
 
         if self.state in ["dodge", "dodge_countdown", "attack", "transition"]:
-            pygame.draw.rect(screen, (0, 0, 0), (0, 0, 600, 50))
+            pygame.draw.rect(screen, (0, 0, 0), (0, 0, 600, 10))
 
         if self.boss_hit and self.state == "transition":
-            screen.blit(self.boss_hit_image, (0, 50))
+            screen.blit(self.boss_hit_image, (0, 5))
         else:
             if pygame.time.get_ticks() - self.boss_anim_timer > 300:
-                self.boss_anim_index = (self.boss_anim_index + 1) % len(self.boss_images)
+                self.boss_anim_index = (self.boss_anim_index + 1) % 8
                 self.boss_anim_timer = pygame.time.get_ticks()
-            screen.blit(self.boss_images[self.boss_anim_index], (210, 30))
+            screen.blit(self.boss_images[self.boss_anim_index], (210, 5))
 
         hp_text = self.font.render("Your HP :", True, (255, 255, 255))
         boss_text = self.font.render("Boss HP :", True, (255, 255, 255))
-        screen.blit(hp_text, (20, 10))
-        screen.blit(boss_text, (350, 10))
+        self.screen.blit(hp_text, (20, 10))
+        self.screen.blit(boss_text, (350, 0))
         for i in range(self.player_hp):
-            screen.blit(self.heart_image, (140 + i * 25, 10))
+            self.screen.blit(self.heart_image, (140 + i * 25, 10))
         for i in range(self.boss_hp):
-            screen.blit(self.heart_image, (460 + i * 25, 10))
+            self.screen.blit(self.heart_image, (460 + i * 25, 10))
 
         if self.state in ["dodge", "dodge_countdown"]:
-            player_color = (0, 255, 255) if self.invincible else (255, 200, 0)
-            pygame.draw.ellipse(screen, player_color, self.player)
+            player_color = (0, 255, 255) if self.invincible else (255, 255, 0)
+            pygame.draw.rect(self.screen, player_color, self.player)
             for proj in self.projectiles:
-                rotated_rect = proj.surface.get_rect(center=proj.rect.center)
-                screen.blit(proj.surface, rotated_rect)
+                rotated_rect = proj.get_rect()
+                self.screen.blit(proj.image, rotated_rect)
             for item in self.items:
-                screen.blit(item.image, item.rect.topleft)
+                screen.blit(item.image, item.rect)
             if self.state == "dodge_countdown":
                 countdown = max(0, (self.dodge_countdown_duration - (pygame.time.get_ticks() - self.dodge_countdown_timer)) // 1000 + 1)
                 countdown_text = self.font.render(f"Ready in: {countdown}", True, (255, 255, 255))
-                screen.blit(countdown_text, (240, 680))
+                self.screen.blit(countdown_text, (240, 255))
 
         elif self.state == "attack":
-            pygame.draw.rect(screen, (255, 255, 255), self.attack_bar)
-            pygame.draw.rect(screen, (255, 255, 255), self.attack_zone, 2)
-            pygame.draw.rect(screen, (255, 0, 0), self.attack_cursor)
+            pygame.draw.rect(self.screen, (255, 255, 255), self.attack_bar)
+            pygame.draw.rect(self.screen, (255, 255, 255), self.attack_zone, 2)
+            pygame.draw.rect(self.screen, (255, 0, 0), self.attack_cursor)
             if not self.attack_active:
-                countdown = max(0, (self.attack_delay - (pygame.time.get_ticks() - self.attack_start_time)) // 1000 + 1)
+                countdown = max(0, (self.attack_timer - (pygame.time.get_ticks() - self.attack_start_time)) // 1000 + 1)
                 countdown_text = self.font.render(f"Ready in: {countdown}", True, (255, 255, 255))
-                screen.blit(countdown_text, (240, 680))
+                self.screen.blit(countdown_text, (240, 100))
             else:
                 press_text = self.font.render("Press SPACE", True, (255, 255, 255))
-                screen.blit(press_text, (230, 680))
+                self.screen.blit(press_text, (230, 100))
 
-        elif self.state in ["win", "lose", "ending3", "ending4"]:
+        elif self.state in ["win", "lose", "ending3"]:
             screen.blit(self.ending_images[self.state], (0, 0))
             self.button_manager.draw(screen)
 
-    def spawn_projectiles(self):
-        dirs = [
+    def spawn_projectile(self):
+        directions = [
             (0, self.projectile_speed), (0, -self.projectile_speed),
             (self.projectile_speed, 0), (-self.projectile_speed, 0),
-            (self.projectile_speed/1.4, self.projectile_speed/1.4),
-            (-self.projectile_speed/1.4, -self.projectile_speed/1.4),
-            (-self.projectile_speed/1.4, self.projectile_speed/1.4),
-            (self.projectile_speed/1.4, -self.projectile_speed/1.4)
+            (self.projectile_speed / 1.414, self.projectile_speed / 1.414),
+            (-self.projectile_speed / 1.414, -self.projectile_speed / 1.414),
+            (-self.projectile_speed / 1.414, self.projectile_speed / 1.414),
+            (self.projectile_speed / 1.414, -self.projectile_speed / 1.414)
         ]
         angles = [0, 180, 90, -90, 45, -135, 135, -45]
         count = random.randint(2, 3) if self.boss_hp <= 2 else random.randint(1, 2)
-        types = random.sample(range(8), count)
-        for t in types:
-            vx, vy = dirs[t]
-            angle = angles[t]
+        selected_directions = random.sample(range(len(angles)), count)
+        for idx in selected_directions:
+            vx, vy = directions[idx]
+            angle = angles[idx]
             if vx == 0:
-                x = random.choice([100, 300, 500])
-                y = 300 if vy > 0 else 880
-                rect = pygame.Rect(x-100, y, 200, 20)
-            elif vy == 0:
-                x = 0 if vx > 0 else 580
-                y = random.choice([400, 600, 800])
-                rect = pygame.Rect(x, y-100, 20, 200)
-            else:
-                x = 0 if vx > 0 else 580
-                y = 300 if vy > 0 else 880
-                rect = pygame.Rect(x, y, 20, 200)
-            self.projectiles.append(Projectile(rect, vx, vy, angle))
+                x = random.choice
