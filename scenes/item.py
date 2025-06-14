@@ -10,21 +10,19 @@ class Item:
         for item_type in ["item1", "item2", "item3", "item4"]:
             path = os.path.join("assets", "images", f"{item_type}.png")
             try:
-                image = pygame.image.load(path).convert_alpha()  # 優化表面
+                image = pygame.image.load(path)
+                image = image.convert_alpha()  # 優化表面
                 image = pygame.transform.scale(image, (40, 40))
                 cls.images[item_type] = image
+                print(f"Loaded {item_type}.png successfully")
             except pygame.error as e:
                 print(f"Failed to load {item_type}.png: {e}")
-                # 預設圖片（紅色方塊）
                 cls.images[item_type] = pygame.Surface((40, 40))
-                cls.images[item_type].fill((255, 0, 0))
+                cls.images[item_type].fill((255, 0, 0))  # 預設紅色方塊
 
     def __init__(self, x, y, item_type):
         self.item_type = item_type
-        self.image = Item.images.get(item_type, pygame.Surface((40, 40)))  # 使用快取圖片
+        self.image = Item.images.get(item_type, pygame.Surface((40, 40)))
         self.rect = self.image.get_rect(topleft=(x, y))
         self.spawn_time = pygame.time.get_ticks()
         self.lifetime = 3000  # 3 秒存活
-
-# 在模組載入時預載入圖片
-Item.preload_images()
