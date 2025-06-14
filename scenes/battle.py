@@ -382,7 +382,7 @@ class BattleScene:
             self.update_music()
 
     def draw(self, screen):
-        if self.boss_hp <＝ 2:
+        if self.boss_hp <= 2:
             screen.fill((255, 0, 0))
         else:
             screen.fill((240, 205, 0))
