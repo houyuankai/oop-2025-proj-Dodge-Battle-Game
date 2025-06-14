@@ -28,7 +28,7 @@ class BattleScene:
         
         self.invincible = False
         self.invincible_timer = 0
-        self.invincible_duration = 2000
+        self.invincible_duration = 1700
 
         self.player = pygame.Rect(300, 600, 20, 20)
         self.player_speed = 7
