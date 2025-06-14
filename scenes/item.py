@@ -12,7 +12,7 @@ class Item:
             try:
                 image = pygame.image.load(path)
                 image = image.convert_alpha()  # 優化表面
-                image = pygame.transform.scale(image, (40, 40))
+                image = pygame.transform.scale(image, (50, 50))
                 cls.images[item_type] = image
                 print(f"Loaded {item_type}.png successfully")
             except pygame.error as e:
