@@ -28,7 +28,7 @@ class BattleScene:
         
         self.invincible = False
         self.invincible_timer = 0
-        self.invincible_duration = 1700
+        self.invincible_duration = 1700  # 1.7 秒
 
         self.player = pygame.Rect(300, 600, 20, 20)
         self.player_speed = 7
@@ -77,22 +77,28 @@ class BattleScene:
             os.path.join("assets", "images", "instruction_attack2.png")
         ]
 
-        self.windows = []  # 窗戶列表
+        self.windows = []
         self.window_spawn_timer = 0
-        self.window_spawn_interval = 300  # 每 300ms 生成一對窗戶
+        self.window_spawn_interval = 300
 
-        # 物件相關
         self.items = []
         self.item_spawn_timer = 0
-        self.item_spawn_interval = 1500  # 1.5 秒
+        self.item_spawn_interval = 1500
         self.item3_count = 0
         self.item4_count = 0
+
+        # 結局圖片
+        self.ending_images = {
+            "win": load_image(os.path.join("assets", "images", "win.png"), size=(600, 900)),
+            "lose": load_image(os.path.join("assets", "images", "lose.png"), size=(600, 900)),
+            "ending3": load_image(os.path.join("assets", "images", "ending3.png"), size=(600, 900)),
+            "ending4": load_image(os.path.join("assets", "images", "ending4.png"), size=(600, 900))
+        }
 
         self.reset_player_position()
         self.projectiles.clear()
         self.items.clear()
         
-        # 音樂初始化
         self.current_music = None
         self.music_paths = {
             "dodge": os.path.join("assets", "sounds", "music_2.mp3"),
@@ -112,8 +118,8 @@ class BattleScene:
         self.invincible = False
         self.invincible_timer = 0
         self.projectiles.clear()
-        self.items.clear()  # 清空物件
-        self.windows.clear()  # 清空窗戶
+        self.items.clear()
+        self.windows.clear()
         self.reset_player_position()
         self.dodge_start_time = pygame.time.get_ticks()
         self.last_spawn = pygame.time.get_ticks()
@@ -128,9 +134,8 @@ class BattleScene:
         self.first_attack = True
         self.window_spawn_timer = 0
         self.item_spawn_timer = 0
-        self.item3_count = 0  # 重置計數
+        self.item3_count = 0
         self.item4_count = 0
-        # 停止音樂並重置
         pygame.mixer.music.stop()
         self.current_music = None
         self.game.current_music = None
@@ -148,53 +153,11 @@ class BattleScene:
                     self.state = "transition"
                     self.transition_timer = 1000
                     self.previous_state = "attack"
-        elif self.state in ["win", "lose"]:
+        elif self.state in ["win", "lose", "ending3", "ending4"]:
             self.button_manager.handle_event(event, self)
 
     def update(self):
-        dt = self.clock.tick(60) / 16.67  # 標準化為 60 FPS
-        # 音樂控制
-        if self.state == "instruction":
-            if self.first_dodge:  # 閃躲前解說，無音樂
-                if self.current_music != None:
-                    pygame.mixer.music.stop()
-                    self.current_music = None
-                    self.game.current_music = None
-            # first_attack 的 InstructionScene 不干涉音樂
-        elif self.state in ["dodge_countdown", "dodge", "attack", "transition"]:
-            if self.current_music != "music_2.mp3" or not pygame.mixer.music.get_busy():
-                try:
-                    pygame.mixer.music.stop()
-                    pygame.mixer.music.load(self.music_paths["dodge"])
-                    pygame.mixer.music.set_volume(0.5)
-                    pygame.mixer.music.play(-1)
-                    self.current_music = "music_2.mp3"
-                    self.game.current_music = "music_2.mp3"
-                except pygame.error:
-                    pass
-        elif self.state == "win":
-            if self.current_music != "music_4.mp3":
-                try:
-                    pygame.mixer.music.stop()
-                    pygame.mixer.music.load(self.music_paths["win"])
-                    pygame.mixer.music.set_volume(0.5)
-                    pygame.mixer.music.play(-1)
-                    self.current_music = "music_4.mp3"
-                    self.game.current_music = "music_4.mp3"
-                except pygame.error:
-                    pass
-        elif self.state == "lose":
-            if self.current_music != "music_3.mp3":
-                try:
-                    pygame.mixer.music.stop()
-                    pygame.mixer.music.load(self.music_paths["lose"])
-                    pygame.mixer.music.set_volume(0.5)
-                    pygame.mixer.music.play(-1)
-                    self.current_music = "music_3.mp3"
-                    self.game.current_music = "music_3.mp3"
-                except pygame.error:
-                    pass
-
+        dt = self.clock.tick(60) / 16.67
         if self.state == "instruction":
             if self.first_dodge:
                 self.game.change_scene(InstructionScene(self.game, self.dodge_pages, "dodge_countdown", self))
@@ -211,7 +174,7 @@ class BattleScene:
         elif self.state == "transition":
             self.transition_timer -= self.clock.get_time()
             if self.transition_timer <= 0:
-                self.items.clear()  # 清空物件
+                self.items.clear()
                 if self.boss_hp <= 0:
                     self.state = "win"
                 elif self.player_hp <= 0:
@@ -229,12 +192,11 @@ class BattleScene:
                         self.reset_player_position()
                         self.projectiles.clear()
 
-        # 更新窗戶
         if self.state in ["dodge", "dodge_countdown", "attack", "transition"]:
             self.window_spawn_timer += self.clock.get_time()
             if self.window_spawn_timer >= self.window_spawn_interval:
-                self.windows.append(Window(0, 150, 300, 150, width=20, height=160))  # 左窗戶
-                self.windows.append(Window(600, 150, 300, 150, width=20, height=160))  # 右窗戶
+                self.windows.append(Window(0, 150, 300, 150, width=20, height=160))
+                self.windows.append(Window(600, 150, 300, 150, width=20, height=160))
                 self.window_spawn_timer = 0
             for window in self.windows[:]:
                 if window.update(dt):
@@ -263,29 +225,27 @@ class BattleScene:
             self.spawn_projectiles()
             self.last_spawn = now
 
-        # 物件生成
         if now - self.item_spawn_timer > self.item_spawn_interval:
             if len(self.items) < 2:
                 r = random.random()
-                if r < 0.10:  # 10% item1
+                if r < 0.10:
                     x = random.randint(50, 550)
                     y = random.randint(350, 850)
                     self.items.append(Item(x, y, "item1"))
-                elif r < 0.20:  # 10% item2
+                elif r < 0.20:
                     x = random.randint(50, 550)
                     y = random.randint(350, 850)
                     self.items.append(Item(x, y, "item2"))
-                elif r < 0.30:  # 10% item3
+                elif r < 0.30:
                     x = random.randint(50, 550)
                     y = random.randint(350, 850)
                     self.items.append(Item(x, y, "item3"))
-                elif r < 0.35:  # 5% item4
+                elif r < 0.35:
                     x = random.randint(50, 550)
                     y = random.randint(350, 850)
                     self.items.append(Item(x, y, "item4"))
             self.item_spawn_timer = now
 
-        # 物件更新和碰撞
         for item in self.items[:]:
             if now - item.spawn_time > item.lifetime:
                 self.items.remove(item)
@@ -300,8 +260,20 @@ class BattleScene:
                     if self.boss_hp < 5:
                         self.boss_hp += 1
                     self.item3_count += 1
+                    if self.item3_count >= 6:
+                        self.state = "ending3"
+                        self.items.clear()
+                        pygame.mixer.music.stop()
+                        self.current_music = None
+                        self.game.current_music = None
                 elif item.item_type == "item4":
                     self.item4_count += 1
+                    if self.item4_count >= 13:
+                        self.state = "ending4"
+                        self.items.clear()
+                        pygame.mixer.music.stop()
+                        self.current_music = None
+                        self.game.current_music = None
                 self.items.remove(item)
 
         if self.invincible:
@@ -343,26 +315,20 @@ class BattleScene:
                 self.previous_state = "attack"
                
     def draw(self, screen):
-        # 繪製黃色背景
         screen.fill((240, 205, 0))
-        # 繪製黑色操作區
         pygame.draw.rect(screen, (0, 0, 0), (0, 300, 600, 600))
 
-        # 繪製對角線背景
         if self.state in ["dodge", "dodge_countdown", "attack", "transition"]:
             pygame.draw.line(screen, (100, 100, 100), (0, 0), (600, 300), 2)
             pygame.draw.line(screen, (100, 100, 100), (600, 0), (0, 300), 2)
 
-        # 繪製窗戶
         if self.state in ["dodge", "dodge_countdown", "attack", "transition"]:
             for window in self.windows:
                 window.draw(screen)
 
-        # 繪製黑色長方形
         if self.state in ["dodge", "dodge_countdown", "attack", "transition"]:
             pygame.draw.rect(screen, (0, 0, 0), (0, 0, 600, 50))
 
-        # 繪製魔王
         if self.boss_hit and self.state == "transition":
             screen.blit(self.boss_hit_image, (0, 50))
         else:
@@ -371,7 +337,6 @@ class BattleScene:
                 self.boss_anim_timer = pygame.time.get_ticks()
             screen.blit(self.boss_images[self.boss_anim_index], (210, 30))
 
-        # 繪製生命值
         hp_text = self.font.render("Your HP :", True, (255, 255, 255))
         boss_text = self.font.render("Boss HP :", True, (255, 255, 255))
         screen.blit(hp_text, (20, 10))
@@ -381,14 +346,12 @@ class BattleScene:
         for i in range(self.boss_hp):
             screen.blit(self.heart_image, (460 + i * 25, 10))
 
-        # 繪製閃躲或倒數階段
         if self.state in ["dodge", "dodge_countdown"]:
             player_color = (0, 255, 255) if self.invincible else (255, 200, 0)
             pygame.draw.ellipse(screen, player_color, self.player)
             for proj in self.projectiles:
                 rotated_rect = proj.surface.get_rect(center=proj.rect.center)
                 screen.blit(proj.surface, rotated_rect)
-            # 繪製物件
             for item in self.items:
                 screen.blit(item.image, item.rect.topleft)
             if self.state == "dodge_countdown":
@@ -396,7 +359,6 @@ class BattleScene:
                 countdown_text = self.font.render(f"Ready in: {countdown}", True, (255, 255, 255))
                 screen.blit(countdown_text, (240, 680))
 
-        # 繪製攻擊階段
         elif self.state == "attack":
             pygame.draw.rect(screen, (255, 255, 255), self.attack_bar)
             pygame.draw.rect(screen, (255, 255, 255), self.attack_zone, 2)
@@ -409,10 +371,8 @@ class BattleScene:
                 press_text = self.font.render("Press SPACE", True, (255, 255, 255))
                 screen.blit(press_text, (230, 680))
 
-        # 繪製勝負階段
-        elif self.state in ["win", "lose"]:
-            result_img = load_image(os.path.join("assets", "images", f"{self.state}.png"), size=(600, 900))
-            screen.blit(result_img, (0, 0))
+        elif self.state in ["win", "lose", "ending3", "ending4"]:
+            screen.blit(self.ending_images[self.state], (0, 0))
             self.button_manager.draw(screen)
 
     def spawn_projectiles(self):
