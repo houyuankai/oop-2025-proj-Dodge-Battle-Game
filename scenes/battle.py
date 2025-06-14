@@ -2,7 +2,6 @@ import pygame
 import random
 import os
 import math
-import time
 from scenes.projectile import Projectile
 from scenes.button_manager import ButtonManager
 from scenes.utils import load_image
@@ -106,7 +105,9 @@ class BattleScene:
         self.music_paths = {
             "dodge": os.path.join("assets", "sounds", "music_2.mp3"),
             "win": os.path.join("assets", "sounds", "music_4.mp3"),
-            "lose": os.path.join("assets", "sounds", "music_3.mp3")
+            "lose": os.path.join("assets", "sounds", "music_3.mp3"),
+            "ending3": os.path.join("assets", "sounds", "music_e3.mp3"),
+            "ending4": os.path.join("assets", "sounds", "music_e4.mp3")
         }
         pygame.mixer.music.set_volume(1.0)
 
@@ -188,7 +189,7 @@ class BattleScene:
                     self.game.current_music = self.current_music
                 except pygame.error as e:
                     print(f"Failed to load music_4.mp3: {e}")
-        elif self.state in ["lose", "ending3", "ending4"]:
+        elif self.state == "lose":
             if self.current_music != self.music_paths["lose"]:
                 pygame.mixer.music.stop()
                 try:
@@ -199,6 +200,28 @@ class BattleScene:
                     self.game.current_music = self.current_music
                 except pygame.error as e:
                     print(f"Failed to load music_3.mp3: {e}")
+        elif self.state == "ending3":
+            if self.current_music != self.music_paths["ending3"]:
+                pygame.mixer.music.stop()
+                try:
+                    pygame.mixer.music.load(self.music_paths["ending3"])
+                    pygame.mixer.music.set_volume(1.0)
+                    pygame.mixer.music.play(-1)
+                    self.current_music = self.music_paths["ending3"]
+                    self.game.current_music = self.current_music
+                except pygame.error as e:
+                    print(f"Failed to load music_e3.mp3: {e}")
+        elif self.state == "ending4":
+            if self.current_music != self.music_paths["ending4"]:
+                pygame.mixer.music.stop()
+                try:
+                    pygame.mixer.music.load(self.music_paths["ending4"])
+                    pygame.mixer.music.set_volume(1.0)
+                    pygame.mixer.music.play(-1)
+                    self.current_music = self.music_paths["ending4"]
+                    self.game.current_music = self.current_music
+                except pygame.error as e:
+                    print(f"Failed to load music_e4.mp3: {e}")
 
     def update(self):
         dt = self.clock.tick(60) / 16.67
@@ -276,21 +299,16 @@ class BattleScene:
         if now - self.item_spawn_timer > self.item_spawn_interval:
             if len(self.items) < 2:
                 r = random.random()
-                start_time = time.time()
                 x = random.randint(50, 550)
                 y = random.randint(350, 850)
-                if r < 0.10:  # 10% item1
+                if r < 0.20:  # 20% item1
                     self.items.append(Item(x, y, "item1"))
-                    print(f"Generated item1 at {x},{y}, time: {(time.time() - start_time)*1000:.3f}ms")
-                elif r < 0.20:  # 10% item2
+                elif r < 0.45:  # 25% item2
                     self.items.append(Item(x, y, "item2"))
-                    print(f"Generated item2 at {x},{y}, time: {(time.time() - start_time)*1000:.3f}ms")
-                elif r < 0.25:  # 5% item3
+                elif r < 0.60:  # 15% item3
                     self.items.append(Item(x, y, "item3"))
-                    print(f"Generated item3 at {x},{y}, time: {(time.time() - start_time)*1000:.3f}ms")
-                elif r < 0.40:  # 15% item4
+                elif r < 0.70:  # 10% item4
                     self.items.append(Item(x, y, "item4"))
-                    print(f"Generated item4 at {x},{y}, time: {(time.time() - start_time)*1000:.3f}ms")
             self.item_spawn_timer = now
 
         for item in self.items[:]:
@@ -309,14 +327,14 @@ class BattleScene:
                     if self.boss_hp < 5:
                         self.boss_hp += 1
                     self.item3_count += 1
-                    if self.item3_count >= 3:  # 結局三
+                    if self.item3_count >= 6:  # 結局三
                         self.state = "ending3"
                         self.items.clear()
                         self.update_music()
                         break
                 elif item.item_type == "item4":
                     self.item4_count += 1
-                    if self.item4_count >= 3:  # 結局四
+                    if self.item4_count >= 5:  # 結局四
                         self.state = "ending4"
                         self.items.clear()
                         self.update_music()
