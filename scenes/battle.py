@@ -294,7 +294,9 @@ class BattleScene:
         for item in self.items[:]:
             if now - item.spawn_time > item.lifetime:
                 self.items.remove(item)
-            elif self.player.colliderect(item.rect):
+                continue
+            if self.player.colliderect(item.rect):
+                self.items.remove(item)  # 先移除物件
                 if item.item_type == "item1":
                     if self.player_hp < 3:
                         self.player_hp += 1
@@ -305,17 +307,19 @@ class BattleScene:
                     if self.boss_hp < 5:
                         self.boss_hp += 1
                     self.item3_count += 1
-                    if self.item3_count >= 2:
+                    if self.item3_count >= 2:  # 蒐集 2 個
                         self.state = "ending3"
                         self.items.clear()
                         self.update_music()
+                        break  # 跳出迴圈
                 elif item.item_type == "item4":
                     self.item4_count += 1
-                    if self.item4_count >= 2:
+                    if self.item4_count >= 2:  # 蒐集 2 個
                         self.state = "ending4"
                         self.items.clear()
                         self.update_music()
-                self.items.remove(item)
+                        break  # 跳出迴圈
+                continue  # 處理下一個物件
 
         if self.invincible:
             if now - self.invincible_timer > self.invincible_duration:
