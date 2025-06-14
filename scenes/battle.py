@@ -436,4 +436,15 @@ class BattleScene:
             vx, vy = directions[idx]
             angle = angles[idx]
             if vx == 0:
-                x = random.choice
+                x = random.choice([100, 300, 500])
+                y = 300 if vy > 0 else 900
+                rect = pygame.Rect(x - 100, y, 200, 10)
+            elif vy == 0:
+                x = 0 if vx > 0 else 580
+                y = random.choice([400, 600, 800])
+                rect = pygame.Rect(x, y - 100, 10, 200)
+            else:
+                x = 0 if vx > 0 else 580
+                y = 300 if vy > 0 else 900
+                rect = pygame.Rect(x, y, 10, 100)
+            self.projectiles.append(Projectile(rect, angle, vx, vy))
