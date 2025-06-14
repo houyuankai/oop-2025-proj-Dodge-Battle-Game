@@ -309,14 +309,14 @@ class BattleScene:
                     if self.boss_hp < 5:
                         self.boss_hp += 1
                     self.item3_count += 1
-                    if self.item3_count >= 2:  # 結局三
+                    if self.item3_count >= 3:  # 結局三
                         self.state = "ending3"
                         self.items.clear()
                         self.update_music()
                         break
                 elif item.item_type == "item4":
                     self.item4_count += 1
-                    if self.item4_count >= 8:  # 結局四
+                    if self.item4_count >= 3:  # 結局四
                         self.state = "ending4"
                         self.items.clear()
                         self.update_music()
