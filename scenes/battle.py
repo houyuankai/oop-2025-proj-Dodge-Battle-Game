@@ -300,7 +300,7 @@ class BattleScene:
             if len(self.items) < 2:
                 r = random.random()
                 x = random.randint(50, 550)
-                y = random.randint(100, 850)
+                y = random.randint(350, 850)
                 if r < 0.18:  # 18% item1
                     self.items.append(Item(x, y, "item1"))
                 elif r < 0.43:  # 25% item2
