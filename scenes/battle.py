@@ -382,7 +382,11 @@ class BattleScene:
             self.update_music()
 
     def draw(self, screen):
-        screen.fill((240, 205, 0))
+        if self.boss_hp < 2:
+            screen.fill((255, 0, 0))
+        else:
+            screen.fill((240, 205, 0))
+        
         pygame.draw.rect(screen, (0, 0, 0), (0, 300, 600, 600))
 
         if self.state in ["dodge", "dodge_countdown", "attack", "transition"]:
