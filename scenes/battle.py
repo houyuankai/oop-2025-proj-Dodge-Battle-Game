@@ -157,18 +157,18 @@ class BattleScene:
             self.button_manager.handle_event(event, self)
 
     def update_music(self):
-        if self.state in ["dodge", "dodge_countdown", "attack"]:
+        if self.state in ["dodge", "dodge_countdown", "attack", "transition"]:  # 包含 transition
             if self.current_music != self.music_paths["dodge"]:
                 pygame.mixer.music.stop()
                 try:
                     pygame.mixer.music.load(self.music_paths["dodge"])
-                    pygame.mixer.music.set_volume(1.0)  # 確保音量
+                    pygame.mixer.music.set_volume(1.0)
                     pygame.mixer.music.play(-1)
                     self.current_music = self.music_paths["dodge"]
                     self.game.current_music = self.current_music
                 except pygame.error as e:
                     print(f"Failed to load music_2.mp3: {e}")
-        elif self.state in ["instruction", "transition"]:
+        elif self.state == "instruction":
             if self.current_music is not None:
                 pygame.mixer.music.stop()
                 self.current_music = None
