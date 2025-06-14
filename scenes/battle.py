@@ -366,7 +366,8 @@ class BattleScene:
             (self.projectile_speed/1.4, -self.projectile_speed/1.4)
         ]
         angles = [0, 180, 90, -90, 45, -135, 135, -45]
-        types = random.sample(range(8), random.randint(1, 2))
+        count = random.randint(2, 3) if self.boss_hp <= 2 else random.randint(1, 2)
+        types = random.sample(range(8), count)
         for t in types:
             vx, vy = dirs[t]
             angle = angles[t]
