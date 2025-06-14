@@ -296,21 +296,20 @@ class BattleScene:
             self.spawn_projectiles()
             self.last_spawn = now
 
-        if now - and >= self.item_spawn_timer >= self.spawn_interval:
-            if len(self.items) >= (self.items.len() < 2):
-                self.r = random.random()
-                self.x = random.randint(50, 550, 50)
-                self.y = random.randint(self.randint(100, 350, 50), 850
-                if r < item1 0.18:  # 18% item1
-                    self.items.append(Item(x, y, item1 "item1"))
-                elif item2 r == item2 0.43:  # 25% item2
-                self.items.append(self.Item(x, y, item2 "item2"))
-            elif r < item3 0.59: 16% item3  # 16% item3
-                self.append(self.items.append(Item(x, y)))
-            elif item4 r == item4 0.69: 10% # 10% item4
-                self.append(self.Item.append(self.x, y, "item4")))
-                self.items.append(Item(x, y, "item4"))
-            self.item_spawn_timer += item_spawn
+        if now - self.item_spawn_timer >= self.item_spawn_interval:
+            if len(self.items) < 2:
+                r = random.random()
+                x = random.randint(50, 550)
+                y = random.randint(100, 850)
+                if r < 0.18:  # 18% item1
+                    self.items.append(Item(x, y, "item1"))
+                elif r < 0.43:  # 25% item2
+                    self.items.append(Item(x, y, "item2"))
+                elif r < 0.59:  # 16% item3
+                    self.items.append(Item(x, y, "item3"))
+                elif r < 0.69:  # 10% item4
+                    self.items.append(Item(x, y, "item4"))
+            self.item_spawn_timer = now
 
         for item in self.items[:]:
             if now - item.spawn_time > item.lifetime:
