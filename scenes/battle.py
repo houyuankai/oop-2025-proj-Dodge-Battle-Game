@@ -265,21 +265,21 @@ class BattleScene:
 
         # 物件生成
         if now - self.item_spawn_timer > self.item_spawn_interval:
-            if len(self.items) < 2:  # 最多 2 個物件
+            if len(self.items) < 2:
                 r = random.random()
-                if r < 0.10:  # 10% 物件一
+                if r < 0.10:  # 10% item1
                     x = random.randint(50, 550)
                     y = random.randint(350, 850)
                     self.items.append(Item(x, y, "item1"))
-                elif r < 0.20:  # 10% 物件二
+                elif r < 0.20:  # 10% item2
                     x = random.randint(50, 550)
                     y = random.randint(350, 850)
                     self.items.append(Item(x, y, "item2"))
-                elif r < 0.30:  # 10% 物件三
+                elif r < 0.30:  # 10% item3
                     x = random.randint(50, 550)
                     y = random.randint(350, 850)
                     self.items.append(Item(x, y, "item3"))
-                elif r < 0.35:  # 5% 物件四
+                elif r < 0.35:  # 5% item4
                     x = random.randint(50, 550)
                     y = random.randint(350, 850)
                     self.items.append(Item(x, y, "item4"))
