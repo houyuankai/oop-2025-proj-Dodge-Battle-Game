@@ -7,6 +7,7 @@ from scenes.button_manager import ButtonManager
 from scenes.utils import load_image
 from scenes.instruction import InstructionScene
 from scenes.window import Window
+from scenes.item import Item
 
 class BattleScene:
     def __init__(self, game):
