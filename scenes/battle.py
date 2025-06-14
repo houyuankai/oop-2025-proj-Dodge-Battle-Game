@@ -104,6 +104,7 @@ class BattleScene:
             "win": os.path.join("assets", "sounds", "music_4.mp3"),
             "lose": os.path.join("assets", "sounds", "music_3.mp3")
         }
+        pygame.mixer.music.set_volume(1.0)  # 確保音量正常
 
     def reset_player_position(self):
         self.player.x = 300
@@ -155,8 +156,50 @@ class BattleScene:
         elif self.state in ["win", "lose", "ending3", "ending4"]:
             self.button_manager.handle_event(event, self)
 
+    def update_music(self):
+        if self.state in ["dodge", "dodge_countdown", "attack"]:
+            if self.current_music != self.music_paths["dodge"]:
+                pygame.mixer.music.stop()
+                try:
+                    pygame.mixer.music.load(self.music_paths["dodge"])
+                    pygame.mixer.music.set_volume(1.0)  # 確保音量
+                    pygame.mixer.music.play(-1)
+                    self.current_music = self.music_paths["dodge"]
+                    self.game.current_music = self.current_music
+                except pygame.error as e:
+                    print(f"Failed to load music_2.mp3: {e}")
+        elif self.state in ["instruction", "transition"]:
+            if self.current_music is not None:
+                pygame.mixer.music.stop()
+                self.current_music = None
+                self.game.current_music = None
+        elif self.state == "win":
+            if self.current_music != self.music_paths["win"]:
+                pygame.mixer.music.stop()
+                try:
+                    pygame.mixer.music.load(self.music_paths["win"])
+                    pygame.mixer.music.set_volume(1.0)
+                    pygame.mixer.music.play(-1)
+                    self.current_music = self.music_paths["win"]
+                    self.game.current_music = self.current_music
+                except pygame.error as e:
+                    print(f"Failed to load music_4.mp3: {e}")
+        elif self.state in ["lose", "ending3", "ending4"]:
+            if self.current_music != self.music_paths["lose"]:
+                pygame.mixer.music.stop()
+                try:
+                    pygame.mixer.music.load(self.music_paths["lose"])
+                    pygame.mixer.music.set_volume(1.0)
+                    pygame.mixer.music.play(-1)
+                    self.current_music = self.music_paths["lose"]
+                    self.game.current_music = self.current_music
+                except pygame.error as e:
+                    print(f"Failed to load music_3.mp3: {e}")
+
     def update(self):
         dt = self.clock.tick(60) / 16.67
+        self.update_music()
+
         if self.state == "instruction":
             if self.first_dodge:
                 self.game.change_scene(InstructionScene(self.game, self.dodge_pages, "dodge_countdown", self))
@@ -209,16 +252,9 @@ class BattleScene:
             self.dodge_start_time = current_ticks
             self.last_spawn = current_ticks
             self.item_spawn_timer = current_ticks
-        # 播放 music_2.mp3
+        # 備用音樂檢查
         if self.current_music != self.music_paths["dodge"]:
-            pygame.mixer.music.stop()
-            try:
-                pygame.mixer.music.load(self.music_paths["dodge"])
-                pygame.mixer.music.play(-1)
-                self.current_music = self.music_paths["dodge"]
-                self.game.current_music = self.current_music
-            except pygame.error as e:
-                print(f"Failed to load music_2.mp3: {e}")
+            self.update_music()
 
     def update_dodge(self):
         keys = pygame.key.get_pressed()
@@ -272,17 +308,13 @@ class BattleScene:
                     if self.item3_count >= 6:
                         self.state = "ending3"
                         self.items.clear()
-                        pygame.mixer.music.stop()
-                        self.current_music = None
-                        self.game.current_music = None
+                        self.update_music()
                 elif item.item_type == "item4":
                     self.item4_count += 1
-                    if self.item4_count >= 8:  # 改為 8 個
+                    if self.item4_count >= 8:
                         self.state = "ending4"
                         self.items.clear()
-                        pygame.mixer.music.stop()
-                        self.current_music = None
-                        self.game.current_music = None
+                        self.update_music()
                 self.items.remove(item)
 
         if self.invincible:
@@ -322,16 +354,9 @@ class BattleScene:
                 self.state = "transition"
                 self.transition_timer = 1000
                 self.previous_state = "attack"
-        # 播放 music_2.mp3
+        # 備用音樂檢查
         if self.current_music != self.music_paths["dodge"]:
-            pygame.mixer.music.stop()
-            try:
-                pygame.mixer.music.load(self.music_paths["dodge"])
-                pygame.mixer.music.play(-1)
-                self.current_music = self.music_paths["dodge"]
-                self.game.current_music = self.current_music
-            except pygame.error as e:
-                print(f"Failed to load music_2.mp3: {e}")
+            self.update_music()
 
     def draw(self, screen):
         screen.fill((240, 205, 0))
@@ -393,27 +418,6 @@ class BattleScene:
         elif self.state in ["win", "lose", "ending3", "ending4"]:
             screen.blit(self.ending_images[self.state], (0, 0))
             self.button_manager.draw(screen)
-            # 播放結局音樂
-            music_key = "win" if self.state == "win" else "lose" if self.state == "lose" else None
-            if music_key and self.current_music != self.music_paths[music_key]:
-                pygame.mixer.music.stop()
-                try:
-                    pygame.mixer.music.load(self.music_paths[music_key])
-                    pygame.mixer.music.play(-1)
-                    self.current_music = self.music_paths[music_key]
-                    self.game.current_music = self.current_music
-                except pygame.error as e:
-                    print(f"Failed to load {self.music_paths[music_key]}: {e}")
-            # 結局三、四無專屬音樂，使用 music_3.mp3
-            if self.state in ["ending3", "ending4"] and self.current_music != self.music_paths["lose"]:
-                pygame.mixer.music.stop()
-                try:
-                    pygame.mixer.music.load(self.music_paths["lose"])
-                    pygame.mixer.music.play(-1)
-                    self.current_music = self.music_paths["lose"]
-                    self.game.current_music = self.current_music
-                except pygame.error as e:
-                    print(f"Failed to load music_3.mp3: {e}")
 
     def spawn_projectiles(self):
         dirs = [
