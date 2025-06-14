@@ -1,11 +1,30 @@
 import pygame
 import os
-from scenes.utils import load_image
 
 class Item:
+    images = {}  # 靜態圖片快取
+
+    @classmethod
+    def preload_images(cls):
+        """預載入所有物件圖片"""
+        for item_type in ["item1", "item2", "item3", "item4"]:
+            path = os.path.join("assets", "images", f"{item_type}.png")
+            try:
+                image = pygame.image.load(path).convert_alpha()  # 優化表面
+                image = pygame.transform.scale(image, (40, 40))
+                cls.images[item_type] = image
+            except pygame.error as e:
+                print(f"Failed to load {item_type}.png: {e}")
+                # 預設圖片（紅色方塊）
+                cls.images[item_type] = pygame.Surface((40, 40))
+                cls.images[item_type].fill((255, 0, 0))
+
     def __init__(self, x, y, item_type):
-        self.rect = pygame.Rect(x, y, 40, 40)
-        self.item_type = item_type  # "item1", "item2", "item3", "item4"
-        self.image = load_image(os.path.join("assets", "images", f"{item_type}.png"), size=(40, 40))
+        self.item_type = item_type
+        self.image = Item.images.get(item_type, pygame.Surface((40, 40)))  # 使用快取圖片
+        self.rect = self.image.get_rect(topleft=(x, y))
         self.spawn_time = pygame.time.get_ticks()
-        self.lifetime = 3000  # 3 秒
+        self.lifetime = 3000  # 3 秒存活
+
+# 在模組載入時預載入圖片
+Item.preload_images()
