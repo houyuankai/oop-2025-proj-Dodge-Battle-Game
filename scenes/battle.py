@@ -342,13 +342,13 @@ class BattleScene:
                     while len(self.items) > 0 and math.hypot(x2 - x1, y2 - y1) < 50:
                         x2 = random.randint(50, 550)
                         y2 = random.randint(350, 850)
-                    if r2 < 0.07:  # 7% key1
+                    if r2 < 0.08:  # 8% key1
                         self.items.append(Item(x2, y2, "key1"))
                         print(f"Spawned key1 at ({x2}, {y2}), boss_hp: {self.boss_hp}")
-                    elif r2 < 0.14:  # 7% key2
+                    elif r2 < 0.16:  # 8% key2
                         self.items.append(Item(x2, y2, "key2"))
                         print(f"Spawned key2 at ({x2}, {y2}), boss_hp: {self.boss_hp}")
-                    elif r2 < 0.21:  # 7% key3
+                    elif r2 < 0.24:  # 8% key3
                         self.items.append(Item(x2, y2, "key3"))
                         print(f"Spawned key3 at ({x2}, {y2}), boss_hp: {self.boss_hp}")
             self.item_spawn_timer = now
