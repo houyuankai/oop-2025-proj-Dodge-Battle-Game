@@ -11,3 +11,5 @@ __pycache__/
 
 # 系統檔案
 .DS_Store
+__pycache__/
+*.pyc
