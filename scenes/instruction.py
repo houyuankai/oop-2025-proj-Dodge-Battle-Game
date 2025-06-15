@@ -13,7 +13,7 @@ class InstructionScene:
         self.current_page = 0
         self.done = False
         try:
-            self.images = [load_image(path, size=(600 * self.scale, 900 * self.scale)) for path in image_paths]
+            self.images = [load_image(path, size=(600, 900)) for path in image_paths]
         except Exception as e:
             raise Exception(f"Image load error: {e}")
         
