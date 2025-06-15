@@ -15,7 +15,6 @@ class Item:
                 image = image.convert_alpha()  # 優化表面
                 image = pygame.transform.scale(image, (50, 50))
                 cls.images[item_type] = image
-                print(f"Loaded {item_type}.png successfully")
             except pygame.error as e:
                 print(f"Failed to load {item_type}.png: {e}")
                 cls.images[item_type] = pygame.Surface((40, 40))
