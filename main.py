@@ -10,15 +10,10 @@ class Game:
             print("Starting Game initialization...")
             pygame.init()
             pygame.mixer.init()
-            # 動態獲取螢幕高度
-            info = pygame.display.Info()
-            screen_height = max(info.current_h, 900)  # 最小高度 900
-            # 保持 2:3 比例
-            self.screen_height = screen_height
-            self.screen_width = int(screen_height * 2 / 3)
-            self.scale = screen_height / 900
+            self.screen_width = 600
+            self.screen_height = 900
+            self.scale = 1.0
             print(f"Screen size: {self.screen_width}x{self.screen_height}, Scale: {self.scale}")
-            # 設置視窗
             os.environ['SDL_VIDEO_CENTERED'] = '1'
             self.screen = pygame.display.set_mode((self.screen_width, self.screen_height))
             pygame.display.set_caption("Cuddle Time!")
