@@ -29,25 +29,27 @@ class InstructionScene:
             print("InstructionScene: Done, ignoring event")
             return
         print(f"InstructionScene: Handling event {event.type}, current_page={self.current_page}")
-        if event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE:
-            print("InstructionScene: Space key pressed")
-            if self.sound:
-                self.sound.stop()
-            self.current_page += 1
-            if self.current_page >= len(self.image_paths):
-                print(f"InstructionScene: Switching to {self.next_state}")
-                self.battle_scene.state = self.next_state
-                if self.next_state == "dodge_countdown":
-                    self.battle_scene.dodge_countdown_timer = pygame.time.get_ticks()
-                elif self.next_state == "attack":
-                    self.battle_scene.attack_start_time = pygame.time.get_ticks()
-                    self.battle_scene.attack_active = False
-                self.game.change_scene(self.battle_scene)
-                self.done = True
-            else:
-                print(f"InstructionScene: Moving to page {self.current_page}")
+        if event.type == pygame.KEYDOWN:
+            print(f"InstructionScene: Key pressed, key code={event.key}")
+            if event.key == pygame.K_SPACE or event.key == pygame.K_RETURN:  # 支援空白鍵和 Enter
+                print("InstructionScene: Space or Enter key pressed")
                 if self.sound:
-                    self.sound.play(0)
+                    self.sound.stop()
+                self.current_page += 1
+                if self.current_page >= len(self.image_paths):
+                    print(f"InstructionScene: Switching to {self.next_state}")
+                    self.battle_scene.state = self.next_state
+                    if self.next_state == "dodge_countdown":
+                        self.battle_scene.dodge_countdown_timer = pygame.time.get_ticks()
+                    elif self.next_state == "attack":
+                        self.battle_scene.attack_start_time = pygame.time.get_ticks()
+                        self.battle_scene.attack_active = False
+                    self.game.change_scene(self.battle_scene)
+                    self.done = True
+                else:
+                    print(f"InstructionScene: Moving to page {self.current_page}")
+                    if self.sound:
+                        self.sound.play(0)
 
     def update(self):
         pass
