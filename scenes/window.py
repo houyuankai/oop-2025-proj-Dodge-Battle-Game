@@ -1,13 +1,13 @@
 import pygame
 
 class Window:
-    def __init__(self, start_x, start_y, target_x, target_y, width=80, height=160, scale=1.0):
+    def __init__(self, start_x, start_y, target_x, target_y, width=20, height=160, scale=1.0):
         self.initial_width = width
         self.initial_height = height
         self.rect = pygame.Rect(0, 0, width, height)
         self.rect.center = (start_x, start_y)
         self.target_x = target_x
-        self.speed = 0.042 * scale
+        self.speed = 0.042
         self.scale = 1.0
         self.scale_speed = 0.025
         self.min_scale = 0.01
@@ -19,7 +19,7 @@ class Window:
         if abs(dx) > 1:
             move_x = dx * self.speed * dt
             self.rect.centerx += move_x
-            self.rect.centery = 150 * self.rect.width / self.initial_width
+            self.rect.centery = 150
         self.scale = max(self.scale - self.scale_speed * dt, self.min_scale)
         old_center = self.rect.center
         self.rect.width = max(int(self.initial_width * self.scale), 1)
