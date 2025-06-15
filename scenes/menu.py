@@ -60,4 +60,3 @@ class MenuScene:
     def draw(self, screen):
         screen.blit(self.background, (0, 0))
         screen.blit(self.start_button, self.start_button_rect)
-        screen.blit(self.title_surface, self.title_rect)
