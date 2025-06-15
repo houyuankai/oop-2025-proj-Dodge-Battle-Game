@@ -327,10 +327,10 @@ class BattleScene:
                 elif r < 0.38:  # 20% item2
                     self.items.append(Item(x1, y1, "item2"))
                     print(f"Spawned item2 at ({x1}, {y1}), boss_hp: {self.boss_hp}")
-                elif r < 0.54:  # 16% item3
+                elif r < 0.52:  # 14% item3
                     self.items.append(Item(x1, y1, "item3"))
                     print(f"Spawned item3 at ({x1}, {y1}), boss_hp: {self.boss_hp}")
-                elif r < 0.68:  # 14% item4
+                elif r < 0.62:  # 10% item4
                     self.items.append(Item(x1, y1, "item4"))
                     print(f"Spawned item4 at ({x1}, {y1}), boss_hp: {self.boss_hp}")
                 # 鑰匙生成（分離座標）
@@ -342,13 +342,13 @@ class BattleScene:
                     while len(self.items) > 0 and math.hypot(x2 - x1, y2 - y1) < 50:
                         x2 = random.randint(50, 550)
                         y2 = random.randint(350, 850)
-                    if r2 < 0.7:  # 10% key1
+                    if r2 < 0.7:  # 7% key1
                         self.items.append(Item(x2, y2, "key1"))
                         print(f"Spawned key1 at ({x2}, {y2}), boss_hp: {self.boss_hp}")
-                    elif r2 < 0.14:  # 10% key2
+                    elif r2 < 0.14:  # 7% key2
                         self.items.append(Item(x2, y2, "key2"))
                         print(f"Spawned key2 at ({x2}, {y2}), boss_hp: {self.boss_hp}")
-                    elif r2 < 0.21:  # 10% key3
+                    elif r2 < 0.21:  # 7% key3
                         self.items.append(Item(x2, y2, "key3"))
                         print(f"Spawned key3 at ({x2}, {y2}), boss_hp: {self.boss_hp}")
             self.item_spawn_timer = now
