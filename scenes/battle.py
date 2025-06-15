@@ -146,7 +146,7 @@ class BattleScene:
         self.item_spawn_timer = 0
         self.item3_count = 0
         self.item4_count = 0
-        elf.key1_count = 0
+        self.key1_count = 0
         self.key2_count = 0
         self.key3_count = 0
         pygame.mixer.music.stop()
