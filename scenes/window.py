@@ -1,38 +1,35 @@
 import pygame
 
 class Window:
-    def __init__(self, start_x, start_y, target_x, target_y, width=80, height=160):
-        self.initial_width = width  # 儲存初始寬度
-        self.initial_height = height  # 儲存初始高度
+    def __init__(self, start_x, start_y, target_x, target_y, width=80, height=160, scale=1.0):
+        self.initial_width = width
+        self.initial_height = height
         self.rect = pygame.Rect(0, 0, width, height)
         self.rect.center = (start_x, start_y)
-        self.target_x = target_x  # 僅需 x 目標
-        self.speed = 0.042  # 約 2.5 像素/幀 (60 FPS)
+        self.target_x = target_x
+        self.speed = 0.042 * scale
         self.scale = 1.0
-        self.scale_speed = 0.025  # 每幀縮小 1%（延長存活時間）
-        self.min_scale = 0.01  # 最小縮放比例（提高以確保可見）
-        self.color = (255, 255, 255)  # 純白
-        self.alpha = 255  # 完全不透明
+        self.scale_speed = 0.025
+        self.min_scale = 0.01
+        self.color = (255, 255, 255)
+        self.alpha = 255
 
     def update(self, dt):
-        # 移動：僅沿 x 軸，y 鎖定為 150
         dx = self.target_x - self.rect.centerx
-        if abs(dx) > 1:  # 避免過近時抖動
+        if abs(dx) > 1:
             move_x = dx * self.speed * dt
             self.rect.centerx += move_x
-            self.rect.centery = 150  # 強制 y=150
-        # 縮放
+            self.rect.centery = 150 * self.rect.width / self.initial_width
         self.scale = max(self.scale - self.scale_speed * dt, self.min_scale)
-        old_center = self.rect.center  # 保存中心
-        self.rect.width = max(int(self.initial_width * self.scale), 1)  # 至少 1 像素
-        self.rect.height = max(int(self.initial_height * self.scale), 1)  # 至少 1 像素
-        self.rect.center = old_center  # 恢復中心，確保 y=150
+        old_center = self.rect.center
+        self.rect.width = max(int(self.initial_width * self.scale), 1)
+        self.rect.height = max(int(self.initial_height * self.scale), 1)
+        self.rect.center = old_center
         if self.rect.width < 1 or self.rect.height < 1:
-            return True  # 標記移除
+            return True
         return False
 
     def draw(self, screen):
-        # 繪製矩形窗戶
         surface = pygame.Surface((self.rect.width, self.rect.height), pygame.SRCALPHA)
         surface.fill((*self.color, self.alpha))
         screen.blit(surface, self.rect.topleft)
