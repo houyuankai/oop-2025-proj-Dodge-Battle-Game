@@ -15,110 +15,110 @@ class BattleScene:
         self.screen = game.screen
         self.clock = pygame.time.Clock()
         self.dodge_start_time = pygame.time.get_ticks()
-        self.scale = game.scale  # 從 Game 獲取縮放比例
+        self.scale = game.scale
 
-        Item.preload_images(self.scale)
+        try:
+            Item.preload_images(self.scale)
 
-        self.player_hp = 3
-        self.boss_hp = 5
+            self.player_hp = 3
+            self.boss_hp = 5
 
-        self.state = "instruction"
-        self.dodge_countdown_timer = pygame.time.get_ticks()
-        
-        self.transition_timer = 0
-        self.attack_timer = 0
-        self.dodge_countdown_duration = 2000
-        
-        self.invincible = False
-        self.invincible_timer = 0
-        self.invincible_duration = 1700
+            self.state = "instruction"
+            self.dodge_countdown_timer = pygame.time.get_ticks()
+            
+            self.transition_timer = 0
+            self.attack_timer = 0
+            self.dodge_countdown_duration = 2000
+            
+            self.invincible = False
+            self.invincible_timer = 0
+            self.invincible_duration = 1700
 
-        # 縮放玩家
-        self.player = pygame.Rect(300 * self.scale, 600 * self.scale, 20 * self.scale, 20 * self.scale)
-        self.player_speed = 7 * self.scale
+            self.player = pygame.Rect(300 * self.scale, 600 * self.scale, 20 * self.scale, 20 * self.scale)
+            self.player_speed = 7 * self.scale
 
-        self.projectiles = []
-        self.spawn_delay = 1000
-        self.projectile_speed = 5 * self.scale
-        self.last_spawn = pygame.time.get_ticks()
-        
-        # 縮放 Boss 圖片
-        self.boss_images = [
-            load_image(os.path.join("assets", "images", f"boss_{i}.png"), size=(180 * self.scale, 270 * self.scale)) for i in range(1, 9)
-        ]
-        self.boss_hit_image = load_image(os.path.join("assets", "images", "boss_hit.png"), size=(600 * self.scale, 250 * self.scale))
-        self.boss_anim_index = 0
-        self.boss_anim_timer = 0
-        self.boss_hit = False
-        
-        self.heart_image = load_image(os.path.join("assets", "images", "heart.png"), size=(25 * self.scale, 25 * self.scale))
-        
-        self.font = pygame.font.SysFont("Arial", int(24 * self.scale), bold=True)
-        self.large_font = pygame.font.SysFont("Arial", int(72 * self.scale), bold=True)
+            self.projectiles = []
+            self.spawn_delay = 1000
+            self.projectile_speed = 5 * self.scale
+            self.last_spawn = pygame.time.get_ticks()
+            
+            self.boss_images = [
+                load_image(os.path.join("assets", "images", f"boss_{i}.png"), size=(180 * self.scale, 270 * self.scale)) for i in range(1, 9)
+            ]
+            self.boss_hit_image = load_image(os.path.join("assets", "images", "boss_hit.png"), size=(600 * self.scale, 250 * self.scale))
+            self.boss_anim_index = 0
+            self.boss_anim_timer = 0
+            self.boss_hit = False
+            
+            self.heart_image = load_image(os.path.join("assets", "images", "heart.png"), size=(25 * self.scale, 25 * self.scale))
+            
+            self.font = pygame.font.SysFont("Arial", int(24 * self.scale), bold=True)
+            self.large_font = pygame.font.SysFont("Arial", int(72 * self.scale), bold=True)
 
-        self.previous_state = None
+            self.previous_state = None
 
-        self.attack_start_time = 0
-        self.attack_delay = 2000
-        
-        # 縮放攻擊條
-        self.attack_bar = pygame.Rect(75 * self.scale, 590 * self.scale, 450 * self.scale, 20 * self.scale)
-        self.attack_zone = pygame.Rect(265 * self.scale, 580 * self.scale, 70 * self.scale, 40 * self.scale)
-        self.attack_cursor = pygame.Rect(75 * self.scale, 580 * self.scale, 20 * self.scale, 40 * self.scale)
-        self.attack_speed = 8 * self.scale
-        self.attack_active = False
-        
-        self.button_manager = ButtonManager(game)
+            self.attack_start_time = 0
+            self.attack_delay = 2000
+            
+            self.attack_bar = pygame.Rect(75 * self.scale, 590 * self.scale, 450 * self.scale, 20 * self.scale)
+            self.attack_zone = pygame.Rect(265 * self.scale, 580 * self.scale, 70 * self.scale, 40 * self.scale)
+            self.attack_cursor = pygame.Rect(75 * self.scale, 580 * self.scale, 20 * self.scale, 40 * self.scale)
+            self.attack_speed = 8 * self.scale
+            self.attack_active = False
+            
+            self.button_manager = ButtonManager(game)
 
-        self.first_dodge = True
-        self.first_attack = True
+            self.first_dodge = True
+            self.first_attack = True
 
-        self.dodge_pages = [
-            os.path.join("assets", "images", "instruction_dodge1.png"),
-            os.path.join("assets", "images", "instruction_dodge2.png"),
-            os.path.join("assets", "images", "instruction_dodge3.png")
-        ]
-        self.attack_pages = [
-            os.path.join("assets", "images", "instruction_attack1.png"),
-            os.path.join("assets", "images", "instruction_attack2.png")
-        ]
+            self.dodge_pages = [
+                os.path.join("assets", "images", "instruction_dodge1.png"),
+                os.path.join("assets", "images", "instruction_dodge2.png"),
+                os.path.join("assets", "images", "instruction_dodge3.png")
+            ]
+            self.attack_pages = [
+                os.path.join("assets", "images", "instruction_attack1.png"),
+                os.path.join("assets", "images", "instruction_attack2.png")
+            ]
 
-        self.windows = []
-        self.window_spawn_timer = 0
-        self.window_spawn_interval = 300
+            self.windows = []
+            self.window_spawn_timer = 0
+            self.window_spawn_interval = 300
 
-        self.items = []
-        self.item_spawn_timer = 0
-        self.item_spawn_interval = 1500
-        self.item3_count = 0
-        self.item4_count = 0
-        self.key1_count = 0
-        self.key2_count = 0
-        self.key3_count = 0
+            self.items = []
+            self.item_spawn_timer = 0
+            self.item_spawn_interval = 1500
+            self.item3_count = 0
+            self.item4_count = 0
+            self.key1_count = 0
+            self.key2_count = 0
+            self.key3_count = 0
 
-        # 縮放結局圖片
-        self.ending_images = {
-            "win": load_image(os.path.join("assets", "images", "win.png"), size=(600 * self.scale, 900 * self.scale)),
-            "lose": load_image(os.path.join("assets", "images", "lose.png"), size=(600 * self.scale, 900 * self.scale)),
-            "ending3": load_image(os.path.join("assets", "images", "ending3.png"), size=(600 * self.scale, 900 * self.scale)),
-            "ending4": load_image(os.path.join("assets", "images", "ending4.png"), size=(600 * self.scale, 900 * self.scale)),
-            "ending5": load_image(os.path.join("assets", "images", "ending5.png"), size=(600 * self.scale, 900 * self.scale))
-        }
+            self.ending_images = {
+                "win": load_image(os.path.join("assets", "images", "win.png"), size=(600 * self.scale, 900 * self.scale)),
+                "lose": load_image(os.path.join("assets", "images", "lose.png"), size=(600 * self.scale, 900 * self.scale)),
+                "ending3": load_image(os.path.join("assets", "images", "ending3.png"), size=(600 * self.scale, 900 * self.scale)),
+                "ending4": load_image(os.path.join("assets", "images", "ending4.png"), size=(600 * self.scale, 900 * self.scale)),
+                "ending5": load_image(os.path.join("assets", "images", "ending5.png"), size=(600 * self.scale, 900 * self.scale))
+            }
 
-        self.reset_player_position()
-        self.projectiles.clear()
-        self.items.clear()
-        
-        self.current_music = None
-        self.music_paths = {
-            "dodge": os.path.join("assets", "sounds", "music_2.mp3"),
-            "win": os.path.join("assets", "sounds", "music_4.mp3"),
-            "lose": os.path.join("assets", "sounds", "music_3.mp3"),
-            "ending3": os.path.join("assets", "sounds", "music_e3.mp3"),
-            "ending4": os.path.join("assets", "sounds", "music_e4.mp3"),
-            "ending5": os.path.join("assets", "sounds", "music_e5.mp3")
-        }
-        pygame.mixer.music.set_volume(1.0)
+            self.reset_player_position()
+            self.projectiles.clear()
+            self.items.clear()
+            
+            self.current_music = None
+            self.music_paths = {
+                "dodge": os.path.join("assets", "sounds", "music_2.mp3"),
+                "win": os.path.join("assets", "sounds", "music_4.mp3"),
+                "lose": os.path.join("assets", "sounds", "music_3.mp3"),
+                "ending3": os.path.join("assets", "sounds", "music_e3.mp3"),
+                "ending4": os.path.join("assets", "sounds", "music_e4.mp3"),
+                "ending5": os.path.join("assets", "sounds", "music_e5.mp3")
+            }
+            pygame.mixer.music.set_volume(1.0)
+        except Exception as e:
+            print(f"BattleScene initialization failed: {e}")
+            raise
 
     def reset_player_position(self):
         self.player.x = 300 * self.scale
@@ -184,7 +184,7 @@ class BattleScene:
                     self.current_music = self.music_paths["dodge"]
                     self.game.current_music = self.current_music
                 except pygame.error as e:
-                    print(f"Failed to load music_2.mp3: {e}")
+                    print(f"Failed to load {self.music_paths['dodge']}: {e}")
         elif self.state == "instruction":
             if self.current_music is not None:
                 pygame.mixer.music.stop()
@@ -200,7 +200,7 @@ class BattleScene:
                     self.current_music = self.music_paths["win"]
                     self.game.current_music = self.current_music
                 except pygame.error as e:
-                    print(f"Failed to load music_4.mp3: {e}")
+                    print(f"Failed to load {self.music_paths['win']}: {e}")
         elif self.state == "lose":
             if self.current_music != self.music_paths["lose"]:
                 pygame.mixer.music.stop()
@@ -211,7 +211,7 @@ class BattleScene:
                     self.current_music = self.music_paths["lose"]
                     self.game.current_music = self.current_music
                 except pygame.error as e:
-                    print(f"Failed to load music_3.mp3: {e}")
+                    print(f"Failed to load {self.music_paths['lose']}: {e}")
         elif self.state == "ending3":
             if self.current_music != self.music_paths["ending3"]:
                 pygame.mixer.music.stop()
@@ -222,7 +222,7 @@ class BattleScene:
                     self.current_music = self.music_paths["ending3"]
                     self.game.current_music = self.current_music
                 except pygame.error as e:
-                    print(f"Failed to load music_e3.mp3: {e}")
+                    print(f"Failed to load {self.music_paths['ending3']}: {e}")
         elif self.state == "ending4":
             if self.current_music != self.music_paths["ending4"]:
                 pygame.mixer.music.stop()
@@ -233,7 +233,7 @@ class BattleScene:
                     self.current_music = self.music_paths["ending4"]
                     self.game.current_music = self.current_music
                 except pygame.error as e:
-                    print(f"Failed to load music_e4.mp3: {e}")
+                    print(f"Failed to load {self.music_paths['ending4']}: {e}")
         elif self.state == "ending5":
             if self.current_music != self.music_paths["ending5"]:
                 pygame.mixer.music.stop()
@@ -244,7 +244,7 @@ class BattleScene:
                     self.current_music = self.music_paths["ending5"]
                     self.game.current_music = self.current_music
                 except pygame.error as e:
-                    print(f"Failed to load music_e5.mp3: {e}")
+                    print(f"Failed to load {self.music_paths['ending5']}: {e}")
 
     def update(self):
         dt = self.clock.tick(60) / 16.67
