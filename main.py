@@ -6,31 +6,42 @@ from scenes.battle import BattleScene
 
 class Game:
     def __init__(self):
-        pygame.init()
-        pygame.mixer.init()
-        # 動態獲取螢幕高度
-        info = pygame.display.Info()
-        screen_height = info.current_h
-        # 保持 2:3 比例
-        self.screen_height = screen_height
-        self.screen_width = int(screen_height * 2 / 3)
-        self.scale = screen_height / 900  # 縮放比例
-        self.screen = pygame.display.set_mode((self.screen_width, self.screen_height))
-        pygame.display.set_caption("Cuddle Time!")
-        # 置中視窗
-        os.environ['SDL_VIDEO_CENTERED'] = '1'
-        self.clock = pygame.time.Clock()
-        self.running = True
-        self.current_scene = MenuScene(self)
-        self.current_music = None
+        try:
+            print("Starting Game initialization...")
+            pygame.init()
+            pygame.mixer.init()
+            # 動態獲取螢幕高度
+            info = pygame.display.Info()
+            screen_height = max(info.current_h, 900)  # 最小高度 900
+            # 保持 2:3 比例
+            self.screen_height = screen_height
+            self.screen_width = int(screen_height * 2 / 3)
+            self.scale = screen_height / 900
+            print(f"Screen size: {self.screen_width}x{self.screen_height}, Scale: {self.scale}")
+            # 設置視窗
+            os.environ['SDL_VIDEO_CENTERED'] = '1'
+            self.screen = pygame.display.set_mode((self.screen_width, self.screen_height))
+            pygame.display.set_caption("Cuddle Time!")
+            self.clock = pygame.time.Clock()
+            self.running = True
+            self.current_scene = MenuScene(self)
+            self.current_music = None
+        except Exception as e:
+            print(f"Initialization failed: {e}")
+            sys.exit(1)
 
     def run(self):
-        while self.running:
-            self.clock.tick(60)
-            self.handle_events()
-            self.current_scene.update()
-            self.current_scene.draw(self.screen)
-            pygame.display.update()
+        try:
+            while self.running:
+                self.clock.tick(60)
+                self.handle_events()
+                self.current_scene.update()
+                self.current_scene.draw(self.screen)
+                pygame.display.update()
+        except Exception as e:
+            print(f"Runtime error: {e}")
+            pygame.quit()
+            sys.exit(1)
 
     def handle_events(self):
         for event in pygame.event.get():
