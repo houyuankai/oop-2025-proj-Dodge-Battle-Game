@@ -1,18 +1,28 @@
 import pygame
+import logging
+
+logging.basicConfig(level=logging.DEBUG, format='%(asctime)s %(levelname)s: %(message)s')
 
 class Window:
     def __init__(self, start_x, start_y, target_x, target_y, width=20, height=160, scale=1.0):
-        self.initial_width = width
-        self.initial_height = height
-        self.rect = pygame.Rect(0, 0, width, height)
-        self.rect.center = (start_x, start_y)
-        self.target_x = target_x
-        self.speed = 0.042
-        self.scale = 1.0
-        self.scale_speed = 0.025
-        self.min_scale = 0.01
-        self.color = (255, 255, 255)
-        self.alpha = 255
+        try:
+            logging.info("Creating window")
+            self.initial_width = width
+            self.initial_height = height
+            self.rect = pygame.Rect(0, 0, width, height)
+            self.rect.center = (start_x, start_y)
+            self.target_x = target_x
+            self.speed = 0.042
+            self.scale = 1.0
+            self.scale_speed = 0.025
+            self.min_scale = 0.01
+            self.color = (255, 255, 255)
+            self.alpha = 255
+            logging.info("Window created")
+        except Exception as e:
+            logging.error(f"Window initialization failed: {str(e)}")
+            print(f"Window initialization failed: {str(e)}")
+            raise
 
     def update(self, dt):
         dx = self.target_x - self.rect.centerx
