@@ -26,18 +26,14 @@ class InstructionScene:
 
     def handle_event(self, event):
         if self.done:
-            print("InstructionScene: Done, ignoring event")
             return
-        print(f"InstructionScene: Handling event {event.type}, current_page={self.current_page}")
         if event.type == pygame.KEYDOWN:
-            print(f"InstructionScene: Key pressed, key code={event.key}")
-            if event.key == pygame.K_SPACE or event.key == pygame.K_RETURN:  # 支援空白鍵和 Enter
-                print("InstructionScene: Space or Enter key pressed")
+            if event.key == pygame.K_SPACE or event.key == pygame.K_RETURN:
                 if self.sound:
                     self.sound.stop()
                 self.current_page += 1
                 if self.current_page >= len(self.image_paths):
-                    print(f"InstructionScene: Switching to {self.next_state}")
+                    self.boss_hit = False
                     self.battle_scene.state = self.next_state
                     if self.next_state == "dodge_countdown":
                         self.battle_scene.dodge_countdown_timer = pygame.time.get_ticks()
@@ -47,7 +43,6 @@ class InstructionScene:
                     self.game.change_scene(self.battle_scene)
                     self.done = True
                 else:
-                    print(f"InstructionScene: Moving to page {self.current_page}")
                     if self.sound:
                         self.sound.play(0)
 
