@@ -2,12 +2,15 @@ import pygame
 import random
 import os
 import math
+import logging
 from scenes.projectile import Projectile
 from scenes.button_manager import ButtonManager
 from scenes.utils import load_image
 from scenes.instruction import InstructionScene
 from scenes.window import Window
 from scenes.item import Item
+
+logging.basicConfig(level=logging.DEBUG, format='%(asctime)s %(levelname)s: %(message)s')
 
 class BattleScene:
     def __init__(self, game):
@@ -18,6 +21,7 @@ class BattleScene:
         self.scale = game.scale
 
         try:
+            logging.info("Initializing BattleScene")
             Item.preload_images(self.scale)
 
             self.player_hp = 3
@@ -116,8 +120,10 @@ class BattleScene:
                 "ending5": os.path.join("assets", "sounds", "music_e5.mp3")
             }
             pygame.mixer.music.set_volume(1.0)
+            logging.info("BattleScene initialized successfully")
         except Exception as e:
-            print(f"BattleScene initialization failed: {e}")
+            logging.error(f"BattleScene initialization failed: {str(e)}")
+            print(f"BattleScene initialization failed: {str(e)}")
             raise
 
     def reset_player_position(self):
@@ -156,6 +162,7 @@ class BattleScene:
         pygame.mixer.music.stop()
         self.current_music = None
         self.game.current_music = None
+        logging.info("Game reset")
 
     def handle_event(self, event):
         if self.state in ["dodge", "dodge_countdown", "attack", "transition"]:
@@ -170,81 +177,75 @@ class BattleScene:
                     self.state = "transition"
                     self.transition_timer = 1000
                     self.previous_state = "attack"
+                    logging.info("Attack performed")
         elif self.state in ["win", "lose", "ending3", "ending4", "ending5"]:
             self.button_manager.handle_event(event, self)
 
     def update_music(self):
-        if self.state in ["dodge", "dodge_countdown", "attack", "transition"]:
-            if self.current_music != self.music_paths["dodge"]:
-                pygame.mixer.music.stop()
-                try:
+        try:
+            if self.state in ["dodge", "dodge_countdown", "attack", "transition"]:
+                if self.current_music != self.music_paths["dodge"]:
+                    pygame.mixer.music.stop()
                     pygame.mixer.music.load(self.music_paths["dodge"])
                     pygame.mixer.music.set_volume(1.0)
                     pygame.mixer.music.play(-1)
                     self.current_music = self.music_paths["dodge"]
                     self.game.current_music = self.current_music
-                except pygame.error as e:
-                    print(f"Failed to load {self.music_paths['dodge']}: {e}")
-        elif self.state == "instruction":
-            if self.current_music is not None:
-                pygame.mixer.music.stop()
-                self.current_music = None
-                self.game.current_music = None
-        elif self.state == "win":
-            if self.current_music != self.music_paths["win"]:
-                pygame.mixer.music.stop()
-                try:
+                    logging.info("Playing dodge music")
+            elif self.state == "instruction":
+                if self.current_music is not None:
+                    pygame.mixer.music.stop()
+                    self.current_music = None
+                    self.game.current_music = None
+                    logging.info("Stopped music for instruction")
+            elif self.state == "win":
+                if self.current_music != self.music_paths["win"]:
+                    pygame.mixer.music.stop()
                     pygame.mixer.music.load(self.music_paths["win"])
                     pygame.mixer.music.set_volume(1.0)
                     pygame.mixer.music.play(-1)
                     self.current_music = self.music_paths["win"]
                     self.game.current_music = self.current_music
-                except pygame.error as e:
-                    print(f"Failed to load {self.music_paths['win']}: {e}")
-        elif self.state == "lose":
-            if self.current_music != self.music_paths["lose"]:
-                pygame.mixer.music.stop()
-                try:
+                    logging.info("Playing win music")
+            elif self.state == "lose":
+                if self.current_music != self.music_paths["lose"]:
+                    pygame.mixer.music.stop()
                     pygame.mixer.music.load(self.music_paths["lose"])
                     pygame.mixer.music.set_volume(1.0)
                     pygame.mixer.music.play(-1)
                     self.current_music = self.music_paths["lose"]
                     self.game.current_music = self.current_music
-                except pygame.error as e:
-                    print(f"Failed to load {self.music_paths['lose']}: {e}")
-        elif self.state == "ending3":
-            if self.current_music != self.music_paths["ending3"]:
-                pygame.mixer.music.stop()
-                try:
+                    logging.info("Playing lose music")
+            elif self.state == "ending3":
+                if self.current_music != self.music_paths["ending3"]:
+                    pygame.mixer.music.stop()
                     pygame.mixer.music.load(self.music_paths["ending3"])
                     pygame.mixer.music.set_volume(1.0)
                     pygame.mixer.music.play(-1)
                     self.current_music = self.music_paths["ending3"]
                     self.game.current_music = self.current_music
-                except pygame.error as e:
-                    print(f"Failed to load {self.music_paths['ending3']}: {e}")
-        elif self.state == "ending4":
-            if self.current_music != self.music_paths["ending4"]:
-                pygame.mixer.music.stop()
-                try:
+                    logging.info("Playing ending3 music")
+            elif self.state == "ending4":
+                if self.current_music != self.music_paths["ending4"]:
+                    pygame.mixer.music.stop()
                     pygame.mixer.music.load(self.music_paths["ending4"])
                     pygame.mixer.music.set_volume(1.0)
                     pygame.mixer.music.play(-1)
                     self.current_music = self.music_paths["ending4"]
                     self.game.current_music = self.current_music
-                except pygame.error as e:
-                    print(f"Failed to load {self.music_paths['ending4']}: {e}")
-        elif self.state == "ending5":
-            if self.current_music != self.music_paths["ending5"]:
-                pygame.mixer.music.stop()
-                try:
+                    logging.info("Playing ending4 music")
+            elif self.state == "ending5":
+                if self.current_music != self.music_paths["ending5"]:
+                    pygame.mixer.music.stop()
                     pygame.mixer.music.load(self.music_paths["ending5"])
                     pygame.mixer.music.set_volume(1.0)
                     pygame.mixer.music.play(-1)
                     self.current_music = self.music_paths["ending5"]
                     self.game.current_music = self.current_music
-                except pygame.error as e:
-                    print(f"Failed to load {self.music_paths['ending5']}: {e}")
+                    logging.info("Playing ending5 music")
+        except pygame.error as e:
+            logging.error(f"Failed to load music: {str(e)}")
+            print(f"Failed to load music: {str(e)}")
 
     def update(self):
         dt = self.clock.tick(60) / 16.67
@@ -254,9 +255,11 @@ class BattleScene:
             if self.first_dodge:
                 self.game.change_scene(InstructionScene(self.game, self.dodge_pages, "dodge_countdown", self))
                 self.first_dodge = False
+                logging.info("Showing dodge instruction")
             elif self.first_attack:
                 self.game.change_scene(InstructionScene(self.game, self.attack_pages, "attack", self))
                 self.first_attack = False
+                logging.info("Showing attack instruction")
         elif self.state == "dodge":
             self.update_dodge()
         elif self.state == "dodge_countdown":
@@ -269,20 +272,24 @@ class BattleScene:
                 self.items.clear()
                 if self.boss_hp <= 0:
                     self.state = "win"
+                    logging.info("Win state reached")
                 elif self.player_hp <= 0:
                     self.state = "lose"
+                    logging.info("Lose state reached")
                 else:
                     if self.previous_state == "dodge":
                         self.state = "instruction" if self.first_attack else "attack"
                         self.attack_cursor.x = 75
                         self.attack_start_time = pygame.time.get_ticks()
                         self.attack_active = False
+                        logging.info("Transition to attack")
                     else:
                         self.state = "dodge_countdown"
                         self.boss_hit = False
                         self.dodge_countdown_timer = pygame.time.get_ticks()
                         self.reset_player_position()
                         self.projectiles.clear()
+                        logging.info("Transition to dodge_countdown")
 
         if self.state in ["dodge", "dodge_countdown", "attack", "transition"]:
             self.window_spawn_timer += self.clock.get_time()
@@ -302,6 +309,7 @@ class BattleScene:
             self.dodge_start_time = current_ticks
             self.last_spawn = current_ticks
             self.item_spawn_timer = current_ticks
+            logging.info("Dodge countdown finished")
         if self.current_music != self.music_paths["dodge"]:
             self.update_music()
 
@@ -356,41 +364,52 @@ class BattleScene:
                 if item.item_type == "item1":
                     if self.player_hp < 3:
                         self.player_hp += 1
+                        logging.info("Collected item1, HP increased")
                 elif item.item_type == "item2":
                     self.invincible = True
                     self.invincible_timer = now
+                    logging.info("Collected item2, invincible activated")
                 elif item.item_type == "item3":
                     if self.boss_hp < 5:
                         self.boss_hp += 1
                     self.item3_count += 1
+                    logging.info(f"Collected item3, count: {self.item3_count}")
                     if self.item3_count >= 7:  # 結局三
                         self.state = "ending3"
                         self.items.clear()
                         self.update_music()
+                        logging.info("Ending3 triggered")
                         break
                 elif item.item_type == "item4":
                     self.item4_count += 1
+                    logging.info(f"Collected item4, count: {self.item4_count}")
                     if self.item4_count >= 4:  # 結局四
                         self.state = "ending4"
                         self.items.clear()
                         self.update_music()
+                        logging.info("Ending4 triggered")
                         break
                 elif item.item_type == "key1":
                     self.key1_count += 1
+                    logging.info("Collected key1")
                 elif item.item_type == "key2":
                     self.key2_count += 1
+                    logging.info("Collected key2")
                 elif item.item_type == "key3":
                     self.key3_count += 1
+                    logging.info("Collected key3")
                 if self.key1_count >= 1 and self.key2_count >= 1 and self.key3_count >= 1:  # 結局五
                     self.state = "ending5"
                     self.items.clear()
                     self.update_music()
+                    logging.info("Ending5 triggered")
                     break
                 continue
 
         if self.invincible:
             if now - self.invincible_timer > self.invincible_duration:
                 self.invincible = False
+                logging.info("Invincibility ended")
 
         for proj in self.projectiles[:]:
             proj.rect.x += proj.vx
@@ -402,21 +421,25 @@ class BattleScene:
                 self.projectiles.remove(proj)
                 self.invincible = True
                 self.invincible_timer = now
+                logging.info("Player hit, HP decreased")
                 if self.player_hp <= 0:
                     self.state = "transition"
                     self.transition_timer = 1000
                     self.previous_state = "dodge"
+                    logging.info("Player HP reached 0")
                     return
                 
         if pygame.time.get_ticks() - self.dodge_start_time >= 10000:
             self.state = "transition"
             self.transition_timer = 1000
             self.previous_state = "dodge"
+            logging.info("Dodge phase timed out")
 
     def update_attack(self):
         if not self.attack_active:
             if pygame.time.get_ticks() - self.attack_start_time >= self.attack_delay:
                 self.attack_active = True
+                logging.info("Attack phase activated")
         else:
             self.attack_cursor.x += self.attack_speed
             if self.attack_cursor.x > 505:
@@ -425,6 +448,7 @@ class BattleScene:
                 self.state = "transition"
                 self.transition_timer = 1000
                 self.previous_state = "attack"
+                logging.info("Attack phase missed")
         if self.current_music != self.music_paths["dodge"]:
             self.update_music()
 
@@ -521,3 +545,4 @@ class BattleScene:
                 y = 300 if vy > 0 else 880
                 rect = pygame.Rect(x, y, 20, 200)
             self.projectiles.append(Projectile(rect, vx, vy, angle))
+            logging.info("Spawned projectile")
