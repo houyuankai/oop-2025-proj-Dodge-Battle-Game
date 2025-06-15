@@ -21,6 +21,19 @@ class BattleScene:
         "ending4": load_image(os.path.join("assets", "images", "ending4.png"), size=(600, 900)),
         "ending5": load_image(os.path.join("assets", "images", "ending5.png"), size=(600, 900))
     }
+    # 預載音效
+    music_paths = {
+        "dodge": os.path.join("assets", "sounds", "music_2.mp3"),
+        "win": os.path.join("assets", "sounds", "music_4.mp3"),
+        "lose": os.path.join("assets", "sounds", "music_3.mp3"),
+        "ending3": os.path.join("assets", "sounds", "music_e3.mp3"),
+        "ending4": os.path.join("assets", "sounds", "music_e4.mp3"),
+        "ending5": os.path.join("assets", "sounds", "music_e5.mp3")
+    }
+    for path in music_paths.values():
+        if os.path.exists(path):
+            pygame.mixer.music.load(path)  # 預載以減少延遲
+            pygame.mixer.music.stop()
 
     def __init__(self, game):
         self.game = game
@@ -104,14 +117,6 @@ class BattleScene:
         self.items.clear()
         
         self.current_music = None
-        self.music_paths = {
-            "dodge": os.path.join("assets", "sounds", "music_2.mp3"),
-            "win": os.path.join("assets", "sounds", "music_4.mp3"),
-            "lose": os.path.join("assets", "sounds", "music_3.mp3"),
-            "ending3": os.path.join("assets", "sounds", "music_e3.mp3"),
-            "ending4": os.path.join("assets", "sounds", "music_e4.mp3"),
-            "ending5": os.path.join("assets", "sounds", "music_e5.mp3")
-        }
         pygame.mixer.music.set_volume(1.0)
 
     def reset_player_position(self):
@@ -421,7 +426,7 @@ class BattleScene:
                 window.draw(screen)
 
         if self.state in ["dodge", "dodge_countdown", "attack", "transition"]:
-            pygame.draw.rect(screen, (0, 0, 0), (0, 0, 50))
+            pygame.draw.rect(screen, (0, 0, 0), (0, 0, 600, 50))  # 修正矩形參數
 
         if self.boss_hit and self.state == "transition":
             screen.blit(self.boss_hit_image, (0, 50))
