@@ -19,6 +19,8 @@ class Item:
                 print(f"Failed to load {item_type}.png: {e}")
                 cls.images[item_type] = pygame.Surface((40, 40))
                 cls.images[item_type].fill((255, 0, 0))  # 預設紅色方塊
+        for i in range(1, 4):
+            cls.images[f"key{i}"] = load_image(os.path.join("assets", "images", f"key{i}.png"), size=(50, 50))
 
     def __init__(self, x, y, item_type):
         self.item_type = item_type
