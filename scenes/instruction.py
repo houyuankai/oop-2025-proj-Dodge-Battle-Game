@@ -23,7 +23,7 @@ class InstructionScene:
             self.sound.set_volume(0.5)
             self.sound.play(0)
         except pygame.error as e:
-            pass
+            print(f"Failed to load music_5.mp3: {e}")
 
     def handle_event(self, event):
         if self.done:
