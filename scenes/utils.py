@@ -1,12 +1,23 @@
 import pygame
+import sys
 import os
 
+def resource_path(relative_path):
+    """獲取打包後或開發中的資源路徑"""
+    if hasattr(sys, '_MEIPASS'):
+        # PyInstaller 臨時目錄
+        return os.path.join(sys._MEIPASS, relative_path)
+    # 開發環境：相對專案根目錄
+    base_path = os.path.dirname(os.path.dirname(__file__))
+    return os.path.join(base_path, relative_path)
+
 def load_image(path, size=None):
-    if not os.path.exists(path):
-        raise FileNotFoundError(f"Image not found: {path}")
-    image = pygame.image.load(path).convert_alpha()
+    full_path = resource_path(path)
+    if not os.path.exists(full_path):
+        raise FileNotFoundError(f"Image not found: {full_path}")
+    image = pygame.image.load(full_path)
     if size:
-        image = pygame.transform.scale(image, (int(size[0]), int(size[1])))
+        image = pygame.transform.scale(image, size)
     return image
 
 def load_images_from_folder(folder_path, scale=None):
