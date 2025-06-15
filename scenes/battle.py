@@ -316,26 +316,41 @@ class BattleScene:
             self.last_spawn = now
 
         if now - self.item_spawn_timer >= self.item_spawn_interval:
-            if len(self.items) < 2:
+            if len(self.items) < 3:  # 增加限制
+                # 普通物件生成
                 r = random.random()
-                x = random.randint(50, 550)
-                y = random.randint(350, 850)
+                x1 = random.randint(50, 550)
+                y1 = random.randint(350, 850)
                 if r < 0.18:  # 18% item1
-                    self.items.append(Item(x, y, "item1"))
+                    self.items.append(Item(x1, y1, "item1"))
+                    print(f"Spawned item1 at ({x1}, {y1}), boss_hp: {self.boss_hp}")
                 elif r < 0.38:  # 20% item2
-                    self.items.append(Item(x, y, "item2"))
+                    self.items.append(Item(x1, y1, "item2"))
+                    print(f"Spawned item2 at ({x1}, {y1}), boss_hp: {self.boss_hp}")
                 elif r < 0.54:  # 16% item3
-                    self.items.append(Item(x, y, "item3"))
+                    self.items.append(Item(x1, y1, "item3"))
+                    print(f"Spawned item3 at ({x1}, {y1}), boss_hp: {self.boss_hp}")
                 elif r < 0.68:  # 14% item4
-                    self.items.append(Item(x, y, "item4"))
-            if self.boss_hp in [1, 2] and len(self.items) < 2:
-                r2 = random.random()
-                if r2 < 0.10:  # 10% key1
-                    self.items.append(Item(x, y, "key1"))
-                elif r2 < 0.20:  # 10% key2
-                    self.items.append(Item(x, y, "key2"))
-                elif r2 < 0.30:  # 10% key3
-                    self.items.append(Item(x, y, "key3"))
+                    self.items.append(Item(x1, y1, "item4"))
+                    print(f"Spawned item4 at ({x1}, {y1}), boss_hp: {self.boss_hp}")
+                # 鑰匙生成（分離座標）
+                if self.boss_hp in [1, 2]:
+                    r2 = random.random()
+                    x2 = random.randint(50, 550)
+                    y2 = random.randint(350, 850)
+                    # 確保鑰匙與普通物件距離 > 50
+                    while len(self.items) > 0 and math.hypot(x2 - x1, y2 - y1) < 50:
+                        x2 = random.randint(50, 550)
+                        y2 = random.randint(350, 850)
+                    if r2 < 0.10:  # 10% key1
+                        self.items.append(Item(x2, y2, "key1"))
+                        print(f"Spawned key1 at ({x2}, {y2}), boss_hp: {self.boss_hp}")
+                    elif r2 < 0.20:  # 10% key2
+                        self.items.append(Item(x2, y2, "key2"))
+                        print(f"Spawned key2 at ({x2}, {y2}), boss_hp: {self.boss_hp}")
+                    elif r2 < 0.30:  # 10% key3
+                        self.items.append(Item(x2, y2, "key3"))
+                        print(f"Spawned key3 at ({x2}, {y2}), boss_hp: {self.boss_hp}")
             self.item_spawn_timer = now
 
         for item in self.items[:]:
