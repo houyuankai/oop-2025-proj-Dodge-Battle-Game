@@ -15,9 +15,9 @@ class BattleScene:
         self.screen = game.screen
         self.clock = pygame.time.Clock()
         self.dodge_start_time = pygame.time.get_ticks()
+        self.scale = game.scale  # 從 Game 獲取縮放比例
 
-        # 預載入物件圖片
-        Item.preload_images()
+        Item.preload_images(self.scale)
 
         self.player_hp = 3
         self.boss_hp = 5
@@ -31,38 +31,41 @@ class BattleScene:
         
         self.invincible = False
         self.invincible_timer = 0
-        self.invincible_duration = 1700  # 1.7 秒
+        self.invincible_duration = 1700
 
-        self.player = pygame.Rect(300, 600, 20, 20)
-        self.player_speed = 7
+        # 縮放玩家
+        self.player = pygame.Rect(300 * self.scale, 600 * self.scale, 20 * self.scale, 20 * self.scale)
+        self.player_speed = 7 * self.scale
 
         self.projectiles = []
         self.spawn_delay = 1000
-        self.projectile_speed = 5
+        self.projectile_speed = 5 * self.scale
         self.last_spawn = pygame.time.get_ticks()
         
+        # 縮放 Boss 圖片
         self.boss_images = [
-            load_image(os.path.join("assets", "images", f"boss_{i}.png"), size=(180, 270)) for i in range(1, 9)
+            load_image(os.path.join("assets", "images", f"boss_{i}.png"), size=(180 * self.scale, 270 * self.scale)) for i in range(1, 9)
         ]
-        self.boss_hit_image = load_image(os.path.join("assets", "images", "boss_hit.png"), size=(600, 250))
+        self.boss_hit_image = load_image(os.path.join("assets", "images", "boss_hit.png"), size=(600 * self.scale, 250 * self.scale))
         self.boss_anim_index = 0
         self.boss_anim_timer = 0
         self.boss_hit = False
         
-        self.heart_image = load_image(os.path.join("assets", "images", "heart.png"), size=(25, 25))
+        self.heart_image = load_image(os.path.join("assets", "images", "heart.png"), size=(25 * self.scale, 25 * self.scale))
         
-        self.font = pygame.font.SysFont("Arial", 24, bold=True)
-        self.large_font = pygame.font.SysFont("Arial", 72, bold=True)
+        self.font = pygame.font.SysFont("Arial", int(24 * self.scale), bold=True)
+        self.large_font = pygame.font.SysFont("Arial", int(72 * self.scale), bold=True)
 
         self.previous_state = None
 
         self.attack_start_time = 0
         self.attack_delay = 2000
         
-        self.attack_bar = pygame.Rect(75, 590, 450, 20)
-        self.attack_zone = pygame.Rect(265, 580, 70, 40)
-        self.attack_cursor = pygame.Rect(75, 580, 20, 40)
-        self.attack_speed = 8
+        # 縮放攻擊條
+        self.attack_bar = pygame.Rect(75 * self.scale, 590 * self.scale, 450 * self.scale, 20 * self.scale)
+        self.attack_zone = pygame.Rect(265 * self.scale, 580 * self.scale, 70 * self.scale, 40 * self.scale)
+        self.attack_cursor = pygame.Rect(75 * self.scale, 580 * self.scale, 20 * self.scale, 40 * self.scale)
+        self.attack_speed = 8 * self.scale
         self.attack_active = False
         
         self.button_manager = ButtonManager(game)
@@ -93,12 +96,13 @@ class BattleScene:
         self.key2_count = 0
         self.key3_count = 0
 
+        # 縮放結局圖片
         self.ending_images = {
-            "win": load_image(os.path.join("assets", "images", "win.png"), size=(600, 900)),
-            "lose": load_image(os.path.join("assets", "images", "lose.png"), size=(600, 900)),
-            "ending3": load_image(os.path.join("assets", "images", "ending3.png"), size=(600, 900)),
-            "ending4": load_image(os.path.join("assets", "images", "ending4.png"), size=(600, 900)),
-            "ending5": load_image(os.path.join("assets", "images", "ending5.png"), size=(600, 900))
+            "win": load_image(os.path.join("assets", "images", "win.png"), size=(600 * self.scale, 900 * self.scale)),
+            "lose": load_image(os.path.join("assets", "images", "lose.png"), size=(600 * self.scale, 900 * self.scale)),
+            "ending3": load_image(os.path.join("assets", "images", "ending3.png"), size=(600 * self.scale, 900 * self.scale)),
+            "ending4": load_image(os.path.join("assets", "images", "ending4.png"), size=(600 * self.scale, 900 * self.scale)),
+            "ending5": load_image(os.path.join("assets", "images", "ending5.png"), size=(600 * self.scale, 900 * self.scale))
         }
 
         self.reset_player_position()
@@ -117,8 +121,8 @@ class BattleScene:
         pygame.mixer.music.set_volume(1.0)
 
     def reset_player_position(self):
-        self.player.x = 300
-        self.player.y = 600
+        self.player.x = 300 * self.scale
+        self.player.y = 600 * self.scale
         
     def reset_game(self):
         self.player_hp = 3
@@ -137,7 +141,7 @@ class BattleScene:
         self.attack_timer = 0
         self.attack_start_time = 0
         self.attack_active = False
-        self.attack_cursor.x = 75
+        self.attack_cursor.x = 75 * self.scale
         self.previous_state = None
         self.boss_hit = False
         self.first_dodge = True
@@ -270,7 +274,7 @@ class BattleScene:
                 else:
                     if self.previous_state == "dodge":
                         self.state = "instruction" if self.first_attack else "attack"
-                        self.attack_cursor.x = 75
+                        self.attack_cursor.x = 75 * self.scale
                         self.attack_start_time = pygame.time.get_ticks()
                         self.attack_active = False
                     else:
@@ -283,8 +287,8 @@ class BattleScene:
         if self.state in ["dodge", "dodge_countdown", "attack", "transition"]:
             self.window_spawn_timer += self.clock.get_time()
             if self.window_spawn_timer >= self.window_spawn_interval:
-                self.windows.append(Window(0, 150, 300, 150, width=20, height=160))
-                self.windows.append(Window(600, 150, 300, 150, width=20, height=160))
+                self.windows.append(Window(0, 150 * self.scale, 300 * self.scale, 150 * self.scale, width=20 * self.scale, height=160 * self.scale, scale=self.scale))
+                self.windows.append(Window(600 * self.scale, 150 * self.scale, 300 * self.scale, 150 * self.scale, width=20 * self.scale, height=160 * self.scale, scale=self.scale))
                 self.window_spawn_timer = 0
             for window in self.windows[:]:
                 if window.update(dt):
@@ -308,7 +312,7 @@ class BattleScene:
         if keys[pygame.K_w]: self.player.y -= self.player_speed
         if keys[pygame.K_s]: self.player.y += self.player_speed
 
-        self.player.clamp_ip(pygame.Rect(0, 300, 600, 600))
+        self.player.clamp_ip(pygame.Rect(0, 300 * self.scale, 600 * self.scale, 600 * self.scale))
 
         now = pygame.time.get_ticks()
         if now - self.last_spawn > self.spawn_delay:
@@ -318,8 +322,8 @@ class BattleScene:
         if now - self.item_spawn_timer >= self.item_spawn_interval:
             if len(self.items) < 3:
                 r = random.random()
-                x1 = random.randint(50, 550)
-                y1 = random.randint(350, 850)
+                x1 = random.randint(50 * self.scale, 550 * self.scale)
+                y1 = random.randint(350 * self.scale, 850 * self.scale)
                 if r < 0.18:  # 18% item1
                     self.items.append(Item(x1, y1, "item1"))
                 elif r < 0.38:  # 20% item2
@@ -330,11 +334,11 @@ class BattleScene:
                     self.items.append(Item(x1, y1, "item4"))
                 if self.boss_hp in [1, 2]:
                     r2 = random.random()
-                    x2 = random.randint(50, 550)
-                    y2 = random.randint(350, 850)
-                    while len(self.items) > 0 and math.hypot(x2 - x1, y2 - y1) < 50:
-                        x2 = random.randint(50, 550)
-                        y2 = random.randint(350, 850)
+                    x2 = random.randint(50 * self.scale, 550 * self.scale)
+                    y2 = random.randint(350 * self.scale, 850 * self.scale)
+                    while len(self.items) > 0 and math.hypot(x2 - x1, y2 - y1) < 50 * self.scale:
+                        x2 = random.randint(50 * self.scale, 550 * self.scale)
+                        y2 = random.randint(350 * self.scale, 850 * self.scale)
                     if r2 < 0.08:  # 8% key1
                         self.items.append(Item(x2, y2, "key1"))
                     elif r2 < 0.16:  # 8% key2
@@ -391,7 +395,7 @@ class BattleScene:
         for proj in self.projectiles[:]:
             proj.rect.x += proj.vx
             proj.rect.y += proj.vy
-            if not pygame.Rect(0, 300, 600, 600).colliderect(proj.rect):
+            if not pygame.Rect(0, 300 * self.scale, 600 * self.scale, 600 * self.scale).colliderect(proj.rect):
                 self.projectiles.remove(proj)
             elif self.player.colliderect(proj.rect) and not self.invincible:
                 self.player_hp -= 1
@@ -415,7 +419,7 @@ class BattleScene:
                 self.attack_active = True
         else:
             self.attack_cursor.x += self.attack_speed
-            if self.attack_cursor.x > 505:
+            if self.attack_cursor.x > 505 * self.scale:
                 self.boss_hit = False
                 self.attack_active = False
                 self.state = "transition"
@@ -430,35 +434,35 @@ class BattleScene:
         else:
             screen.fill((240, 205, 0))
         
-        pygame.draw.rect(screen, (0, 0, 0), (0, 300, 600, 600))
+        pygame.draw.rect(screen, (0, 0, 0), (0, 300 * self.scale, 600 * self.scale, 600 * self.scale))
 
         if self.state in ["dodge", "dodge_countdown", "attack", "transition"]:
-            pygame.draw.line(screen, (100, 100, 100), (0, 0), (600, 300), 2)
-            pygame.draw.line(screen, (100, 100, 100), (600, 0), (0, 300), 2)
+            pygame.draw.line(screen, (100, 100, 100), (0, 0), (600 * self.scale, 300 * self.scale), 2)
+            pygame.draw.line(screen, (100, 100, 100), (600 * self.scale, 0), (0, 300 * self.scale), 2)
 
         if self.state in ["dodge", "dodge_countdown", "attack", "transition"]:
             for window in self.windows:
                 window.draw(screen)
 
         if self.state in ["dodge", "dodge_countdown", "attack", "transition"]:
-            pygame.draw.rect(screen, (0, 0, 0), (0, 0, 600, 50))
+            pygame.draw.rect(screen, (0, 0, 0), (0, 0, 600 * self.scale, 50 * self.scale))
 
         if self.boss_hit and self.state == "transition":
-            screen.blit(self.boss_hit_image, (0, 50))
+            screen.blit(self.boss_hit_image, (0, 50 * self.scale))
         else:
             if pygame.time.get_ticks() - self.boss_anim_timer > 300:
                 self.boss_anim_index = (self.boss_anim_index + 1) % len(self.boss_images)
                 self.boss_anim_timer = pygame.time.get_ticks()
-            screen.blit(self.boss_images[self.boss_anim_index], (210, 30))
+            screen.blit(self.boss_images[self.boss_anim_index], (210 * self.scale, 30 * self.scale))
 
         hp_text = self.font.render("Your HP :", True, (255, 255, 255))
         boss_text = self.font.render("Boss HP :", True, (255, 255, 255))
-        screen.blit(hp_text, (20, 10))
-        screen.blit(boss_text, (350, 10))
+        screen.blit(hp_text, (20 * self.scale, 10 * self.scale))
+        screen.blit(boss_text, (350 * self.scale, 10 * self.scale))
         for i in range(self.player_hp):
-            screen.blit(self.heart_image, (140 + i * 25, 10))
+            screen.blit(self.heart_image, (140 * self.scale + i * 25 * self.scale, 10 * self.scale))
         for i in range(self.boss_hp):
-            screen.blit(self.heart_image, (460 + i * 25, 10))
+            screen.blit(self.heart_image, (460 * self.scale + i * 25 * self.scale, 10 * self.scale))
 
         if self.state in ["dodge", "dodge_countdown"]:
             player_color = (0, 255, 255) if self.invincible else (255, 200, 0)
@@ -471,7 +475,7 @@ class BattleScene:
             if self.state == "dodge_countdown":
                 countdown = max(0, (self.dodge_countdown_duration - (pygame.time.get_ticks() - self.dodge_countdown_timer)) // 1000 + 1)
                 countdown_text = self.font.render(f"Ready in: {countdown}", True, (255, 255, 255))
-                screen.blit(countdown_text, (240, 680))
+                screen.blit(countdown_text, (240 * self.scale, 680 * self.scale))
 
         elif self.state == "attack":
             pygame.draw.rect(screen, (255, 255, 255), self.attack_bar)
@@ -480,10 +484,10 @@ class BattleScene:
             if not self.attack_active:
                 countdown = max(0, (self.attack_delay - (pygame.time.get_ticks() - self.attack_start_time)) // 1000 + 1)
                 countdown_text = self.font.render(f"Ready in: {countdown}", True, (255, 255, 255))
-                screen.blit(countdown_text, (240, 680))
+                screen.blit(countdown_text, (240 * self.scale, 680 * self.scale))
             else:
                 press_text = self.font.render("Press SPACE", True, (255, 255, 255))
-                screen.blit(press_text, (230, 680))
+                screen.blit(press_text, (230 * self.scale, 680 * self.scale))
 
         elif self.state in ["win", "lose", "ending3", "ending4", "ending5"]:
             screen.blit(self.ending_images[self.state], (0, 0))
@@ -505,15 +509,15 @@ class BattleScene:
             vx, vy = dirs[t]
             angle = angles[t]
             if vx == 0:
-                x = random.choice([100, 300, 500])
-                y = 300 if vy > 0 else 880
-                rect = pygame.Rect(x-100, y, 200, 20)
+                x = random.choice([100 * self.scale, 300 * self.scale, 500 * self.scale])
+                y = 300 * self.scale if vy > 0 else 880 * self.scale
+                rect = pygame.Rect(x - 100 * self.scale, y, 200 * self.scale, 20 * self.scale)
             elif vy == 0:
-                x = 0 if vx > 0 else 580
-                y = random.choice([400, 600, 800])
-                rect = pygame.Rect(x, y-100, 20, 200)
+                x = 0 if vx > 0 else 580 * self.scale
+                y = random.choice([400 * self.scale, 600 * self.scale, 800 * self.scale])
+                rect = pygame.Rect(x, y - 100 * self.scale, 20 * self.scale, 200 * self.scale)
             else:
-                x = 0 if vx > 0 else 580
-                y = 300 if vy > 0 else 880
-                rect = pygame.Rect(x, y, 20, 200)
+                x = 0 if vx > 0 else 580 * self.scale
+                y = 300 * self.scale if vy > 0 else 880 * self.scale
+                rect = pygame.Rect(x, y, 20 * self.scale, 200 * self.scale)
             self.projectiles.append(Projectile(rect, vx, vy, angle))
