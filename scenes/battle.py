@@ -376,7 +376,7 @@ class BattleScene:
                         break
                 elif item.item_type == "item4":
                     self.item4_count += 1
-                    if self.item4_count >= 5:  # 結局四
+                    if self.item4_count >= 4:  # 結局四:蒐集4個
                         self.state = "ending4"
                         self.items.clear()
                         self.update_music()
