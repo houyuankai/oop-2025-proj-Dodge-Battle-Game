@@ -1,30 +1,42 @@
 import pygame
 import os
+import logging
 from scenes.utils import load_image
+
+logging.basicConfig(level=logging.DEBUG, format='%(asctime)s %(levelname)s: %(message)s')
 
 class Item:
     images = {}
 
     @classmethod
     def preload_images(cls, scale):
-        for item_type in ["item1", "item2", "item3", "item4"]:
-            path = os.path.join("assets", "images", f"{item_type}.png")
-            try:
+        try:
+            logging.info("Preloading item images")
+            for item_type in ["item1", "item2", "item3", "item4"]:
+                path = os.path.join("assets", "images", f"{item_type}.png")
+                if not os.path.exists(path):
+                    logging.error(f"Image not found: {path}")
+                    cls.images[item_type] = pygame.Surface((int(40 * scale), int(40 * scale)))
+                    cls.images[item_type].fill((255, 0, 0))
+                    continue
                 image = pygame.image.load(path)
                 image = image.convert_alpha()
                 image = pygame.transform.scale(image, (int(50 * scale), int(50 * scale)))
                 cls.images[item_type] = image
-            except pygame.error as e:
-                print(f"Failed to load {item_type}.png: {e}")
-                cls.images[item_type] = pygame.Surface((int(40 * scale), int(40 * scale)))
-                cls.images[item_type].fill((255, 0, 0))
-        for i in range(1, 4):
-            try:
-                cls.images[f"key{i}"] = load_image(os.path.join("assets", "images", f"key{i}.png"), size=(int(50 * scale), int(50 * scale)))
-            except pygame.error as e:
-                print(f"Failed to load key{i}.png: {e}")
-                cls.images[f"key{i}"] = pygame.Surface((int(40 * scale), int(40 * scale)))
-                cls.images[f"key{i}"].fill((255, 0, 0))
+                logging.info(f"Loaded {item_type}.png")
+            for i in range(1, 4):
+                path = os.path.join("assets", "images", f"key{i}.png")
+                if not os.path.exists(path):
+                    logging.error(f"Image not found: {path}")
+                    cls.images[f"key{i}"] = pygame.Surface((int(40 * scale), int(40 * scale)))
+                    cls.images[f"key{i}"].fill((255, 0, 0))
+                    continue
+                cls.images[f"key{i}"] = load_image(path, size=(int(50 * scale), int(50 * scale)))
+                logging.info(f"Loaded key{i}.png")
+        except Exception as e:
+            logging.error(f"Preload images failed: {str(e)}")
+            print(f"Preload images failed: {str(e)}")
+            raise
 
     def __init__(self, x, y, item_type):
         self.item_type = item_type
@@ -32,3 +44,4 @@ class Item:
         self.rect = self.image.get_rect(topleft=(x, y))
         self.spawn_time = pygame.time.get_ticks()
         self.lifetime = 3000
+        logging.info(f"Created item: {item_type}")
