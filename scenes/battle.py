@@ -97,7 +97,7 @@ class BattleScene:
             "win": load_image(os.path.join("assets", "images", "win.png"), size=(600, 900)),
             "lose": load_image(os.path.join("assets", "images", "lose.png"), size=(600, 900)),
             "ending3": load_image(os.path.join("assets", "images", "ending3.png"), size=(600, 900)),
-            "ending4": load_image(os.path.join("assets", "images", "ending4.png"), size=(600, 900))
+            "ending4": load_image(os.path.join("assets", "images", "ending4.png"), size=(600, 900)),
             "ending5": load_image(os.path.join("assets", "images", "ending5.png"), size=(600, 900))
         }
 
