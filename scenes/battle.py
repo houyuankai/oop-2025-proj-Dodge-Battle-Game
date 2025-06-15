@@ -316,41 +316,31 @@ class BattleScene:
             self.last_spawn = now
 
         if now - self.item_spawn_timer >= self.item_spawn_interval:
-            if len(self.items) < 3:  # 增加限制
-                # 普通物件生成
+            if len(self.items) < 3:
                 r = random.random()
                 x1 = random.randint(50, 550)
                 y1 = random.randint(350, 850)
                 if r < 0.18:  # 18% item1
                     self.items.append(Item(x1, y1, "item1"))
-                    print(f"Spawned item1 at ({x1}, {y1}), boss_hp: {self.boss_hp}")
                 elif r < 0.38:  # 20% item2
                     self.items.append(Item(x1, y1, "item2"))
-                    print(f"Spawned item2 at ({x1}, {y1}), boss_hp: {self.boss_hp}")
                 elif r < 0.52:  # 14% item3
                     self.items.append(Item(x1, y1, "item3"))
-                    print(f"Spawned item3 at ({x1}, {y1}), boss_hp: {self.boss_hp}")
                 elif r < 0.62:  # 10% item4
                     self.items.append(Item(x1, y1, "item4"))
-                    print(f"Spawned item4 at ({x1}, {y1}), boss_hp: {self.boss_hp}")
-                # 鑰匙生成（分離座標）
                 if self.boss_hp in [1, 2]:
                     r2 = random.random()
                     x2 = random.randint(50, 550)
                     y2 = random.randint(350, 850)
-                    # 確保鑰匙與普通物件距離 > 50
                     while len(self.items) > 0 and math.hypot(x2 - x1, y2 - y1) < 50:
                         x2 = random.randint(50, 550)
                         y2 = random.randint(350, 850)
                     if r2 < 0.08:  # 8% key1
                         self.items.append(Item(x2, y2, "key1"))
-                        print(f"Spawned key1 at ({x2}, {y2}), boss_hp: {self.boss_hp}")
                     elif r2 < 0.16:  # 8% key2
                         self.items.append(Item(x2, y2, "key2"))
-                        print(f"Spawned key2 at ({x2}, {y2}), boss_hp: {self.boss_hp}")
                     elif r2 < 0.24:  # 8% key3
                         self.items.append(Item(x2, y2, "key3"))
-                        print(f"Spawned key3 at ({x2}, {y2}), boss_hp: {self.boss_hp}")
             self.item_spawn_timer = now
 
         for item in self.items[:]:
@@ -376,7 +366,7 @@ class BattleScene:
                         break
                 elif item.item_type == "item4":
                     self.item4_count += 1
-                    if self.item4_count >= 4:  # 結局四:蒐集4個
+                    if self.item4_count >= 4:  # 結局四
                         self.state = "ending4"
                         self.items.clear()
                         self.update_music()
