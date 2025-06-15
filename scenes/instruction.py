@@ -1,7 +1,6 @@
 import pygame
-       import os
-       from scenes.utils import load_image
-
+import os
+from scenes.utils import load_image
        class InstructionScene:
            def __init__(self, game, image_paths, next_state, battle_scene):
                self.game = game
