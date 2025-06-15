@@ -89,12 +89,16 @@ class BattleScene:
         self.item_spawn_interval = 1500
         self.item3_count = 0
         self.item4_count = 0
+        self.key1_count = 0
+        self.key2_count = 0
+        self.key3_count = 0
 
         self.ending_images = {
             "win": load_image(os.path.join("assets", "images", "win.png"), size=(600, 900)),
             "lose": load_image(os.path.join("assets", "images", "lose.png"), size=(600, 900)),
             "ending3": load_image(os.path.join("assets", "images", "ending3.png"), size=(600, 900)),
             "ending4": load_image(os.path.join("assets", "images", "ending4.png"), size=(600, 900))
+            "ending5": load_image(os.path.join("assets", "images", "ending5.png"), size=(600, 900))
         }
 
         self.reset_player_position()
@@ -107,7 +111,8 @@ class BattleScene:
             "win": os.path.join("assets", "sounds", "music_4.mp3"),
             "lose": os.path.join("assets", "sounds", "music_3.mp3"),
             "ending3": os.path.join("assets", "sounds", "music_e3.mp3"),
-            "ending4": os.path.join("assets", "sounds", "music_e4.mp3")
+            "ending4": os.path.join("assets", "sounds", "music_e4.mp3"),
+            "ending5": os.path.join("assets", "sounds", "music_e5.mp3")
         }
         pygame.mixer.music.set_volume(1.0)
 
@@ -141,6 +146,9 @@ class BattleScene:
         self.item_spawn_timer = 0
         self.item3_count = 0
         self.item4_count = 0
+        elf.key1_count = 0
+        self.key2_count = 0
+        self.key3_count = 0
         pygame.mixer.music.stop()
         self.current_music = None
         self.game.current_music = None
@@ -158,7 +166,7 @@ class BattleScene:
                     self.state = "transition"
                     self.transition_timer = 1000
                     self.previous_state = "attack"
-        elif self.state in ["win", "lose", "ending3", "ending4"]:
+        elif self.state in ["win", "lose", "ending3", "ending4", "ending5"]:
             self.button_manager.handle_event(event, self)
 
     def update_music(self):
@@ -222,6 +230,17 @@ class BattleScene:
                     self.game.current_music = self.current_music
                 except pygame.error as e:
                     print(f"Failed to load music_e4.mp3: {e}")
+        elif self.state == "ending5":
+            if self.current_music != self.music_paths["ending5"]:
+                pygame.mixer.music.stop()
+                try:
+                    pygame.mixer.music.load(self.music_paths["ending5"])
+                    pygame.mixer.music.set_volume(1.0)
+                    pygame.mixer.music.play(-1)
+                    self.current_music = self.music_paths["ending5"]
+                    self.game.current_music = self.current_music
+                except pygame.error as e:
+                    print(f"Failed to load music_e5.mp3: {e}")
 
     def update(self):
         dt = self.clock.tick(60) / 16.67
@@ -461,7 +480,7 @@ class BattleScene:
                 press_text = self.font.render("Press SPACE", True, (255, 255, 255))
                 screen.blit(press_text, (230, 680))
 
-        elif self.state in ["win", "lose", "ending3", "ending4"]:
+        elif self.state in ["win", "lose", "ending3", "ending4", "ending5"]:
             screen.blit(self.ending_images[self.state], (0, 0))
             self.button_manager.draw(screen)
 
