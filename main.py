@@ -1,20 +1,28 @@
 import pygame
 import sys
+import os
 from scenes.menu import MenuScene
 from scenes.battle import BattleScene
 
 class Game:
     def __init__(self):
         pygame.init()
-        pygame.mixer.init()  # 初始化音樂系統
-        self.screen_width = 600
-        self.screen_height = 900
+        pygame.mixer.init()
+        # 動態獲取螢幕高度
+        info = pygame.display.Info()
+        screen_height = info.current_h
+        # 保持 2:3 比例
+        self.screen_height = screen_height
+        self.screen_width = int(screen_height * 2 / 3)
+        self.scale = screen_height / 900  # 縮放比例
         self.screen = pygame.display.set_mode((self.screen_width, self.screen_height))
         pygame.display.set_caption("Cuddle Time!")
+        # 置中視窗
+        os.environ['SDL_VIDEO_CENTERED'] = '1'
         self.clock = pygame.time.Clock()
         self.running = True
         self.current_scene = MenuScene(self)
-        self.current_music = None  # 追蹤當前音樂
+        self.current_music = None
 
     def run(self):
         while self.running:
@@ -32,7 +40,7 @@ class Game:
                 self.current_scene.handle_event(event)
 
     def change_scene(self, new_scene):
-        pygame.mixer.music.stop()  # 切換場景時停止音樂
+        pygame.mixer.music.stop()
         self.current_music = None
         if isinstance(new_scene, str):
             if new_scene == "menu":
@@ -43,9 +51,3 @@ class Game:
                 raise ValueError(f"Unknown scene name: {new_scene}")
         else:
             self.current_scene = new_scene
-
-if __name__ == "__main__":
-    game = Game()
-    game.run()
-    pygame.quit()
-    sys.exit()
