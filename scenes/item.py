@@ -1,5 +1,6 @@
 import pygame
 import os
+from scenes.utils import load_image
 
 class Item:
     images = {}  # 靜態圖片快取
