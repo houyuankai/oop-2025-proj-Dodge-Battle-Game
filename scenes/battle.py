@@ -307,8 +307,16 @@ class BattleScene:
                     self.items.append(Item(x, y, "item2"))
                 elif r < 0.54:  # 16% item3
                     self.items.append(Item(x, y, "item3"))
-                elif r < 0.68:  # 10% item4
+                elif r < 0.68:  # 14% item4
                     self.items.append(Item(x, y, "item4"))
+            if self.boss_hp in [1, 2] and len(self.items) < 2:
+                r2 = random.random()
+                if r2 < 0.10:  # 10% key1
+                    self.items.append(Item(x, y, "key1"))
+                elif r2 < 0.20:  # 10% key2
+                    self.items.append(Item(x, y, "key2"))
+                elif r2 < 0.30:  # 10% key3
+                    self.items.append(Item(x, y, "key3"))
             self.item_spawn_timer = now
 
         for item in self.items[:]:
@@ -339,6 +347,17 @@ class BattleScene:
                         self.items.clear()
                         self.update_music()
                         break
+                elif item.item_type == "key1":
+                    self.key1_count += 1
+                elif item.item_type == "key2":
+                    self.key2_count += 1
+                elif item.item_type == "key3":
+                    self.key3_count += 1
+                if self.key1_count >= 1 and self.key2_count >= 1 and self.key3_count >= 1:  # 結局五
+                    self.state = "ending5"
+                    self.items.clear()
+                    self.update_music()
+                    break
                 continue
 
         if self.invincible:
