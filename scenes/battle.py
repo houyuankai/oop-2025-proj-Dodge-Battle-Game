@@ -10,6 +10,18 @@ from scenes.window import Window
 from scenes.item import Item
 
 class BattleScene:
+    # 預載圖片
+    boss_images = [load_image(os.path.join("assets", "images", f"boss_{i}.png"), size=(180, 270)) for i in range(1, 9)]
+    boss_hit_image = load_image(os.path.join("assets", "images", "boss_hit.png"), size=(600, 250))
+    heart_image = load_image(os.path.join("assets", "images", "heart.png"), size=(25, 25))
+    ending_images = {
+        "win": load_image(os.path.join("assets", "images", "win.png"), size=(600, 900)),
+        "lose": load_image(os.path.join("assets", "images", "lose.png"), size=(600, 900)),
+        "ending3": load_image(os.path.join("assets", "images", "ending3.png"), size=(600, 900)),
+        "ending4": load_image(os.path.join("assets", "images", "ending4.png"), size=(600, 900)),
+        "ending5": load_image(os.path.join("assets", "images", "ending5.png"), size=(600, 900))
+    }
+
     def __init__(self, game):
         self.game = game
         self.screen = game.screen
@@ -41,15 +53,9 @@ class BattleScene:
         self.projectile_speed = 5
         self.last_spawn = pygame.time.get_ticks()
         
-        self.boss_images = [
-            load_image(os.path.join("assets", "images", f"boss_{i}.png"), size=(180, 270)) for i in range(1, 9)
-        ]
-        self.boss_hit_image = load_image(os.path.join("assets", "images", "boss_hit.png"), size=(600, 250))
         self.boss_anim_index = 0
         self.boss_anim_timer = 0
         self.boss_hit = False
-        
-        self.heart_image = load_image(os.path.join("assets", "images", "heart.png"), size=(25, 25))
         
         self.font = pygame.font.SysFont("Arial", 24, bold=True)
         self.large_font = pygame.font.SysFont("Arial", 72, bold=True)
@@ -92,14 +98,6 @@ class BattleScene:
         self.key1_count = 0
         self.key2_count = 0
         self.key3_count = 0
-
-        self.ending_images = {
-            "win": load_image(os.path.join("assets", "images", "win.png"), size=(600, 900)),
-            "lose": load_image(os.path.join("assets", "images", "lose.png"), size=(600, 900)),
-            "ending3": load_image(os.path.join("assets", "images", "ending3.png"), size=(600, 900)),
-            "ending4": load_image(os.path.join("assets", "images", "ending4.png"), size=(600, 900)),
-            "ending5": load_image(os.path.join("assets", "images", "ending5.png"), size=(600, 900))
-        }
 
         self.reset_player_position()
         self.projectiles.clear()
@@ -423,7 +421,7 @@ class BattleScene:
                 window.draw(screen)
 
         if self.state in ["dodge", "dodge_countdown", "attack", "transition"]:
-            pygame.draw.rect(screen, (0, 0, 0), (0, 0, 600, 50))
+            pygame.draw.rect(screen, (0, 0, 0), (0, 0, 50))
 
         if self.boss_hit and self.state == "transition":
             screen.blit(self.boss_hit_image, (0, 50))
