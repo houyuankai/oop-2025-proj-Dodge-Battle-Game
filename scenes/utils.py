@@ -3,33 +3,31 @@ import sys
 import os
 
 def resource_path(relative_path):
-    """取得 PyInstaller 打包後或開發階段的正確資源路徑"""
-    try:
-        base_path = sys._MEIPASS  # PyInstaller 打包後
-    except AttributeError:
-        base_path = os.path.abspath(".")  # 開發中
-
+    """獲取打包後或開發中的資源路徑"""
+    if hasattr(sys, '_MEIPASS'):
+        # PyInstaller 臨時目錄
+        return os.path.join(sys._MEIPASS, relative_path)
+    # 開發環境：相對專案根目錄
+    base_path = os.path.dirname(os.path.dirname(__file__))
     return os.path.join(base_path, relative_path)
 
 def load_image(path, size=None):
     full_path = resource_path(path)
     if not os.path.exists(full_path):
         raise FileNotFoundError(f"Image not found: {full_path}")
-    image = pygame.image.load(full_path).convert_alpha()
+    image = pygame.image.load(full_path)
     if size:
         image = pygame.transform.scale(image, size)
     return image
 
 def load_images_from_folder(folder_path, scale=None):
-    full_folder_path = resource_path(folder_path)
-    if not os.path.exists(full_folder_path):
-        raise FileNotFoundError(f"Folder not found: {full_folder_path}")
-    
     images = []
-    for filename in sorted(os.listdir(full_folder_path)):
-        if filename.lower().endswith((".png", ".jpg", ".jpeg")):
-            image_path = os.path.join(folder_path, filename)
-            image = load_image(image_path, scale)
+    if not os.path.exists(folder_path):
+        raise FileNotFoundError(f"Folder not found: {folder_path}")
+    for filename in sorted(os.listdir(folder_path)):
+        if filename.endswith(".png") or filename.endswith(".jpg"):
+            path = os.path.join(folder_path, filename)
+            image = load_image(path, scale)
             images.append(image)
     return images
 
