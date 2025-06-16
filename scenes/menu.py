@@ -6,7 +6,7 @@ from scenes.utils import load_image, resource_path
 class MenuScene:
     def __init__(self, game):
         self.game = game
-        self.screen = game.screen  # 確保 screen 已通過 pygame.display.set_mode 初始化
+        self.screen = game.screen  # 已初始化
         self.scale = game.scale
         bg_path = os.path.join("assets", "images", "menu_background.png")
         start_path = os.path.join("assets", "images", "start_button.png")
