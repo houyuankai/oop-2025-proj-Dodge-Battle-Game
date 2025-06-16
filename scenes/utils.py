@@ -4,29 +4,35 @@ import os
 
 def resource_path(relative_path):
     """獲取打包後或開發中的資源路徑"""
-    if hasattr(sys, '_MEIPASS'):
-        # PyInstaller 臨時目錄
+    if hasattr(sys, 'frozen'):  # PyInstaller 打包環境
         return os.path.join(sys._MEIPASS, relative_path)
     # 開發環境：相對專案根目錄
-    base_path = os.path.dirname(os.path.dirname(__file__))
+    base_path = getattr(sys, '_MEIPASS', os.path.dirname(os.path.dirname(__file__)))
     return os.path.join(base_path, relative_path)
 
 def load_image(path, size=None):
+    """載入並調整圖片大小，適配 PyInstaller 環境"""
     full_path = resource_path(path)
     if not os.path.exists(full_path):
         raise FileNotFoundError(f"Image not found: {full_path}")
-    image = pygame.image.load(full_path)
-    if size:
-        image = pygame.transform.scale(image, size)
-    return image
+    try:
+        image = pygame.image.load(full_path).convert_alpha()  # 啟用透明度
+        if size:
+            image = pygame.transform.scale(image, size)
+        return image
+    except pygame.error as e:
+        print(f"Error loading image {full_path}: {e}")
+        return pygame.Surface((1, 1))  # 佔位符
 
 def load_images_from_folder(folder_path, scale=None):
+    """從資料夾批量載入圖片"""
     images = []
-    if not os.path.exists(folder_path):
-        raise FileNotFoundError(f"Folder not found: {folder_path}")
-    for filename in sorted(os.listdir(folder_path)):
-        if filename.endswith(".png") or filename.endswith(".jpg"):
-            path = os.path.join(folder_path, filename)
+    full_folder_path = resource_path(folder_path)
+    if not os.path.exists(full_folder_path):
+        raise FileNotFoundError(f"Folder not found: {full_folder_path}")
+    for filename in sorted(os.listdir(full_folder_path)):
+        if filename.endswith((".png", ".jpg")):
+            path = os.path.join(folder_path, filename)  # 使用相對路徑
             image = load_image(path, scale)
             images.append(image)
     return images
