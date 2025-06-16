@@ -1,6 +1,6 @@
 import pygame
 import os
-from scenes.utils import load_image
+from scenes.utils import load_image, resource_path
 
 class InstructionScene:
     def __init__(self, game, image_paths, next_state, battle_scene):
@@ -14,13 +14,16 @@ class InstructionScene:
         self.done = False
         self.images = []
         for path in image_paths:
-            if not os.path.exists(path):
-                raise FileNotFoundError(f"Image not found: {path}")
+            full_path = resource_path(path)
+            if not os.path.exists(full_path):
+                raise FileNotFoundError(f"Image not found: {full_path}")
             self.images.append(load_image(path, size=(600, 900)))
+            if pygame.display.get_init():  # 確保顯示初始化
+                self.images[-1] = self.images[-1].convert_alpha()
         self.sound = None
         sound_path = os.path.join("assets", "sounds", "music_5.mp3")
-        if os.path.exists(sound_path):
-            self.sound = pygame.mixer.Sound(sound_path)
+        if os.path.exists(resource_path(sound_path)):
+            self.sound = pygame.mixer.Sound(resource_path(sound_path))
             self.sound.set_volume(0.5)
             self.sound.play(0)
 
@@ -33,7 +36,6 @@ class InstructionScene:
                     self.sound.stop()
                 self.current_page += 1
                 if self.current_page >= len(self.image_paths):
-                    self.boss_hit = False
                     self.battle_scene.state = self.next_state
                     if self.next_state == "dodge_countdown":
                         self.battle_scene.dodge_countdown_timer = pygame.time.get_ticks()
