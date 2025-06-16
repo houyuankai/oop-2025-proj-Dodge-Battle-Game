@@ -7,7 +7,7 @@ def resource_path(relative_path):
     if hasattr(sys, 'frozen'):  # PyInstaller 打包環境
         return os.path.join(sys._MEIPASS, relative_path)
     # 開發環境：相對專案根目錄
-    base_path = os.path.dirname(os.path.dirname(__file__))
+    base_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))  # 回到專案根目錄
     return os.path.join(base_path, relative_path)
 
 def load_image(path, size=None):
@@ -16,13 +16,11 @@ def load_image(path, size=None):
     if not os.path.exists(full_path):
         raise FileNotFoundError(f"Image not found: {full_path}")
     try:
-        # 僅載入圖片，轉換留給顯示環境
+        # 僅載入圖片，不立即轉換
         image = pygame.image.load(full_path)
         if size:
             image = pygame.transform.scale(image, size)
-        # 若需要透明度，確保在顯示初始化後使用
-        if pygame.display.get_init():
-            image = image.convert_alpha()
+        # 延遲 convert_alpha()，由調用方在顯示初始化後處理
         return image
     except pygame.error as e:
         print(f"Error loading image {full_path}: {e}")
