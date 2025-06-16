@@ -1,7 +1,7 @@
 import pygame
 import os
 from scenes.battle import BattleScene
-from scenes.utils import load_image 
+from scenes.utils import load_image, resource_path
 
 class MenuScene:
     def __init__(self, game):
@@ -10,9 +10,9 @@ class MenuScene:
         self.scale = game.scale
         bg_path = os.path.join("assets", "images", "menu_background.png")
         start_path = os.path.join("assets", "images", "start_button.png")
-        if not os.path.exists(bg_path):
+        if not os.path.exists(resource_path(bg_path)):  # 使用 resource_path 檢查
             raise FileNotFoundError(f"Image not found: {bg_path}")
-        if not os.path.exists(start_path):
+        if not os.path.exists(resource_path(start_path)):
             raise FileNotFoundError(f"Image not found: {start_path}")
         self.background = load_image(bg_path, size=(600, 900))
         self.start_button = load_image(start_path, size=(150, 75))
@@ -29,8 +29,8 @@ class MenuScene:
     def update(self):
         if self.game.current_music != "music_1.mp3":
             pygame.mixer.music.stop()
-            if os.path.exists(self.music_path):
-                pygame.mixer.music.load(self.music_path)
+            if os.path.exists(resource_path(self.music_path)):  # 使用 resource_path 檢查
+                pygame.mixer.music.load(resource_path(self.music_path))
                 pygame.mixer.music.set_volume(0.5)
                 pygame.mixer.music.play(-1)
                 self.game.current_music = "music_1.mp3"
