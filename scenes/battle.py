@@ -4,18 +4,7 @@ import os
 import math
 from scenes.projectile import Projectile
 from scenes.button_manager import ButtonManager
-from scenes.utils import load_image
-from scenes.instruction import InstructionScene
-from scenes.window import Window
-from scenes.item import Item
-
-import pygame
-import random
-import os
-import math
-from scenes.projectile import Projectile
-from scenes.button_manager import ButtonManager
-from scenes.utils import load_image
+from scenes.utils import load_image, resource_path
 from scenes.instruction import InstructionScene
 from scenes.window import Window
 from scenes.item import Item
@@ -126,8 +115,8 @@ class BattleScene:
         self.current_music = None
         # 預載音效
         for path in self.music_paths.values():
-            if os.path.exists(path):
-                pygame.mixer.music.load(path)
+            if os.path.exists(resource_path(path)):
+                pygame.mixer.music.load(resource_path(path))
                 pygame.mixer.music.stop()
         pygame.mixer.music.set_volume(1.0)
 
