@@ -177,11 +177,13 @@ class BattleScene:
         if self.state in ["dodge", "dodge_countdown", "attack", "transition"]:
             if self.current_music != self.music_paths["dodge"]:
                 pygame.mixer.music.stop()
-                pygame.mixer.music.load(self.music_paths["dodge"])
-                pygame.mixer.music.set_volume(1.0)
-                pygame.mixer.music.play(-1)
-                self.current_music = self.music_paths["dodge"]
-                self.game.current_music = self.current_music
+                full_path = resource_path(self.music_paths["dodge"])
+                if os.path.exists(full_path):
+                    pygame.mixer.music.load(full_path)
+                    pygame.mixer.music.set_volume(1.0)
+                    pygame.mixer.music.play(-1)
+                    self.current_music = self.music_paths["dodge"]
+                    self.game.current_music = self.current_music
         elif self.state == "instruction":
             if self.current_music is not None:
                 pygame.mixer.music.stop()
@@ -190,43 +192,53 @@ class BattleScene:
         elif self.state == "win":
             if self.current_music != self.music_paths["win"]:
                 pygame.mixer.music.stop()
-                pygame.mixer.music.load(self.music_paths["win"])
-                pygame.mixer.music.set_volume(1.0)
-                pygame.mixer.music.play(-1)
-                self.current_music = self.music_paths["win"]
-                self.game.current_music = self.current_music
+                full_path = resource_path(self.music_paths["win"])
+                if os.path.exists(full_path):
+                    pygame.mixer.music.load(full_path)
+                    pygame.mixer.music.set_volume(1.0)
+                    pygame.mixer.music.play(-1)
+                    self.current_music = self.music_paths["win"]
+                    self.game.current_music = self.current_music
         elif self.state == "lose":
             if self.current_music != self.music_paths["lose"]:
                 pygame.mixer.music.stop()
-                pygame.mixer.music.load(self.music_paths["lose"])
-                pygame.mixer.music.set_volume(1.0)
-                pygame.mixer.music.play(-1)
-                self.current_music = self.music_paths["lose"]
-                self.game.current_music = self.current_music
+                full_path = resource_path(self.music_paths["lose"])
+                if os.path.exists(full_path):
+                    pygame.mixer.music.load(full_path)
+                    pygame.mixer.music.set_volume(1.0)
+                    pygame.mixer.music.play(-1)
+                    self.current_music = self.music_paths["lose"]
+                    self.game.current_music = self.current_music
         elif self.state == "ending3":
             if self.current_music != self.music_paths["ending3"]:
                 pygame.mixer.music.stop()
-                pygame.mixer.music.load(self.music_paths["ending3"])
-                pygame.mixer.music.set_volume(1.0)
-                pygame.mixer.music.play(-1)
-                self.current_music = self.music_paths["ending3"]
-                self.game.current_music = self.current_music
+                full_path = resource_path(self.music_paths["ending3"])
+                if os.path.exists(full_path):
+                    pygame.mixer.music.load(full_path)
+                    pygame.mixer.music.set_volume(1.0)
+                    pygame.mixer.music.play(-1)
+                    self.current_music = self.music_paths["ending3"]
+                    self.game.current_music = self.current_music
         elif self.state == "ending4":
             if self.current_music != self.music_paths["ending4"]:
                 pygame.mixer.music.stop()
-                pygame.mixer.music.load(self.music_paths["ending4"])
-                pygame.mixer.music.set_volume(1.0)
-                pygame.mixer.music.play(-1)
-                self.current_music = self.music_paths["ending4"]
-                self.game.current_music = self.current_music
+                full_path = resource_path(self.music_paths["ending4"])
+                if os.path.exists(full_path):
+                    pygame.mixer.music.load(full_path)
+                    pygame.mixer.music.set_volume(1.0)
+                    pygame.mixer.music.play(-1)
+                    self.current_music = self.music_paths["ending4"]
+                    self.game.current_music = self.current_music
         elif self.state == "ending5":
             if self.current_music != self.music_paths["ending5"]:
                 pygame.mixer.music.stop()
-                pygame.mixer.music.load(self.music_paths["ending5"])
-                pygame.mixer.music.set_volume(1.0)
-                pygame.mixer.music.play(-1)
-                self.current_music = self.music_paths["ending5"]
-                self.game.current_music = self.current_music
+                full_path = resource_path(self.music_paths["ending5"])
+                if os.path.exists(full_path):
+                    pygame.mixer.music.load(full_path)
+                    pygame.mixer.music.set_volume(1.0)
+                    pygame.mixer.music.play(-1)
+                    self.current_music = self.music_paths["ending5"]
+                    self.game.current_music = self.current_music
 
     def update(self):
         dt = self.clock.tick(60) / 16.67
