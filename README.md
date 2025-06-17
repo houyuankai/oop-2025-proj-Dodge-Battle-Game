@@ -1,4 +1,45 @@
 # oop-2025-proj-Dodge-Battle-Game
-OOP 2025 Final Project Group 20
+專案概述
+這是一個基於 Python 和 Pygame 開發的物件導向閃躲與戰鬥遊戲專案，作為 2025 年物件導向程式設計課程的期末報告。遊戲包含閃躲敵人攻擊和攻擊敵人的機制，結合視覺和音效效果，旨在展示物件導向設計原則。
 
-https://drive.google.com/file/d/1AKNd0hQRgtkUtnVlnsA9t2di001GVUDX/view?usp=sharing
+功能特色
+玩家可通過鍵盤操控角色進行閃躲和攻擊。
+多階段遊戲場景，包括教學、閃躲和戰鬥模式。
+動態道具和敵人投射物系統。
+背景音樂和音效增強遊戲體驗。
+需求
+作業系統：Windows
+依賴：無需額外安裝 Python 或 Pygame（已透過 PyInstaller 打包）
+硬體：基本 PC 配置
+安裝與運行
+下載檔案：
+從 Google Drive 連結 下載 CuddleTime.zip。
+需獲取分享權限（聯繫專案擁有者）。
+解壓縮：
+使用 7-Zip 或類似工具解壓 CuddleTime.zip 至任意資料夾。
+執行遊戲：
+雙擊 CuddleTime.exe 啟動遊戲。
+確認無需安裝 Python 或其他依賴。
+使用說明
+主畫面：點擊「開始」進入教學模式。
+教學模式：學習閃躲和攻擊操作。
+遊戲模式：
+使用 WASD 鍵移動角色。
+按 Space 在攻擊模式觸發攻擊。
+閃躲敵人投射物以保持生命值。
+結束：根據勝負顯示結局畫面。
+開發資訊
+語言：Python 3.12.3
+框架：Pygame 2.6.1
+打包工具：PyInstaller
+版本控制：GitHub 儲存庫
+貢獻與聯繫
+此專案為學術用途，歡迎回饋意見。請通過 GitHub Issues 提出建議或問題。
+
+版權聲明
+遊戲包含音效和圖片資源，僅限個人學習用途。請勿公開分發或商業使用，音樂來源需進一步確認許可。
+
+說明
+內容基於你提供的專案名稱和背景，整合了 PyInstaller 打包及 7-Zip 解壓的經驗。
+Google Drive 連結已嵌入，假設為分發檔案的來源，需手動獲取權限。
+若需調整（如添加更多細節或更改連結），告訴我，我會幫你修改！
