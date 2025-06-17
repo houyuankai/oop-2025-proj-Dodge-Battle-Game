@@ -3,7 +3,6 @@
 
 　　這是一個基於 Python 和 Pygame 開發的物件導向遊戲專案【Cuddle Time!】，作為 2025 年物件導向程式設計課程的期末報告。遊戲包含閃躲敵人攻擊和攻擊敵人的機制，結合視覺和音效，旨在展示物件導向設計原則。
   
-
 ２. 功能特色
 
 ● 玩家可通過鍵盤操控角色進行閃躲和攻擊。
@@ -28,7 +27,7 @@
 
 ✓ 下載檔案：
 
-　　從 Google Drive 連結 下載 CuddleTime.zip。
+　　從連結 https://drive.google.com/file/d/1AKNd0hQRgtkUtnVlnsA9t2di001GVUDX/view?usp=sharing 下載 CuddleTime.zip。
 
 ✓ 解壓縮：
 
