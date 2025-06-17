@@ -4,7 +4,7 @@
 
 　　這是一個基於 Python 和 Pygame 開發的物件導向遊戲專案【Cuddle Time!】，作為 2025 年物件導向程式設計課程的期末報告。遊戲包含閃躲敵人攻擊和攻擊敵人的機制，結合視覺和音效，旨在展示物件導向設計原則。
 
-https://drive.google.com/file/d/13mi3pMcDE1KlTcyaJ0ImvttLr8YG_4vv/view?usp=sharing
+![遊戲截圖](images/screenshot.png)
 
 ## ２. 功能特色
 
