@@ -27,11 +27,11 @@
 
 ✓ 下載檔案：
 
-　　從連結 https://drive.google.com/file/d/1AKNd0hQRgtkUtnVlnsA9t2di001GVUDX/view?usp=sharing 下載 CuddleTime.zip。
+　　從連結 https://drive.google.com/file/d/1AKNd0hQRgtkUtnVlnsA9t2di001GVUDX/view?usp=sharing 下載 CuddleTime_new.zip。
 
 ✓ 解壓縮：
 
-　　使用 7-Zip 或類似工具解壓 CuddleTime.zip 至任意資料夾。
+　　使用 7-Zip 或類似工具(Windows內建)解壓 CuddleTime_new.zip。
 
 ✓ 執行遊戲：
 
@@ -63,7 +63,7 @@
 
 ● 打包工具：PyInstaller
 
-● 排版編輯：Canva
+● 排版編輯：Canva(海報&簡報)
 
 ● 版本控制：GitHub 儲存庫
 
