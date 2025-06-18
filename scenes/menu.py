@@ -6,7 +6,7 @@ from scenes.utils import load_image, resource_path
 class MenuScene:
     def __init__(self, game):
         self.game = game
-        self.screen = game.screen  # 已初始化
+        self.screen = game.screen  
         self.scale = game.scale
         bg_path = os.path.join("assets", "images", "menu_background.png")
         start_path = os.path.join("assets", "images", "start_button.png")
@@ -15,7 +15,7 @@ class MenuScene:
         if not os.path.exists(resource_path(start_path)):
             raise FileNotFoundError(f"Image not found: {start_path}")
         self.background = load_image(bg_path, size=(600, 900))
-        if pygame.display.get_init():  # 確保顯示初始化
+        if pygame.display.get_init():  
             self.background = self.background.convert_alpha()
         self.start_button = load_image(start_path, size=(150, 75))
         if pygame.display.get_init():
