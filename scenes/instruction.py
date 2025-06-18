@@ -1,9 +1,12 @@
-from scenes.scene import Scene
-from scenes.utils import resource_path, load_image
+import pygame
+import os
+from scenes.utils import load_image, resource_path
 
-class InstructionScene(Scene):
+class InstructionScene:
     def __init__(self, game, image_paths, next_state, battle_scene):
-        super().__init__(game)
+        self.game = game
+        self.screen = game.screen
+        self.scale = game.scale
         self.image_paths = image_paths
         self.next_state = next_state
         self.battle_scene = battle_scene
@@ -15,7 +18,7 @@ class InstructionScene(Scene):
             if not os.path.exists(full_path):
                 raise FileNotFoundError(f"Image not found: {full_path}")
             self.images.append(load_image(path, size=(600, 900)))
-            if pygame.display.get_init():
+            if pygame.display.get_init():  # 確保顯示初始化
                 self.images[-1] = self.images[-1].convert_alpha()
         self.sound = None
         sound_path = os.path.join("assets", "sounds", "music_5.mp3")
