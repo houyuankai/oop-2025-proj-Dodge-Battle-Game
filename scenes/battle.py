@@ -10,7 +10,6 @@ from scenes.window import Window
 from scenes.item import Item
 
 class BattleScene:
-    # 預載圖片
     boss_images = [load_image(os.path.join("assets", "images", f"boss_{i}.png"), size=(180, 270)) for i in range(1, 9)]
     boss_hit_image = load_image(os.path.join("assets", "images", "boss_hit.png"), size=(600, 250))
     heart_image = load_image(os.path.join("assets", "images", "heart.png"), size=(25, 25))
@@ -21,7 +20,6 @@ class BattleScene:
         "ending4": load_image(os.path.join("assets", "images", "ending4.png"), size=(600, 900)),
         "ending5": load_image(os.path.join("assets", "images", "ending5.png"), size=(600, 900))
     }
-    # 定義音效路徑
     music_paths = {
         "dodge": os.path.join("assets", "sounds", "music_2.mp3"),
         "win": os.path.join("assets", "sounds", "music_4.mp3"),
@@ -113,7 +111,7 @@ class BattleScene:
         self.items.clear()
         
         self.current_music = None
-        # 預載音效
+
         for path in self.music_paths.values():
             if os.path.exists(resource_path(path)):
                 pygame.mixer.music.load(resource_path(path))
