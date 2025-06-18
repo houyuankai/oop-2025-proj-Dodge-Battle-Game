@@ -16,24 +16,22 @@ def load_image(path, size=None):
     if not os.path.exists(full_path):
         raise FileNotFoundError(f"Image not found: {full_path}")
     try:
-        # 僅載入圖片，不立即轉換
         image = pygame.image.load(full_path)
         if size:
             image = pygame.transform.scale(image, size)
         return image
     except pygame.error as e:
         print(f"Error loading image {full_path}: {e}")
-        return pygame.Surface((1, 1))  # 佔位符
+        return pygame.Surface((1, 1))  
 
 def load_images_from_folder(folder_path, scale=None):
-    """從資料夾批量載入圖片"""
     images = []
     full_folder_path = resource_path(folder_path)
     if not os.path.exists(full_folder_path):
         raise FileNotFoundError(f"Folder not found: {full_folder_path}")
     for filename in sorted(os.listdir(full_folder_path)):
         if filename.endswith((".png", ".jpg")):
-            path = os.path.join(folder_path, filename)  # 使用相對路徑
+            path = os.path.join(folder_path, filename)  
             image = load_image(path, scale)
             images.append(image)
     return images
