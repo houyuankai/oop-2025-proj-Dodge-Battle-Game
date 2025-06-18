@@ -2,14 +2,14 @@ import pygame
 import random
 import os
 import math
+from scenes.scene import Scene
 from scenes.projectile import Projectile
 from scenes.button_manager import ButtonManager
 from scenes.utils import load_image, resource_path
-from scenes.instruction import InstructionScene
 from scenes.window import Window
 from scenes.item import Item
 
-class BattleScene:
+class BattleScene(Scene):
     boss_images = [load_image(os.path.join("assets", "images", f"boss_{i}.png"), size=(180, 270)) for i in range(1, 9)]
     boss_hit_image = load_image(os.path.join("assets", "images", "boss_hit.png"), size=(600, 250))
     heart_image = load_image(os.path.join("assets", "images", "heart.png"), size=(25, 25))
@@ -30,11 +30,9 @@ class BattleScene:
     }
 
     def __init__(self, game):
-        self.game = game
-        self.screen = game.screen
+        super().__init__(game)
         self.clock = pygame.time.Clock()
         self.dodge_start_time = pygame.time.get_ticks()
-        self.scale = game.scale
 
         Item.preload_images(self.scale)
 
@@ -43,7 +41,11 @@ class BattleScene:
 
         self.state = "instruction"
         self.dodge_countdown_timer = pygame.time.get_ticks()
-        
+        self.button_manager = ButtonManager(game)
+
+        self.windows = []
+        self.items = []
+
         self.transition_timer = 0
         self.attack_timer = 0
         self.dodge_countdown_duration = 2000
