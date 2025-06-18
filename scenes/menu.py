@@ -1,12 +1,13 @@
 import pygame
 import os
-from scenes.scene import Scene
 from scenes.battle import BattleScene
 from scenes.utils import load_image, resource_path
 
-class MenuScene(Scene):
+class MenuScene:
     def __init__(self, game):
-        super().__init__(game)
+        self.game = game
+        self.screen = game.screen  
+        self.scale = game.scale
         bg_path = os.path.join("assets", "images", "menu_background.png")
         start_path = os.path.join("assets", "images", "start_button.png")
         if not os.path.exists(resource_path(bg_path)):
@@ -14,7 +15,7 @@ class MenuScene(Scene):
         if not os.path.exists(resource_path(start_path)):
             raise FileNotFoundError(f"Image not found: {start_path}")
         self.background = load_image(bg_path, size=(600, 900))
-        if pygame.display.get_init():
+        if pygame.display.get_init():  
             self.background = self.background.convert_alpha()
         self.start_button = load_image(start_path, size=(150, 75))
         if pygame.display.get_init():
