@@ -48,7 +48,6 @@ class Game:
                 raise ValueError(f"Unknown scene name: {new_scene}")
         else:
             self.current_scene = new_scene
-
 if __name__ == "__main__":
     game = Game()
     game.run()
